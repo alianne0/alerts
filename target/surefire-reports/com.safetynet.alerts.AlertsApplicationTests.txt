@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: com.safetynet.alerts.AlertsApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.011 s -- in com.safetynet.alerts.AlertsApplicationTests
