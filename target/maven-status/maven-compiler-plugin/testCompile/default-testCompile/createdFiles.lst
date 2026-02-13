@@ -1,1 +1,5 @@
-com/safetynet/alerts/AlertsApplicationTests.class
+com/safetynet/alerts/MedicalRecordControllerTest.class
+com/safetynet/alerts/MedicalRecordControllerTest$DeleteMedicalRecordTests.class
+com/safetynet/alerts/MedicalRecordControllerTest$UpdateMedicalRecordTests.class
+com/safetynet/alerts/FirestationControllerTest$DeleteTests.class
+com/safetynet/alerts/FirestationControllerTest$PutStationForAddressTests.class

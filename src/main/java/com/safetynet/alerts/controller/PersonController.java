@@ -9,63 +9,101 @@ import org.springframework.web.bind.annotation.*;
 import com.safetynet.alerts.service.PersonService;
 import java.util.List;
 
+/**
+ * Controller class for Person
+ */
 @RestController
-@RequestMapping("/person")
+@RequestMapping("/persons")
 public class PersonController {
 
     private final DataParser data;
     private final PersonService personService;
 
+    /**
+     * Constructor for the Person Controller
+     *
+     * @param data
+     * @param personService
+     */
     @Autowired
     public PersonController(DataParser data, PersonService personService) {
         this.data = data;
         this.personService = personService;
     }
 
-    // Get all people
+    /**
+     * Gets all the people
+     *
+     * @return
+     */
     @GetMapping
     public List<Person> getPeople() {
         return personService.findAll();
     }
 
-    // Get one person
-    @GetMapping("/{firstName}/{lastName}")
+    /**
+     * Get one person by their name
+     *
+     * @param lastName
+     * @param firstName
+     * @return
+     */
+    @GetMapping("/{lastName}/{firstName}")
     public ResponseEntity<Person> getPerson(
-            @PathVariable String firstName,
-            @PathVariable String lastName) {
-        return personService.findByName(firstName, lastName)
+            @PathVariable String lastName,
+            @PathVariable String firstName) {
+        return personService.findByName(lastName, firstName)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Post a person
+    /**
+     * Add a new person
+     *
+     * @param newPerson
+     * @return
+     */
     @PostMapping
     public ResponseEntity<Person> postPerson(@RequestBody Person newPerson) {
         Person savedPerson = personService.postPerson(newPerson);
         return new ResponseEntity<>(savedPerson, HttpStatus.CREATED);
     }
 
-    // update an existing person
-    @PatchMapping("/{firstName}/{lastName}")
-    public ResponseEntity<?> patchPerson(
-            @PathVariable String firstName,
+
+    /**
+     * Update an existing person, not changing the name
+     *
+     * @param lastName
+     * @param firstName
+     * @param updates
+     * @return
+     */
+    @PutMapping(path = "/{lastName}/{firstName}")
+    public ResponseEntity<?> putPerson(
             @PathVariable String lastName,
+            @PathVariable String firstName,
             @RequestBody Person updates) {
         try {
-            return personService.updatePerson(firstName, lastName, updates)
+            return personService.updatePerson(lastName, firstName, updates)
                     .<ResponseEntity<?>>map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body("Person not found: " + firstName + " " + lastName));
+                            .body("Person not found: " + firstName  + " " + lastName));
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
 
-    // Delete a person
-    @DeleteMapping("/{firstName}/{lastName}")
+    /**
+     * Delete a person mapping by their name
+     *
+     * @param lastName
+     * @param firstName
+     * @return
+     */
+    @DeleteMapping("/{lastName}/{firstName}")
     public ResponseEntity<Void> delete(
-            @PathVariable String firstName,
-            @PathVariable String lastName) {
+            @PathVariable String lastName,
+            @PathVariable String firstName) {
 
         boolean deleted = personService.deleteByName(lastName, firstName);
         return deleted ? ResponseEntity.ok().build()

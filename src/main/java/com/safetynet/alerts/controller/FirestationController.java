@@ -11,24 +11,44 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * Controller class for the Firestation
+ */
 @RestController
-@RequestMapping("/firestation")
+@RequestMapping("/firestations")
 public class FirestationController {
 
     private final DataParser data;
     private final FirestationService firestationService;
 
+    /**
+     * Constructor for the Firestation Controller
+     *
+     * @param data
+     * @param firestationService
+     */
     @Autowired
     public FirestationController(DataParser data, FirestationService firestationService) {
         this.data = data;
         this.firestationService = firestationService;
     }
 
+    /**
+     * Get all firestations
+     *
+     * @return
+     */
     @GetMapping
     public List<Firestation> getFirestations() {
         return firestationService.findAll();
     }
 
+    /**
+     * Delete a firestation mapping by the address
+     *
+     * @param address
+     * @return
+     */
     @DeleteMapping("/{address}")
     public ResponseEntity<Void> delete(
             @PathVariable String address) {
@@ -36,16 +56,28 @@ public class FirestationController {
         return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 
-//    @DeleteMapping("/station")
-//    public ResponseEntity<Void> delete(
-//            @PathVariable String station) {
-//        boolean deleted = firestationService.deleteByStation(station);
-//        return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
-//    }
+    /**
+     * Add a new firestation with a station and address mapping
+     *
+     * @param body
+     * @return
+     */
+    @PostMapping()
+    public ResponseEntity<Firestation> postFirestation(@RequestBody Firestation body) {
+        Firestation saved = firestationService.postFirestation(body);
+        return new ResponseEntity<>(saved, HttpStatus.CREATED);
+    }
 
 
-    @PatchMapping("/address/{address}")
-    public ResponseEntity<?> patchStationForAddress(
+    /**
+     * Update a firestation's station number by providing its address
+     *
+     * @param address
+     * @param body
+     * @return
+     */
+    @PutMapping(path = "/address/{address}")
+    public ResponseEntity<?> putStationForAddress(
             @PathVariable String address,
             @RequestBody Firestation body) {
 

@@ -2,9 +2,12 @@
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/controller/FirestationController.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/controller/MedicalRecordController.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/controller/PersonController.java
-/Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/domain/DataWrapper.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/domain/Firestation.java
-/Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/domain/JsonParser.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/domain/MedicalRecord.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/domain/Person.java
-/Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/service/DataService.java
+/Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/repository/DataParser.java
+/Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/repository/DataWrapper.java
+/Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/repository/JsonParser.java
+/Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/service/FirestationService.java
+/Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/service/MedicalRecordService.java
+/Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/service/PersonService.java

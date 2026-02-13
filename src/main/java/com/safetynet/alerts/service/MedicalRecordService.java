@@ -21,48 +21,55 @@ public class MedicalRecordService {
         return Collections.unmodifiableList(new ArrayList<>(data.getMedicalRecords()));
     }
 
-    // Add a medical record
-//    public MedicalRecord postMedicalRecord(MedicalRecord medicalRecord) {
-//        Objects.requireNonNull(medicalRecord, "medical record cannot be empty");
-//        List<MedicalRecord> medicalRecords = data.getMedicalRecords();
-//
-//        for (int i = 0; i < medicalRecords.size(); i++) {
-//            MedicalRecord existing  = medicalRecords.get(i);
-//            if(equalsTrimmed(existing.getFirstName(), m))
-//        }
-//    }
+    public MedicalRecord postMedicalRecord(MedicalRecord medicalRecord) {
+        Objects.requireNonNull(medicalRecord,"medical record cannot be null");
+        List<MedicalRecord> medicalRecords = data.getMedicalRecords();
 
-    //Update an existing medial record but dont change the firstname and lastname
-    public Optional <MedicalRecord> updateMedicalRecord(String firstName, String lastName, MedicalRecord updates) {
+        for(int i = 0; i < medicalRecords.size(); i++) {
+            MedicalRecord existing = medicalRecords.get(i);
+            if(equalsTrimmed(existing.getLastName(), medicalRecord.getLastName())
+            && equalsTrimmed(existing.getFirstName(), medicalRecord.getFirstName())){
+                existing.setFirstName(medicalRecord.getFirstName());
+                existing.setLastName(medicalRecord.getLastName());
+                existing.setBirthdate(medicalRecord.getBirthdate());
+                existing.setMedications(medicalRecord.getMedications());
+                existing.setAllergies(medicalRecord.getAllergies());
+                return existing;
+            }
+        }
+        medicalRecords.add(medicalRecord);
+        return medicalRecord;
+    }
+
+    public Optional <MedicalRecord> updateMedicalRecord(String lastName, String firstName, MedicalRecord updates) {
         Objects.requireNonNull(updates, "updates cant be null");
-        if (updates.getFirstName() != null && !equalsTrimmed(updates.getFirstName(), firstName)){
-            throw new IllegalArgumentException("firstname cannot be changed");
+        if (updates.getLastName() != null && !equalsTrimmed(updates.getLastName(), lastName)){
+            throw new IllegalArgumentException("last name cannot be changed");
         }
-        if (updates.getLastName() != null && !equalsTrimmed(updates.getLastName(), lastName)) {
-            throw new IllegalArgumentException("lastname cannot be changed");
+        if (updates.getFirstName() != null && !equalsTrimmed(updates.getFirstName(), firstName)) {
+            throw new IllegalArgumentException("first name cannot be changed");
         }
-
         for(MedicalRecord existing : data.getMedicalRecords()) {
-            if (equalsTrimmed(existing.getFirstName(), firstName) && equalsTrimmed(existing.getLastName(), lastName)) {
+            if (equalsTrimmed(existing.getLastName(), lastName) && equalsTrimmed(existing.getFirstName(), firstName)) {
                 if (updates.getMedications() != null) {
                     existing.setMedications(updates.getMedications());
                 }
                 if (updates.getAllergies() != null) {
-                    existing.setAllergies(updates.getMedications());
+                    existing.setAllergies(updates.getAllergies());
                 }
                 if(updates.getBirthdate() !=null) {
                     existing.setBirthdate(updates.getBirthdate());
+                    return Optional.of(existing);
                 }
             }
         }
         return Optional.empty();
     }
 
-    //Delete a medical record, query by firstname and lastname
-    public boolean deleteByName(String firstName, String lastName) {
+    public boolean deleteByName(String lastName, String firstName) {
         return data.getMedicalRecords().removeIf(
-                m -> equalsTrimmed(m.getFirstName(), firstName)
-                && equalsTrimmed(m.getLastName(), lastName)
+                m -> equalsTrimmed(m.getLastName(), lastName)
+                && equalsTrimmed(m.getFirstName(), firstName)
         );
     }
 

@@ -22,10 +22,10 @@ public class PersonService {
         return Collections.unmodifiableList(new ArrayList<>(data.getPersons()));
     }
 
-    public Optional<Person> findByName(String firstName, String lastName) {
+    public Optional<Person> findByName(String lastName, String firstName) {
         return data.getPersons().stream()
-                .filter(p -> equalsTrimmed(p.getFirstName(), firstName)
-                        && equalsTrimmed(p.getLastName(), lastName))
+                .filter(p -> equalsTrimmed(p.getFirstName(), lastName)
+                        && equalsTrimmed(p.getLastName(), firstName))
                 .findFirst( );
     }
 
@@ -37,13 +37,20 @@ public class PersonService {
             Person existing = persons.get(i);
             if (equalsTrimmed(existing.getLastName(), person.getLastName())
                     && equalsTrimmed(existing.getFirstName(), person.getFirstName())) {
-                persons.set(i, person);
-                return person;
+                existing.setFirstName(person.getFirstName());
+                existing.setLastName(person.getLastName());
+                existing.setAddress(person.getAddress());
+                existing.setCity(person.getCity());
+                existing.setZip(person.getZip());
+                existing.setPhone(person.getPhone());
+                existing.setEmail(person.getEmail());
+                return existing;
             }
         }
         persons.add(person);
         return person;
     }
+
 
     public boolean deleteByName(String lastName, String firstName) {
         return data.getPersons().removeIf(
@@ -51,17 +58,16 @@ public class PersonService {
                         && equalsTrimmed(p.getFirstName(), firstName)
         );
     }
-    //update a person
-    public Optional<Person> updatePerson(String firstName, String lastName, Person updates) {
+    public Optional<Person> updatePerson(String lastName, String firstName, Person updates) {
         Objects.requireNonNull(updates, "updates cannot be null");
-        if (updates.getFirstName() != null && !equalsTrimmed(updates.getFirstName(), firstName)) {
-            throw new IllegalArgumentException("firstname cannot be changed");
-        }
-        if (updates.getLastName() != null && !equalsTrimmed(updates.getLastName(), lastName)){
+        if (updates.getLastName() != null && !equalsTrimmed(updates.getLastName(), lastName)) {
             throw new IllegalArgumentException("last name cannot be changed");
         }
+        if (updates.getFirstName() != null && !equalsTrimmed(updates.getFirstName(), firstName)){
+            throw new IllegalArgumentException("first name cannot be changed");
+        }
         for (Person existing : data.getPersons()) {
-            if (equalsTrimmed(existing.getFirstName(), firstName) && equalsTrimmed(existing.getLastName(), lastName)) {
+            if (equalsTrimmed(existing.getLastName(), lastName) && equalsTrimmed(existing.getFirstName(), firstName)) {
                 if (updates.getAddress() != null) {
                     existing.setAddress(updates.getAddress());
                 }
@@ -72,7 +78,7 @@ public class PersonService {
                     existing.setZip(updates.getZip());
                 }
                 if(updates.getPhone() != null) {
-                    existing.setZip(updates.getPhone());
+                    existing.setPhone(updates.getPhone());
                 }
                 if (updates.getEmail() != null) {
                     existing.setEmail(updates.getEmail());
