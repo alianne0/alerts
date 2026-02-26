@@ -1,7 +1,8 @@
 package com.safetynet.alerts.controller;
-
+//add logs
 import com.safetynet.alerts.domain.Person;
 import com.safetynet.alerts.repository.DataParser;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/persons")
+@Slf4j
 public class PersonController {
 
     private final DataParser data;
@@ -38,6 +40,7 @@ public class PersonController {
      */
     @GetMapping
     public List<Person> getPeople() {
+        log.info("Getting people...");
         return personService.findAll();
     }
 

@@ -1,4 +1,7 @@
 /Users/annerutecki/Documents/GitHub/alerts/src/test/java/com/safetynet/alerts/AlertsApplicationTests.java
 /Users/annerutecki/Documents/GitHub/alerts/src/test/java/com/safetynet/alerts/FirestationControllerTest.java
+/Users/annerutecki/Documents/GitHub/alerts/src/test/java/com/safetynet/alerts/FirestationServiceTest.java
 /Users/annerutecki/Documents/GitHub/alerts/src/test/java/com/safetynet/alerts/MedicalRecordControllerTest.java
+/Users/annerutecki/Documents/GitHub/alerts/src/test/java/com/safetynet/alerts/MedicalRecordServiceTest.java
 /Users/annerutecki/Documents/GitHub/alerts/src/test/java/com/safetynet/alerts/PersonControllerTest.java
+/Users/annerutecki/Documents/GitHub/alerts/src/test/java/com/safetynet/alerts/PersonServiceTest.java

@@ -1,8 +1,10 @@
 package com.safetynet.alerts.controller;
+//add logs for mapping , log error for try catch
 
 import com.safetynet.alerts.domain.MedicalRecord;
 import com.safetynet.alerts.service.MedicalRecordService;
 import com.safetynet.alerts.service.PersonService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import java.util.List;
 /**
  * Controller class for the Medical Records
  */
+@Slf4j
 @RestController
 @RequestMapping("/medicalRecords")
 public class MedicalRecordController {

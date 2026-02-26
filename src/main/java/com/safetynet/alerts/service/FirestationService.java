@@ -16,6 +16,7 @@ public class FirestationService{
         this.data = data;
     }
 
+    //add javadoc
     public List<Firestation> findAll() {
         return Collections.unmodifiableList(new ArrayList<> (data.getFirestations()));
     }

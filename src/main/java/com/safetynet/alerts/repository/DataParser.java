@@ -105,7 +105,8 @@ public class DataParser {
 
         public List<Person> getPersons() { return persons; }
         public void setPersons(List<Person> persons) { this.persons = persons; }
-
+        //can apply object stream here to map to a list of person per station object
+        //list of firestations, list of people, compare their addresses
         public List<Firestation> getFirestations() { return firestations; }
         public void setFirestations(List<Firestation> firestations) { this.firestations = firestations; }
 

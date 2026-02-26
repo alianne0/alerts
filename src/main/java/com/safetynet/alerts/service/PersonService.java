@@ -24,8 +24,8 @@ public class PersonService {
 
     public Optional<Person> findByName(String lastName, String firstName) {
         return data.getPersons().stream()
-                .filter(p -> equalsTrimmed(p.getFirstName(), lastName)
-                        && equalsTrimmed(p.getLastName(), firstName))
+                .filter(p -> equalsTrimmed(p.getLastName(), lastName)
+                        && equalsTrimmed(p.getFirstName(), firstName))
                 .findFirst( );
     }
 

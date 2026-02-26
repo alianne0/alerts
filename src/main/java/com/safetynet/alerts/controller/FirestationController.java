@@ -3,6 +3,7 @@ package com.safetynet.alerts.controller;
 import com.safetynet.alerts.domain.Firestation;
 import com.safetynet.alerts.repository.DataParser;
 import com.safetynet.alerts.service.FirestationService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import java.util.List;
 /**
  * Controller class for the Firestation
  */
+@Slf4j
 @RestController
 @RequestMapping("/firestations")
 public class FirestationController {
