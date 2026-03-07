@@ -8,9 +8,12 @@ com/safetynet/alerts/repository/DataParser$DataWrapper.class
 com/safetynet/alerts/repository/DataParser.class
 com/safetynet/alerts/domain/Firestation.class
 com/safetynet/alerts/controller/MedicalRecordController.class
+com/safetynet/alerts/service/FirstResponderService.class
 com/safetynet/alerts/domain/Person.class
 com/safetynet/alerts/AlertsApplication.class
 com/safetynet/alerts/service/PersonService.class
 com/safetynet/alerts/service/FirestationService.class
 com/safetynet/alerts/repository/JsonParser.class
+com/safetynet/alerts/dto/FireStationResponseDTO.class
+com/safetynet/alerts/dto/CoveredPersonsDTO.class
 com/safetynet/alerts/domain/MedicalRecord.class

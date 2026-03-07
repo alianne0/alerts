@@ -39,7 +39,8 @@ public class MedicalRecordController {
      */
     @GetMapping
     public List<MedicalRecord> getAllMedicalRecords() {
-        return medicalRecordService.findAll();
+        log.info("Getting all of the medical records...");
+    return medicalRecordService.findAll();
     }
 
     /**
@@ -51,6 +52,7 @@ public class MedicalRecordController {
     @PostMapping
     public ResponseEntity<MedicalRecord> postMedicalRecord(@RequestBody MedicalRecord newMedicalRecord) {
         MedicalRecord savedMedicalRecord = medicalRecordService.postMedicalRecord(newMedicalRecord);
+        log.info("Posting a new medical record...");
         return new ResponseEntity<>(savedMedicalRecord, HttpStatus.CREATED);
     }
 
@@ -68,6 +70,7 @@ public class MedicalRecordController {
             @PathVariable String firstName,
             @RequestBody MedicalRecord updates) {
         try {
+            log.info("Updating a medical record...");
             return medicalRecordService.updateMedicalRecord(lastName, firstName, updates)
                     .<ResponseEntity<?>>map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -88,6 +91,8 @@ public class MedicalRecordController {
     public ResponseEntity<Void> delete (
             @PathVariable String lastName, @PathVariable String firstName) {
         boolean deleted = medicalRecordService.deleteByName(lastName, firstName);
+        //TODO: logging
+        log.info("Deleting a medical record...");
         return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 }

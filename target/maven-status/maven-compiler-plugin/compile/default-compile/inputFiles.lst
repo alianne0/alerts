@@ -6,10 +6,13 @@
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/domain/Firestation.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/domain/MedicalRecord.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/domain/Person.java
+/Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/dto/CoveredPersonsDTO.java
+/Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/dto/FireStationResponseDTO.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/repository/DataParser.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/repository/DataWrapper.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/repository/JsonParser.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/service/FirestationService.java
+/Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/service/FirstResponderService.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/service/MedicalRecordService.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/service/PersonService.java
 /Users/annerutecki/Documents/GitHub/alerts/src/main/java/com/safetynet/alerts/view/PeoplePerStation.java

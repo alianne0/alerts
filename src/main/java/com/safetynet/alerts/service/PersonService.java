@@ -8,20 +8,37 @@ import com.safetynet.alerts.repository.DataParser;
 
 import java.util.*;
 
+/**
+ * Service class for the person
+ */
 @Service
 public class PersonService {
 
     private final DataParser data;
 
+    /**
+     * Constructor for the person service
+     * @param data
+     */
     @Autowired
     public PersonService(DataParser data) {
         this.data = data;
     }
 
+    /**
+     * Returns all of the mappings in Person
+     * @return
+     */
     public List<Person> findAll() {
         return Collections.unmodifiableList(new ArrayList<>(data.getPersons()));
     }
 
+    /**
+     * Returns a person mapping and all of their information given their first and last name
+     * @param lastName
+     * @param firstName
+     * @return
+     */
     public Optional<Person> findByName(String lastName, String firstName) {
         return data.getPersons().stream()
                 .filter(p -> equalsTrimmed(p.getLastName(), lastName)
@@ -29,6 +46,11 @@ public class PersonService {
                 .findFirst( );
     }
 
+    /**
+     * Posts a new person mapping
+     * @param person
+     * @return
+     */
     public Person postPerson(Person person) {
         Objects.requireNonNull(person, "person must not be null");
         List<Person> persons = data.getPersons();
@@ -51,13 +73,26 @@ public class PersonService {
         return person;
     }
 
-
+    /**
+     * Deletes a person mapping given their first and last name
+     * @param lastName
+     * @param firstName
+     * @return
+     */
     public boolean deleteByName(String lastName, String firstName) {
         return data.getPersons().removeIf(
                 p -> equalsTrimmed(p.getLastName(), lastName)
                         && equalsTrimmed(p.getFirstName(), firstName)
         );
     }
+
+    /**
+     * Updates a person mapping given their first and last name
+     * @param lastName
+     * @param firstName
+     * @param updates
+     * @return
+     */
     public Optional<Person> updatePerson(String lastName, String firstName, Person updates) {
         Objects.requireNonNull(updates, "updates cannot be null");
         if (updates.getLastName() != null && !equalsTrimmed(updates.getLastName(), lastName)) {

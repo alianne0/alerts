@@ -1,5 +1,5 @@
 package com.safetynet.alerts.controller;
-//add logs
+//TODO: add logs
 import com.safetynet.alerts.domain.Person;
 import com.safetynet.alerts.repository.DataParser;
 import lombok.extern.slf4j.Slf4j;
@@ -34,14 +34,14 @@ public class PersonController {
     }
 
     /**
-     * Gets all the people
-     *
+     * Get all the people
      * @return
      */
     @GetMapping
     public List<Person> getPeople() {
-        log.info("Getting people...");
+        log.info("Getting all of the people...");
         return personService.findAll();
+
     }
 
     /**
@@ -55,6 +55,7 @@ public class PersonController {
     public ResponseEntity<Person> getPerson(
             @PathVariable String lastName,
             @PathVariable String firstName) {
+        //break up into two parts to do logging
         return personService.findByName(lastName, firstName)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -69,6 +70,7 @@ public class PersonController {
     @PostMapping
     public ResponseEntity<Person> postPerson(@RequestBody Person newPerson) {
         Person savedPerson = personService.postPerson(newPerson);
+        log.info("Posting a new person...");
         return new ResponseEntity<>(savedPerson, HttpStatus.CREATED);
     }
 
@@ -87,6 +89,7 @@ public class PersonController {
             @PathVariable String firstName,
             @RequestBody Person updates) {
         try {
+            log.info("Updating an existing person...");
             return personService.updatePerson(lastName, firstName, updates)
                     .<ResponseEntity<?>>map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -109,6 +112,7 @@ public class PersonController {
             @PathVariable String firstName) {
 
         boolean deleted = personService.deleteByName(lastName, firstName);
+        log.info("Deleting a person...");
         return deleted ? ResponseEntity.ok().build()
                 : ResponseEntity.notFound().build();
     }

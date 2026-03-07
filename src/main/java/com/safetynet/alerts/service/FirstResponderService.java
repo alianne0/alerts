@@ -1,48 +1,107 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.domain.Firestation;
+import com.safetynet.alerts.domain.*;
+import com.safetynet.alerts.dto.CoveredPersonsDTO;
 import com.safetynet.alerts.view.PeoplePerStation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.safetynet.alerts.repository.DataParser;
-import com.safetynet.alerts.domain.CoveredPersonsDTO;
-import com.safetynet.alerts.domain.FireStationResponseDTO;
 
-import java.sql.Array;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
+/**
+ * Service class for our first responder endpoints
+ */
 @Service
 public class FirstResponderService {
     private final DataParser data;
 
+    /**
+     * Constructor for the first responder service and instantiates our data parser
+     * @param data
+     */
     @Autowired
     public FirstResponderService(DataParser data) { this.data = data; }
 
+    private static String normalizeName(String firstName, String lastName) {
+        return ((firstName) + "|" + (lastName)).toLowerCase(Locale.ROOT).trim();
+    }
 
+    private static Integer computeAge(MedicalRecord mr) {
+        if (mr == null) return null;
+        try {
+            String birthdate = mr.getBirthdate(); // e.g., "03/06/1984"
+            if (birthdate != null && !birthdate.isBlank()) {
+                DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+                LocalDate dob = LocalDate.parse(birthdate, fmt);
+                return Period.between(dob, LocalDate.now()).getYears();
+            }
+        } catch (Exception e) {
+            return null;
+        }
+        return null;
+    }
+
+    /**
+     * Obtains the list of people serviced by a particular fire station number
+     * Finds the addresses for a fire station, then finds the people with that address
+     * Counts the adults and children by lookup of birthdate by name
+     * @param stationNumber
+     * @return
+     */
     public PeoplePerStation getPeopleByStation(String stationNumber) {
-        List<String> addresses = new ArrayList<>();
-
         // find all addresses for this firestation
+        List<String> addresses = new ArrayList<>();
         for(Firestation fs : data.getFirestations()){
-            if(fs.getStation().equals(stationNumber)) {
+            if(fs != null && fs.getStation().equals(stationNumber)) {
                 addresses.add(fs.getAddress());
             }
         }
         //filter persons who live at those addresses
-        //map them to DTO
+        List<Person> personsCovered = new ArrayList<>();
+        for(Person p : data.getPersons()){
+            if(p != null &&  addresses.contains(p.getAddress())) {
+                personsCovered.add(p);
+            }
+        }
+
         //count adults and children (requires medical records)
+        //linear lookup of birthday by name
+        Map<String, MedicalRecord> medicalRecordSearch = new HashMap<>();
+        for (MedicalRecord mr : data.getMedicalRecords()){
+            if (mr != null && mr.getFirstName() != null && mr.getLastName() != null) {
+
+                String key = normalizeName(mr.getFirstName(), mr.getLastName());
+                medicalRecordSearch.put(key, mr);
+            }
+        }
+
+        //map them to DTO
+        List<CoveredPersonsDTO> personToDto = new ArrayList<>();
+        int adultCount = 0;
+        int childCount = 0;
+        for (Person p : personsCovered) {
+            CoveredPersonsDTO dto = new CoveredPersonsDTO(
+                    p.getFirstName(),
+                    p.getLastName(),
+                    p.getAddress(),
+                    p.getPhone()
+            );
+            personToDto.add(dto);
+            String key = normalizeName(p.getFirstName(), p.getLastName());
+            MedicalRecord mr = medicalRecordSearch.get(key);
+            Integer age = computeAge(mr);
+            if(age != null) {
+                if (age < 18) {
+                    childCount++;
+                } else {
+                    adultCount++;
+                }
+            }
+        }
+        return new PeoplePerStation(personToDto, adultCount, childCount);
     }
-
-    /**
-     * filter (projecting part od domain object into this object (logic done here)
-     * get birthday is accessing the medical record service and accessing a specific persons
-     * if the address tied to the station matches the address tied to a person, then that person will be added to the person count
-     * if person is a certain age, then add to child or adult count
-     * get info needed for the view
-     * compare person and service
-     * object stream take array of objects, stream, apply methods to it
-     * map person domain to people per station view
-     */
-
 }

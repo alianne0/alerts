@@ -42,6 +42,7 @@ public class FirestationController {
      */
     @GetMapping
     public List<Firestation> getFirestations() {
+        log.info("Getting all firestation data...");
         return firestationService.findAll();
     }
 
@@ -55,6 +56,7 @@ public class FirestationController {
     public ResponseEntity<Void> delete(
             @PathVariable String address) {
         boolean deleted = firestationService.deleteByAddress(address);
+        log.info("Deleting a firestation...");
         return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
 
@@ -66,6 +68,7 @@ public class FirestationController {
      */
     @PostMapping()
     public ResponseEntity<Firestation> postFirestation(@RequestBody Firestation body) {
+        log.info("Adding a new firestation...");
         Firestation saved = firestationService.postFirestation(body);
         return new ResponseEntity<>(saved, HttpStatus.CREATED);
     }
@@ -84,9 +87,11 @@ public class FirestationController {
             @RequestBody Firestation body) {
 
         if (body == null || body.getStation() == null || body.getStation().trim().isEmpty()) {
+            log.info("Could not update a firestation due to bad input");
             return ResponseEntity.badRequest().body("station must not be null or blank");
         }
         try {
+            log.info("Updating a firestations number...");
             return firestationService.updateFirestation(address, body.getStation().trim())
                     .<ResponseEntity<?>>map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)

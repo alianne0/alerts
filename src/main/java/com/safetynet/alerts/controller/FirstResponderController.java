@@ -6,24 +6,32 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import com.safetynet.alerts.service.FirstResponderService;
 
+/**
+ * Controller for the FirstResponder class
+ */
 @RestController
 @Slf4j
 public class FirstResponderController {
     private final FirstResponderService firstResponderService;
 
+    /**
+     * Constructor for the first responder controller
+     * @param firstResponderService
+     */
     public FirstResponderController(FirstResponderService firstResponderService) {
-
         this.firstResponderService = firstResponderService;
     }
 
-    //ad query param to the parameter
-//make sure this endpoint works
+    /**
+     * Gets all of the people for a corresponding firestation when the station number is provided.
+     * This method also provides the count of adults and count of children for that specific station
+     * @param stationNumber
+     * @return
+     */
     @GetMapping("/firestation")
     public PeoplePerStation getPeopleByStation(@RequestParam String stationNumber) {
-        log.info("Searching for the people by station for number:", stationNumber);
+        log.info("Searching for people by station:", stationNumber);
+        //create local field in the method for the result and then return the result
         return firstResponderService.getPeopleByStation(stationNumber);
-
-        //return firstResponderService.getPeopleByStation(stationNumber);
-        // pass to first responder service, which will find all info for view object (peoplePerStation) back to controller
     }
 }

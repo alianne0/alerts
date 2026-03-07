@@ -15,30 +15,40 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Handles loading and saving SafetyNet data from a JSON file.
+ * Stores the data in memory so services can modify it.
+ */
 @Repository
 public class DataParser {
 
-    // Path to the external JSON file (configured in application.properties)
     private final Path filePath;
     private final ObjectMapper mapper;
 
-    // Keep these MUTABLE so services can modify them in memory
+    // Mutable in‑memory data lists
     private List<Person> persons = new ArrayList<>();
     private List<Firestation> firestations = new ArrayList<>();
     private List<MedicalRecord> medicalRecords = new ArrayList<>();
 
+    /**
+     * Creates a DataParser using the configured JSON file path.
+     *
+     * @param filePath path to the JSON data file
+     */
     public DataParser(@Value("${data.file:./data/data.json}") String filePath) {
         this.filePath = Paths.get(filePath).toAbsolutePath().normalize();
         this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
     }
 
+    /**
+     * Loads data from the JSON file at startup.
+     * Creates an empty file if none exists.
+     */
     @PostConstruct
     public void load() {
         try {
-            // Create file & parent directories on first run if missing
             if (Files.notExists(filePath)) {
                 Files.createDirectories(filePath.getParent());
-                // initialize an empty wrapper and write it down
                 DataWrapper empty = new DataWrapper();
                 empty.setPersons(new ArrayList<>());
                 empty.setFirestations(new ArrayList<>());
@@ -61,14 +71,24 @@ public class DataParser {
         }
     }
 
-    // --- Accessors return the LIVE lists (services can mutate them) ---
+    /**
+     * Returns the list of persons stored in memory.
+     */
     public List<Person> getPersons() { return persons; }
+
+    /**
+     * Returns the list of firestations stored in memory.
+     */
     public List<Firestation> getFirestations() { return firestations; }
+
+    /**
+     * Returns the list of medical records stored in memory.
+     */
     public List<MedicalRecord> getMedicalRecords() { return medicalRecords; }
 
     /**
-     * Persist current in-memory state to disk safely.
-     * Synchronized to avoid concurrent writes from multiple requests/threads.
+     * Saves all in‑memory data to the JSON file.
+     * Synchronized to avoid concurrent writes.
      */
     public synchronized void saveToFile() {
         try {
@@ -83,8 +103,8 @@ public class DataParser {
     }
 
     /**
-     * Write to a temporary file first, then atomically move into place.
-     * Prevents corrupted JSON if the app crashes during write.
+     * Writes data to a temporary file and replaces the original atomically.
+     * Prevents partial or corrupted JSON writes.
      */
     private void writeWrapperAtomically(DataWrapper wrapper) throws IOException {
         Path tmp = Files.createTempFile(filePath.getParent(), "data-", ".json.tmp");
@@ -92,25 +112,34 @@ public class DataParser {
             mapper.writeValue(tmp.toFile(), wrapper);
             Files.move(tmp, filePath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
         } finally {
-            // In case move fails, ensure temp is cleaned up
             try { Files.deleteIfExists(tmp); } catch (Exception ignore) {}
         }
     }
 
-    // Wrapper matches the structure of data.json
+    /**
+     * Simple wrapper matching the structure of the JSON file.
+     */
     public static class DataWrapper {
         private List<Person> persons;
         private List<Firestation> firestations;
         private List<MedicalRecord> medicalrecords;
 
+        /** Returns the list of persons. */
         public List<Person> getPersons() { return persons; }
+
+        /** Sets the list of persons. */
         public void setPersons(List<Person> persons) { this.persons = persons; }
-        //can apply object stream here to map to a list of person per station object
-        //list of firestations, list of people, compare their addresses
+
+        /** Returns the list of firestations. */
         public List<Firestation> getFirestations() { return firestations; }
+
+        /** Sets the list of firestations. */
         public void setFirestations(List<Firestation> firestations) { this.firestations = firestations; }
 
+        /** Returns the list of medical records. */
         public List<MedicalRecord> getMedicalrecords() { return medicalrecords; }
+
+        /** Sets the list of medical records. */
         public void setMedicalrecords(List<MedicalRecord> medicalrecords) { this.medicalrecords = medicalrecords; }
     }
 }

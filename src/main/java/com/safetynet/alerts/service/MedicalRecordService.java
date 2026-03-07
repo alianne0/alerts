@@ -8,19 +8,35 @@ import com.safetynet.alerts.repository.DataParser;
 
 import java.util.*;
 
+/**
+ * Service class for the medical records
+ */
 @Service
 public class MedicalRecordService {
     private final DataParser data;
 
+    /**
+     * Constructor for the medical record and instantiates our data parser
+     * @param data
+     */
     @Autowired
     public MedicalRecordService(DataParser data) {
         this.data = data;
     }
 
+    /**
+     * Returns all of the medical records
+     * @return
+     */
     public List<MedicalRecord> findAll() {
         return Collections.unmodifiableList(new ArrayList<>(data.getMedicalRecords()));
     }
 
+    /**
+     * Posts a new medical record mapping
+     * @param medicalRecord
+     * @return
+     */
     public MedicalRecord postMedicalRecord(MedicalRecord medicalRecord) {
         Objects.requireNonNull(medicalRecord,"medical record cannot be null");
         List<MedicalRecord> medicalRecords = data.getMedicalRecords();
@@ -41,6 +57,13 @@ public class MedicalRecordService {
         return medicalRecord;
     }
 
+    /**
+     * Updates a particular medical record given their first and last name
+     * @param lastName
+     * @param firstName
+     * @param updates
+     * @return
+     */
     public Optional <MedicalRecord> updateMedicalRecord(String lastName, String firstName, MedicalRecord updates) {
         Objects.requireNonNull(updates, "updates cant be null");
         if (updates.getLastName() != null && !equalsTrimmed(updates.getLastName(), lastName)){
@@ -66,6 +89,12 @@ public class MedicalRecordService {
         return Optional.empty();
     }
 
+    /**
+     * Deletes a mapping for a medical record given their name
+     * @param lastName
+     * @param firstName
+     * @return
+     */
     public boolean deleteByName(String lastName, String firstName) {
         return data.getMedicalRecords().removeIf(
                 m -> equalsTrimmed(m.getLastName(), lastName)

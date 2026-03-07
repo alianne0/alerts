@@ -7,30 +7,57 @@ import com.safetynet.alerts.repository.DataParser;
 
 import java.util.*;
 
+/**
+ * Service class for the firestation
+ */
 @Service
 public class FirestationService{
     private final DataParser data;
 
+    /**
+     * Constructor for the firestation service and instantiates the data parser
+     * @param data
+     */
     @Autowired
     public FirestationService(DataParser data) {
         this.data = data;
     }
 
-    //add javadoc
+    //TODO: testing
+
+    /**
+     * Returns all of the information in the firestation object
+     * @return
+     */
     public List<Firestation> findAll() {
         return Collections.unmodifiableList(new ArrayList<> (data.getFirestations()));
     }
 
+    /**
+     * Gets a specific firestation when provided its address
+     * @param address
+     * @return
+     */
     public Optional<Firestation> findByAddress(String address) {
         return data.getFirestations().stream()
                 .filter(f -> equalsTrimmed(f.getAddress(), address)).findFirst();
     }
 
+    /**
+     * Gets a specific firestation when provided its station number
+     * @param station
+     * @return
+     */
     public Optional<Firestation> findByStation(String station) {
         return data.getFirestations().stream()
                 .filter(f -> equalsTrimmed(f.getStation(), station)).findFirst();
     }
 
+    /**
+     * Posts a firestation mapping
+     * @param firestation
+     * @return
+     */
     public Firestation postFirestation(Firestation firestation) {
         Objects.requireNonNull(firestation, "firestation must not be null");
 
@@ -54,10 +81,21 @@ public class FirestationService{
         return firestation;
     }
 
+    /**
+     * Deletes a firestation mapping by providing its address
+     * @param address
+     * @return
+     */
     public boolean deleteByAddress(String address) {
         return data.getFirestations().removeIf(f -> equalsTrimmed(f.getAddress(), address));
     }
 
+    /**
+     * Updates a firestation's station number based on the address provided
+     * @param address
+     * @param newStation
+     * @return
+     */
     public Optional<Firestation> updateFirestation(String address, String newStation) {
         Objects.requireNonNull(address, "address must not be null");
         Objects.requireNonNull(newStation, "newStation must not be null");
@@ -75,7 +113,12 @@ public class FirestationService{
         return Optional.empty();
     }
 
-
+    /**
+     * Helper method to compare two strings
+     * @param a
+     * @param b
+     * @return
+     */
     private boolean equalsTrimmed(String a, String b) {
         String aa = (a == null) ? null : a.trim();
         String bb = (b == null) ? null : b.trim();

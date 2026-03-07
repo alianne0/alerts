@@ -1,25 +1,25 @@
 package com.safetynet.alerts.view;
 
-import com.safetynet.alerts.domain.Person;
+import com.safetynet.alerts.dto.CoveredPersonsDTO;
 
 import java.util.List;
 
 public class PeoplePerStation {
-    private List<Person> person;
+    private List<CoveredPersonsDTO> coveredPersons;
     private int adultCount;
     private int childCount;
 
-    public PeoplePerStation(List<Person> person, int adultCount, int childCount) {
-        this.person = person;
+    public PeoplePerStation(List<CoveredPersonsDTO> coveredPersons, int adultCount, int childCount) {
+        this.coveredPersons = coveredPersons;
         this.adultCount = adultCount;
         this.childCount = childCount;
     }
-    public List<Person> getPerson() {
-        return person;
+    public List<CoveredPersonsDTO> getCoveredPersons() {
+        return coveredPersons;
     }
 
-    public void setPerson(List<Person> person) {
-        this.person = person;
+    public void setCoveredPersons(List<CoveredPersonsDTO> coveredPersons) {
+        this.coveredPersons = coveredPersons;
     }
 
     public int getAdultCount() {
