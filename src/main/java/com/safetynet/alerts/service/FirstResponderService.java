@@ -1,10 +1,7 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.domain.*;
-import com.safetynet.alerts.dto.CoveredPersonsDTO;
-import com.safetynet.alerts.dto.ChildrenByAddressDTO;
-import com.safetynet.alerts.dto.HouseholdMembersDTO;
-import com.safetynet.alerts.dto.ResidentsPerAddressDTO;
+import com.safetynet.alerts.dto.*;
 import com.safetynet.alerts.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +30,12 @@ public class FirstResponderService {
         return ((firstName) + "|" + (lastName)).toLowerCase(Locale.ROOT).trim();
     }
 
+
+    /**
+     * Helper method for computing the age
+     * @param mr
+     * @return
+     */
     private static Integer computeAge(MedicalRecord mr) {
         if (mr == null) return null;
         try {
@@ -47,6 +50,7 @@ public class FirstResponderService {
         }
         return null;
     }
+
 
     /**
      * Obtains the list of people serviced by a particular fire station number
@@ -107,7 +111,6 @@ public class FirstResponderService {
         }
         return new PeoplePerStation(personToDto, adultCount, childCount);
     }
-
     /**
      * Returns children (age 18 or younger) living at the given address,
      * including their names, ages, and a list of other household members.
@@ -164,7 +167,7 @@ public class FirstResponderService {
             }
         }
 
-        // 4. Wrap in view object to match your other endpoint conventions
+        // 4. Wrap in view object to match other endpoint conventions
         return new ChildrenByAddress(children);
     }
 
@@ -193,7 +196,6 @@ public class FirstResponderService {
         }
 
         // 3) extract unique, non-blank phone numbers
-        // use LinkedHashSet to dedupe while keeping insertion order (stable for tests)
         Set<String> uniquePhones = new LinkedHashSet<>();
         for (Person p : personsCovered) {
             String phone = (p != null) ? p.getPhone() : null;
@@ -219,7 +221,7 @@ public class FirstResponderService {
      * @return ResidentsPerAddress view containing the residents and the station number
      */
     public ResidentsPerAddress getResidentsPerAddress(String address) {
-        // 1) find the fire station number for this address (first match wins)
+        // 1) find the fire station number for this address
         String stationNumber = null;
         for (Firestation fs : data.getFirestations()) {
             if (fs != null && fs.getAddress() != null && fs.getAddress().equals(address)) {
@@ -252,7 +254,7 @@ public class FirstResponderService {
             MedicalRecord mr = medicalRecordSearch.get(key);
 
             Integer maybeAge = computeAge(mr);
-            int age = (maybeAge != null) ? maybeAge : 0; // DTO uses primitive int
+            int age = (maybeAge != null) ? maybeAge : 0;
 
             List<String> medications = (mr != null && mr.getMedications() != null)
                     ? mr.getMedications()
@@ -352,4 +354,115 @@ public class FirstResponderService {
         }
         return households;
     }
+
+    /**
+     * Obtains the list of residents matching a given last name.
+     * Returns their first/last name, address, age, email, medications (with dosages), and allergies.
+     * If multiple people share the last name, they will all appear.
+     * @param lastName the last name to search
+     * @return PersonInfo view containing a list of PersonInfoDTO
+     */
+    public PersonInfo getPersonInfo(String lastName) {
+        if (lastName == null || lastName.isBlank()) {
+            // Keep response shape stable with an empty list
+            return new PersonInfo(new ArrayList<>());
+        }
+
+        // 1) Build a lookup map for medical records by normalized "first:last"
+        Map<String, MedicalRecord> medicalRecordSearch = new HashMap<>();
+        for (MedicalRecord mr : data.getMedicalRecords()) {
+            if (mr != null && mr.getFirstName() != null && mr.getLastName() != null) {
+                String key = normalizeName(mr.getFirstName(), mr.getLastName());
+                medicalRecordSearch.put(key, mr);
+            }
+        }
+
+        // 2) Filter persons who match the last name (case-insensitive)
+        List<Person> personsMatched = new ArrayList<>();
+        for (Person p : data.getPersons()) {
+            if (p != null && p.getLastName() != null) {
+                if (p.getLastName().equalsIgnoreCase(lastName)) {
+                    personsMatched.add(p);
+                }
+            }
+        }
+
+        // 3) Map to DTO
+        List<PersonInfoDTO> result = new ArrayList<>();
+        for (Person p : personsMatched) {
+            String key = normalizeName(p.getFirstName(), p.getLastName());
+            MedicalRecord mr = medicalRecordSearch.get(key);
+
+            // Use provided computeAge helper; DTO has primitive int, so null -> 0
+            Integer ageObj = computeAge(mr);
+            int age = (ageObj != null) ? ageObj : 0;
+
+            List<String> medications;
+            if (mr != null && mr.getMedications() != null) {
+                medications = mr.getMedications();
+            } else {
+                medications = Collections.emptyList();
+            }
+
+            List<String> allergies;
+            if (mr != null && mr.getAllergies() != null) {
+                allergies = mr.getAllergies();
+            } else {
+                allergies = Collections.emptyList();
+            }
+
+            PersonInfoDTO dto = new PersonInfoDTO(
+                    p.getLastName(),
+                    p.getFirstName(),
+                    p.getAddress(),
+                    age,
+                    p.getEmail(),
+                    medications,
+                    allergies
+            );
+            result.add(dto);
+        }
+
+        return new PersonInfo(result);
+    }
+
+    /**
+     * Obtains unique email addresses for all residents in the given city.
+     * Case-insensitive city match. Keeps stable order by first appearance.
+     * @param city the city to search
+     * @return ResidentEmails view containing a unique list of emails
+     */
+    public ResidentEmails getResidentEmails(String city) {
+        // Defensive: empty response if city is blank
+        if (city == null || city.isBlank()) {
+            return new ResidentEmails(new ArrayList<>());
+        }
+
+        // Use a LinkedHashSet to keep uniqueness + insertion order
+        Set<String> uniqueEmails = new LinkedHashSet<>();
+
+        // Loop over all persons in memory (style consistent with your example)
+        for (Person p : data.getPersons()) {
+            if (p == null) continue;
+
+            // Match by city (case-insensitive), ignore nulls
+            String personCity = p.getCity();
+            if (personCity != null && personCity.equalsIgnoreCase(city)) {
+                String email = p.getEmail();
+                if (email != null && !email.isBlank()) {
+                    uniqueEmails.add(email);
+                }
+            }
+        }
+
+        // Convert to list (maintains first-seen order)
+        List<String> emails = new ArrayList<>();
+        for (String e : uniqueEmails) {
+            emails.add(e);
+        }
+
+        // If your ResidentEmails has a constructor that takes the list:
+        return new ResidentEmails(emails);
+    }
+
 }

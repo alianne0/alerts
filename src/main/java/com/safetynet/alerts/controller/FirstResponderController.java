@@ -75,9 +75,25 @@ public class FirstResponderController {
         return firstResponderService.getResidentsPerAddress(address);
     }
 
+    /**
+     * Returns the list of households served by the firestation
+     * The list groups people by address
+     * The people have info such as name, number age, and medical history
+     * @param stations
+     * @return
+     */
     @GetMapping("/flood")
     public List<HouseholdsByStation> getHouseholdsByFirestation(@RequestParam List<String> stations){
         return firstResponderService.getHouseholdsByFirestation(stations);
     }
 
+    @GetMapping("/personInfo")
+    public PersonInfo getPersonInfo(@RequestParam String lastName) {
+        return firstResponderService.getPersonInfo(lastName);
+    }
+
+    @GetMapping("/communityEmail")
+    public ResidentEmails getResidentEmails(@RequestParam String city) {
+        return firstResponderService.getResidentEmails(city);
+    }
 }

@@ -6,6 +6,10 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * Class to hold the information for residents per address
+ * Plus the firestation number
+ */
 public class ResidentsPerAddress {
     @Getter
     @Setter

@@ -5,6 +5,11 @@ import lombok.Setter;
 
 import java.util.List;
 
+/**
+ * DTO to represent the residents per address
+ * Includes information such as first and last name, phone, age
+ * And a list of medications and allergies
+ */
 public class ResidentsPerAddressDTO {
     @Getter @Setter
     private String firstName;

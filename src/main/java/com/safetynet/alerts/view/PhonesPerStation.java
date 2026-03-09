@@ -1,6 +1,5 @@
 package com.safetynet.alerts.view;
 
-import com.safetynet.alerts.dto.PhonesPerStationDTO;
 import lombok.Getter;
 import lombok.Setter;
 
