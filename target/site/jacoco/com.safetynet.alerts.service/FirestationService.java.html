@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FirestationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.service</a> &gt; <span class="el_source">FirestationService.java</span></div><h1>FirestationService.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.service;
+
+import com.safetynet.alerts.domain.Firestation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.safetynet.alerts.repository.DataParser;
+
+import java.util.*;
+
+@Service
+public class FirestationService{
+    private final DataParser data;
+
+    @Autowired
+<span class="fc" id="L15">    public FirestationService(DataParser data) {</span>
+<span class="fc" id="L16">        this.data = data;</span>
+<span class="fc" id="L17">    }</span>
+
+    //add javadoc
+    public List&lt;Firestation&gt; findAll() {
+<span class="fc" id="L21">        return Collections.unmodifiableList(new ArrayList&lt;&gt; (data.getFirestations()));</span>
+    }
+
+    public Optional&lt;Firestation&gt; findByAddress(String address) {
+<span class="fc" id="L25">        return data.getFirestations().stream()</span>
+<span class="fc" id="L26">                .filter(f -&gt; equalsTrimmed(f.getAddress(), address)).findFirst();</span>
+    }
+
+    public Optional&lt;Firestation&gt; findByStation(String station) {
+<span class="fc" id="L30">        return data.getFirestations().stream()</span>
+<span class="fc" id="L31">                .filter(f -&gt; equalsTrimmed(f.getStation(), station)).findFirst();</span>
+    }
+
+    public Firestation postFirestation(Firestation firestation) {
+<span class="fc" id="L35">        Objects.requireNonNull(firestation, &quot;firestation must not be null&quot;);</span>
+
+<span class="fc bfc" id="L37" title="All 4 branches covered.">        if (firestation.getAddress() == null || firestation.getAddress().trim().isEmpty()){</span>
+<span class="fc" id="L38">            throw new IllegalArgumentException(&quot;address cannot be null&quot;);</span>
+        }
+<span class="fc bfc" id="L40" title="All 4 branches covered.">        if (firestation.getStation() == null || firestation.getStation().trim().isEmpty()){</span>
+<span class="fc" id="L41">            throw new IllegalArgumentException(&quot;station cannot be null&quot;);</span>
+        }
+<span class="fc" id="L43">        List&lt;Firestation&gt; firestations = data.getFirestations();</span>
+
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        for(int i = 0; i&lt; firestations.size(); i++){</span>
+<span class="fc" id="L46">            Firestation existing = firestations.get(i);</span>
+<span class="fc bfc" id="L47" title="All 2 branches covered.">            if(equalsTrimmed(existing.getAddress(), firestation.getAddress())){</span>
+<span class="fc" id="L48">                existing.setAddress(firestation.getAddress());</span>
+<span class="fc" id="L49">                existing.setStation(firestation.getStation());</span>
+<span class="fc" id="L50">                return existing;</span>
+            }
+        }
+<span class="fc" id="L53">        firestations.add(firestation);</span>
+<span class="fc" id="L54">        return firestation;</span>
+    }
+
+    public boolean deleteByAddress(String address) {
+<span class="fc" id="L58">        return data.getFirestations().removeIf(f -&gt; equalsTrimmed(f.getAddress(), address));</span>
+    }
+
+    public Optional&lt;Firestation&gt; updateFirestation(String address, String newStation) {
+<span class="fc" id="L62">        Objects.requireNonNull(address, &quot;address must not be null&quot;);</span>
+<span class="fc" id="L63">        Objects.requireNonNull(newStation, &quot;newStation must not be null&quot;);</span>
+<span class="fc" id="L64">        String trimmedStation = newStation.trim();</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">        if (trimmedStation.isEmpty()) {</span>
+<span class="fc" id="L66">            throw new IllegalArgumentException(&quot;newStation must not be blank&quot;);</span>
+        }
+
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        for (Firestation existing : data.getFirestations()) {</span>
+<span class="fc bfc" id="L70" title="All 2 branches covered.">            if (equalsTrimmed(existing.getAddress(), address)) {</span>
+<span class="fc" id="L71">                existing.setStation(trimmedStation);</span>
+<span class="fc" id="L72">                return Optional.of(existing);</span>
+            }
+<span class="fc" id="L74">        }</span>
+<span class="fc" id="L75">        return Optional.empty();</span>
+    }
+
+
+    private boolean equalsTrimmed(String a, String b) {
+<span class="pc bpc" id="L80" title="1 of 2 branches missed.">        String aa = (a == null) ? null : a.trim();</span>
+<span class="fc bfc" id="L81" title="All 2 branches covered.">        String bb = (b == null) ? null : b.trim();</span>
+<span class="fc" id="L82">        return Objects.equals(aa, bb);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

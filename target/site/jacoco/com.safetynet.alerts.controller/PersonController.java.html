@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PersonController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.controller</a> &gt; <span class="el_source">PersonController.java</span></div><h1>PersonController.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.controller;
+//add logs
+import com.safetynet.alerts.domain.Person;
+import com.safetynet.alerts.repository.DataParser;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import com.safetynet.alerts.service.PersonService;
+import java.util.List;
+
+/**
+ * Controller class for Person
+ */
+@RestController
+@RequestMapping(&quot;/persons&quot;)
+<span class="fc" id="L18">@Slf4j</span>
+public class PersonController {
+
+    private final DataParser data;
+    private final PersonService personService;
+
+    /**
+     * Constructor for the Person Controller
+     *
+     * @param data
+     * @param personService
+     */
+    @Autowired
+<span class="fc" id="L31">    public PersonController(DataParser data, PersonService personService) {</span>
+<span class="fc" id="L32">        this.data = data;</span>
+<span class="fc" id="L33">        this.personService = personService;</span>
+<span class="fc" id="L34">    }</span>
+
+    /**
+     * Gets all the people
+     *
+     * @return
+     */
+    @GetMapping
+    public List&lt;Person&gt; getPeople() {
+<span class="fc" id="L43">        log.info(&quot;Getting all of the people...&quot;);</span>
+<span class="fc" id="L44">        return personService.findAll();</span>
+
+    }
+
+    /**
+     * Get one person by their name
+     *
+     * @param lastName
+     * @param firstName
+     * @return
+     */
+    @GetMapping(&quot;/{lastName}/{firstName}&quot;)
+    public ResponseEntity&lt;Person&gt; getPerson(
+            @PathVariable String lastName,
+            @PathVariable String firstName) {
+        //break up into two parts to do logging
+<span class="fc" id="L60">        return personService.findByName(lastName, firstName)</span>
+<span class="fc" id="L61">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L62">                .orElse(ResponseEntity.notFound().build());</span>
+    }
+
+    /**
+     * Add a new person
+     *
+     * @param newPerson
+     * @return
+     */
+    @PostMapping
+    public ResponseEntity&lt;Person&gt; postPerson(@RequestBody Person newPerson) {
+<span class="fc" id="L73">        Person savedPerson = personService.postPerson(newPerson);</span>
+<span class="fc" id="L74">        log.info(&quot;Posting a new person...&quot;);</span>
+<span class="fc" id="L75">        return new ResponseEntity&lt;&gt;(savedPerson, HttpStatus.CREATED);</span>
+    }
+
+
+    /**
+     * Update an existing person, not changing the name
+     *
+     * @param lastName
+     * @param firstName
+     * @param updates
+     * @return
+     */
+    @PutMapping(path = &quot;/{lastName}/{firstName}&quot;)
+    public ResponseEntity&lt;?&gt; putPerson(
+            @PathVariable String lastName,
+            @PathVariable String firstName,
+            @RequestBody Person updates) {
+        try {
+<span class="fc" id="L93">            log.info(&quot;Updating an existing person...&quot;);</span>
+<span class="fc" id="L94">            return personService.updatePerson(lastName, firstName, updates)</span>
+<span class="fc" id="L95">                    .&lt;ResponseEntity&lt;?&gt;&gt;map(ResponseEntity::ok)</span>
+<span class="fc" id="L96">                    .orElseGet(() -&gt; ResponseEntity.status(HttpStatus.NOT_FOUND)</span>
+<span class="fc" id="L97">                            .body(&quot;Person not found: &quot; + firstName  + &quot; &quot; + lastName));</span>
+<span class="fc" id="L98">        } catch (IllegalArgumentException ex) {</span>
+<span class="fc" id="L99">            return ResponseEntity.badRequest().body(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * Delete a person mapping by their name
+     *
+     * @param lastName
+     * @param firstName
+     * @return
+     */
+    @DeleteMapping(&quot;/{lastName}/{firstName}&quot;)
+    public ResponseEntity&lt;Void&gt; delete(
+            @PathVariable String lastName,
+            @PathVariable String firstName) {
+
+<span class="fc" id="L115">        boolean deleted = personService.deleteByName(lastName, firstName);</span>
+<span class="fc" id="L116">        log.info(&quot;Deleting a person...&quot;);</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">        return deleted ? ResponseEntity.ok().build()</span>
+<span class="fc" id="L118">                : ResponseEntity.notFound().build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

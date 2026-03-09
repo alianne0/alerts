@@ -1,7 +1,7 @@
 package com.safetynet.alerts.dto;
 
 /**
- * Class to hold the information of people covered by a specific firestation
+ * DTO to hold the information of people covered by a specific firestation
  */
 public class CoveredPersonsDTO {
     private String firstName;
@@ -10,6 +10,7 @@ public class CoveredPersonsDTO {
     private String phone;
 
     /**
+     * Constructor for the covered persons DTO
      * @param firstName
      * @param lastName
      * @param address
@@ -24,27 +25,39 @@ public class CoveredPersonsDTO {
 
     /**
      * Returns the first name
+     *
      * @return
      */
-    public String getFirstName() { return firstName; }
+    public String getFirstName() {
+        return firstName;
+    }
 
     /**
      * Sets the first name
+     *
      * @param firstName
      */
-    public void setFirstName(String firstName) { this.firstName = firstName; }
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
     /**
      * Returns the last name
+     *
      * @return
      */
-    public String getLastName()  { return lastName; }
+    public String getLastName() {
+        return lastName;
+    }
 
     /**
      * Sets the last name
+     *
      * @param lastName
      */
-    public void setLastName(String lastName)   { this.lastName = lastName; }
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
     /**
      * Returns the address

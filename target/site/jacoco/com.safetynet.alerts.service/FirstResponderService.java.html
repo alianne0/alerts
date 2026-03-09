@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FirstResponderService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.service</a> &gt; <span class="el_source">FirstResponderService.java</span></div><h1>FirstResponderService.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.service;
+
+import com.safetynet.alerts.domain.*;
+import com.safetynet.alerts.dto.CoveredPersonsDTO;
+import com.safetynet.alerts.view.PeoplePerStation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import com.safetynet.alerts.repository.DataParser;
+
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+
+@Service
+public class FirstResponderService {
+    private final DataParser data;
+
+    @Autowired
+<span class="fc" id="L20">    public FirstResponderService(DataParser data) { this.data = data; }</span>
+
+    //helpers
+    private static String normalizeName(String firstName, String lastName) {
+<span class="nc" id="L24">        return ((firstName) + &quot;|&quot; + (lastName)).toLowerCase(Locale.ROOT).trim();</span>
+    }
+
+    private static Integer computeAge(MedicalRecord mr) {
+<span class="nc bnc" id="L28" title="All 2 branches missed.">        if (mr == null) return null;</span>
+        try {
+<span class="nc" id="L30">            String birthdate = mr.getBirthdate(); // e.g., &quot;03/06/1984&quot;</span>
+<span class="nc bnc" id="L31" title="All 4 branches missed.">            if (birthdate != null &amp;&amp; !birthdate.isBlank()) {</span>
+<span class="nc" id="L32">                DateTimeFormatter fmt = DateTimeFormatter.ofPattern(&quot;MM/dd/yyyy&quot;);</span>
+<span class="nc" id="L33">                LocalDate dob = LocalDate.parse(birthdate, fmt);</span>
+<span class="nc" id="L34">                return Period.between(dob, LocalDate.now()).getYears();</span>
+            }
+<span class="nc" id="L36">        } catch (Exception e) {</span>
+<span class="nc" id="L37">            return null;</span>
+<span class="nc" id="L38">        }</span>
+<span class="nc" id="L39">        return null;</span>
+    }
+
+    public PeoplePerStation getPeopleByStation(String stationNumber) {
+        // find all addresses for this firestation
+<span class="nc" id="L44">        List&lt;String&gt; addresses = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        for(Firestation fs : data.getFirestations()){</span>
+<span class="nc bnc" id="L46" title="All 4 branches missed.">            if(fs != null &amp;&amp; fs.getStation().equals(stationNumber)) {</span>
+<span class="nc" id="L47">                addresses.add(fs.getAddress());</span>
+            }
+<span class="nc" id="L49">        }</span>
+        //filter persons who live at those addresses
+<span class="nc" id="L51">        List&lt;Person&gt; personsCovered = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">        for(Person p : data.getPersons()){</span>
+<span class="nc bnc" id="L53" title="All 4 branches missed.">            if(p != null &amp;&amp;  addresses.contains(p.getAddress())) {</span>
+<span class="nc" id="L54">                personsCovered.add(p);</span>
+            }
+<span class="nc" id="L56">        }</span>
+
+        //count adults and children (requires medical records)
+        //linear lookup of birthday by name
+<span class="nc" id="L60">        Map&lt;String, MedicalRecord&gt; medicalRecordSearch = new HashMap&lt;&gt;();</span>
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        for (MedicalRecord mr : data.getMedicalRecords()){</span>
+<span class="nc bnc" id="L62" title="All 6 branches missed.">            if (mr != null &amp;&amp; mr.getFirstName() != null &amp;&amp; mr.getLastName() != null) {</span>
+
+<span class="nc" id="L64">                String key = normalizeName(mr.getFirstName(), mr.getLastName());</span>
+<span class="nc" id="L65">                medicalRecordSearch.put(key, mr);</span>
+            }
+<span class="nc" id="L67">        }</span>
+
+        //map them to DTO
+<span class="nc" id="L70">        List&lt;CoveredPersonsDTO&gt; personToDto = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L71">        int adultCount = 0;</span>
+<span class="nc" id="L72">        int childCount = 0;</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        for (Person p : personsCovered) {</span>
+<span class="nc" id="L74">            CoveredPersonsDTO dto = new CoveredPersonsDTO(</span>
+<span class="nc" id="L75">                    p.getFirstName(),</span>
+<span class="nc" id="L76">                    p.getLastName(),</span>
+<span class="nc" id="L77">                    p.getAddress(),</span>
+<span class="nc" id="L78">                    p.getPhone()</span>
+            );
+<span class="nc" id="L80">            personToDto.add(dto);</span>
+<span class="nc" id="L81">            String key = normalizeName(p.getFirstName(), p.getLastName());</span>
+<span class="nc" id="L82">            MedicalRecord mr = medicalRecordSearch.get(key);</span>
+<span class="nc" id="L83">            Integer age = computeAge(mr);</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">            if(age != null) {</span>
+<span class="nc bnc" id="L85" title="All 2 branches missed.">                if (age &lt; 18) {</span>
+<span class="nc" id="L86">                    childCount++;</span>
+                } else {
+<span class="nc" id="L88">                    adultCount++;</span>
+                }
+            }
+<span class="nc" id="L91">        }</span>
+<span class="nc" id="L92">        return new PeoplePerStation(personToDto, adultCount, childCount);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

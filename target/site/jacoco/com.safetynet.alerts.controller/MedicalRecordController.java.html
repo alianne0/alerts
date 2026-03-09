@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MedicalRecordController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.controller</a> &gt; <span class="el_source">MedicalRecordController.java</span></div><h1>MedicalRecordController.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.controller;
+//add logs for mapping , log error for try catch
+
+import com.safetynet.alerts.domain.MedicalRecord;
+import com.safetynet.alerts.service.MedicalRecordService;
+import com.safetynet.alerts.service.PersonService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+/**
+ * Controller class for the Medical Records
+ */
+<span class="fc" id="L18">@Slf4j</span>
+@RestController
+@RequestMapping(&quot;/medicalRecords&quot;)
+public class MedicalRecordController {
+    private final MedicalRecordService medicalRecordService;
+
+    /**
+     * Constructor for the Medical Record controller
+     *
+     * @param medicalRecordService
+     * @param personService
+     */
+    @Autowired
+<span class="fc" id="L31">    public MedicalRecordController(MedicalRecordService medicalRecordService, PersonService personService) {</span>
+<span class="fc" id="L32">        this.medicalRecordService = medicalRecordService;</span>
+<span class="fc" id="L33">    }</span>
+
+    /**
+     * Get all the medical records
+     *
+     * @return
+     */
+    @GetMapping
+    public List&lt;MedicalRecord&gt; getAllMedicalRecords() {
+<span class="fc" id="L42">        log.info(&quot;Getting all of the medical records...&quot;);</span>
+<span class="fc" id="L43">    return medicalRecordService.findAll();</span>
+    }
+
+    /**
+     * Add a new medical record
+     *
+     * @param newMedicalRecord
+     * @return
+     */
+    @PostMapping
+    public ResponseEntity&lt;MedicalRecord&gt; postMedicalRecord(@RequestBody MedicalRecord newMedicalRecord) {
+<span class="fc" id="L54">        MedicalRecord savedMedicalRecord = medicalRecordService.postMedicalRecord(newMedicalRecord);</span>
+<span class="fc" id="L55">        log.info(&quot;Posting a new medical record...&quot;);</span>
+<span class="fc" id="L56">        return new ResponseEntity&lt;&gt;(savedMedicalRecord, HttpStatus.CREATED);</span>
+    }
+
+    /**
+     * Update a medical record
+     *
+     * @param lastName
+     * @param firstName
+     * @param updates
+     * @return
+     */
+    @PutMapping(&quot;/{lastName}/{firstName}&quot;)
+    public ResponseEntity&lt;?&gt; updateMedicalRecord (
+            @PathVariable String lastName,
+            @PathVariable String firstName,
+            @RequestBody MedicalRecord updates) {
+        try {
+<span class="fc" id="L73">            log.info(&quot;Updating a medical record...&quot;);</span>
+<span class="fc" id="L74">            return medicalRecordService.updateMedicalRecord(lastName, firstName, updates)</span>
+<span class="fc" id="L75">                    .&lt;ResponseEntity&lt;?&gt;&gt;map(ResponseEntity::ok)</span>
+<span class="fc" id="L76">                    .orElseGet(() -&gt; ResponseEntity.status(HttpStatus.NOT_FOUND)</span>
+<span class="fc" id="L77">                            .body(&quot;person not found: &quot; + lastName + &quot;&quot; + firstName));</span>
+<span class="fc" id="L78">        } catch (IllegalArgumentException ex) {</span>
+<span class="fc" id="L79">            return ResponseEntity.badRequest().body(ex.getMessage());</span>
+        }
+    }
+
+    /**
+     * Delete a medical record given the name
+     *
+     * @param lastName
+     * @param firstName
+     * @return
+     */
+    @DeleteMapping(&quot;/{lastName}/{firstName}&quot;)
+    public ResponseEntity&lt;Void&gt; delete (
+            @PathVariable String lastName, @PathVariable String firstName) {
+<span class="fc" id="L93">        boolean deleted = medicalRecordService.deleteByName(lastName, firstName);</span>
+<span class="fc" id="L94">        log.info(&quot;Deleting a medical record...&quot;);</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">        return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
