@@ -1,21 +1,17 @@
 package com.safetynet.alerts.view;
 
 import com.safetynet.alerts.dto.CoveredPersonsDTO;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.util.List;
 
 /**
  * Class to hold information about the covered persons per station
  * and also holds the adult and child count associated with that
  */
+@Data
 public class PeoplePerStation {
-    @Getter @Setter
     private List<CoveredPersonsDTO> coveredPersons;
-    @Getter @Setter
     private int adultCount;
-    @Getter @Setter
     private int childCount;
 
     /**

@@ -1,21 +1,16 @@
 package com.safetynet.alerts.view;
 
 import com.safetynet.alerts.dto.ResidentsPerAddressDTO;
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.util.List;
 
 /**
  * Class to hold the information for residents per address
  * Plus the firestation number
  */
+@Data
 public class ResidentsPerAddress {
-    @Getter
-    @Setter
     private List<ResidentsPerAddressDTO> residents;
-
-    @Getter @Setter
     private String stationNumber;
 
     /**

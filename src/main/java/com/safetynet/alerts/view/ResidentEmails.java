@@ -1,17 +1,14 @@
 package com.safetynet.alerts.view;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.util.List;
 
 /**
  * Class to hold the information for all emails in a city
  */
+@Data
 public class ResidentEmails {
-    @Getter @Setter
     private List<String> emails;
-
 
     /**
      * Constructor for Resident Emails

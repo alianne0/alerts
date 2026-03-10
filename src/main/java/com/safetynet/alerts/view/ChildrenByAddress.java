@@ -1,14 +1,15 @@
 package com.safetynet.alerts.view;
 import com.safetynet.alerts.dto.ChildrenByAddressDTO;
 import com.safetynet.alerts.dto.HouseholdMembersDTO;
+import lombok.Data;
 
 import java.util.List;
 
 /**
  * Class to store children by address
  */
+@Data
 public class ChildrenByAddress {
-
     private List<ChildrenByAddressDTO> children;
 
     /**
@@ -19,11 +20,4 @@ public class ChildrenByAddress {
         this.children = children;
     }
 
-    /**
-     * Returns the children by address
-     * @return
-     */
-    public List<ChildrenByAddressDTO> getChildren() {
-        return children;
-    }
 }

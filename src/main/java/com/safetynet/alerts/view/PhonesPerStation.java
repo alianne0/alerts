@@ -1,17 +1,13 @@
 package com.safetynet.alerts.view;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.util.List;
 
 /**
  * Class to store information on the list of phones per station
  */
+@Data
 public class PhonesPerStation {
-
-    @Getter
-    @Setter
     private List<String> phones;
 
     /**
