@@ -461,6 +461,11 @@ public class FirstResponderService {
             emails.add(e);
         }
 
+        // If your ResidentEmails has a setter:
+        // ResidentEmails view = new ResidentEmails();
+        // view.setEmails(emails);
+        // return view;
+
         // If your ResidentEmails has a constructor that takes the list:
         return new ResidentEmails(emails);
     }

@@ -6,6 +6,8 @@ import com.safetynet.alerts.domain.Firestation;
 import com.safetynet.alerts.domain.MedicalRecord;
 import com.safetynet.alerts.domain.Person;
 import jakarta.annotation.PostConstruct;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -19,6 +21,8 @@ import java.util.Optional;
  * Handles loading and saving SafetyNet data from a JSON file.
  * Stores the data in memory so services can modify it.
  */
+@Data
+@Slf4j
 @Repository
 public class DataParser {
 
@@ -71,26 +75,12 @@ public class DataParser {
         }
     }
 
-    /**
-     * Returns the list of persons stored in memory.
-     */
-    public List<Person> getPersons() { return persons; }
-
-    /**
-     * Returns the list of firestations stored in memory.
-     */
-    public List<Firestation> getFirestations() { return firestations; }
-
-    /**
-     * Returns the list of medical records stored in memory.
-     */
-    public List<MedicalRecord> getMedicalRecords() { return medicalRecords; }
 
     /**
      * Saves all in‑memory data to the JSON file.
      * Synchronized to avoid concurrent writes.
      */
-    public synchronized void saveToFile() {
+    public void saveToFile() {
         try {
             DataWrapper wrapper = new DataWrapper();
             wrapper.setPersons(this.persons);
@@ -98,6 +88,8 @@ public class DataParser {
             wrapper.setMedicalrecords(this.medicalRecords);
             writeWrapperAtomically(wrapper);
         } catch (IOException e) {
+            //TODO: log at error level
+            log.error("Failed to save to file ",  e);
             throw new RuntimeException("Failed to save to " + filePath, e);
         }
     }
@@ -119,27 +111,10 @@ public class DataParser {
     /**
      * Simple wrapper matching the structure of the JSON file.
      */
+    @Data
     public static class DataWrapper {
         private List<Person> persons;
         private List<Firestation> firestations;
         private List<MedicalRecord> medicalrecords;
-
-        /** Returns the list of persons. */
-        public List<Person> getPersons() { return persons; }
-
-        /** Sets the list of persons. */
-        public void setPersons(List<Person> persons) { this.persons = persons; }
-
-        /** Returns the list of firestations. */
-        public List<Firestation> getFirestations() { return firestations; }
-
-        /** Sets the list of firestations. */
-        public void setFirestations(List<Firestation> firestations) { this.firestations = firestations; }
-
-        /** Returns the list of medical records. */
-        public List<MedicalRecord> getMedicalrecords() { return medicalrecords; }
-
-        /** Sets the list of medical records. */
-        public void setMedicalrecords(List<MedicalRecord> medicalrecords) { this.medicalrecords = medicalrecords; }
     }
 }

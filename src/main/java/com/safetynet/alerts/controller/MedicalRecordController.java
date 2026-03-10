@@ -74,7 +74,7 @@ public class MedicalRecordController {
             return medicalRecordService.updateMedicalRecord(lastName, firstName, updates)
                     .<ResponseEntity<?>>map(ResponseEntity::ok)
                     .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body("person not found: " + lastName + "" + firstName));
+                            .body("person not found: " + lastName + " " + firstName));
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.badRequest().body(ex.getMessage());
         }

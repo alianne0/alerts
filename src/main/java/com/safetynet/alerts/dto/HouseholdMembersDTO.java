@@ -1,18 +1,13 @@
 package com.safetynet.alerts.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 /**
  * DTO to hold the information for household members of children for a specific station
  */
+@Data
 public class HouseholdMembersDTO {
-    @Getter
-    @Setter
     private String firstName;
-
-    @Getter
-    @Setter
     private String lastName;
 
     /**

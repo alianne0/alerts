@@ -1,8 +1,6 @@
 package com.safetynet.alerts.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.util.List;
 
 /**
@@ -10,27 +8,17 @@ import java.util.List;
  * Includes information such as first and last name, phone, age
  * And a list of medications and allergies
  */
+@Data
 public class ResidentsPerAddressDTO {
-    @Getter @Setter
     private String firstName;
-
-    @Getter @Setter
     private String lastName;
-
-    @Getter @Setter
     private String phone;
-
-    @Getter @Setter
     private int age;
-
-    @Getter @Setter
     private List<String> medications;
-
-    @Getter @Setter
     private List<String> allergies;
 
     /**
-     * Construcfor for ResidentsPerAddress DTO
+     * Constructor for ResidentsPerAddress DTO
      * @param firstName
      * @param lastName
      * @param phone

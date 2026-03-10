@@ -1,41 +1,16 @@
 package com.safetynet.alerts.dto;
 
-import lombok.Getter;
-import lombok.Setter;
-
+import lombok.Data;
 import java.util.List;
 
 /**
  * DTO for get children by address
  */
+@Data
 public class ChildrenByAddressDTO {
-    /**
-     * Sets and gets the firstname
-     */
-    @Setter
-    @Getter
     private String firstName;
-    /**
-     * Sets and gets the lastname
-     *
-     * @param lastName
-     */
-    @Setter
-    @Getter
     private String lastName;
-
-    /**
-     * Sets and gets the age
-     * @param age
-     */
-    @Setter
-    @Getter
     private int age;
-
-    /**
-     * Gets and sets the household members list
-     */
-    @Getter @Setter
     private List<HouseholdMembersDTO> householdMembersList;
 
     /**
