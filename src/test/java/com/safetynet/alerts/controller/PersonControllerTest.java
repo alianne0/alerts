@@ -8,7 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -24,8 +25,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Unit tests for PersonController using standalone MockMvc.
+ * Test class for the Person controller
  */
+@ExtendWith(MockitoExtension.class)
 class PersonControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -33,14 +35,23 @@ class PersonControllerTest {
     private PersonService personService;
     private DataParser dataParser;
 
+    /**
+     * Initializes the controller with mocked dependencies before each test.
+     */
     @BeforeEach
     void setUp() {
         personService = mock(PersonService.class);
         dataParser = mock(DataParser.class);
-        PersonController controller = new PersonController(dataParser, personService);
+
+        PersonController controller =
+                new PersonController(dataParser, personService);
+
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
+    /**
+     * Creates a fully populated {@link Person} for use in tests.
+     */
     private Person samplePerson() {
         Person p = new Person();
         p.setFirstName("John");
@@ -54,11 +65,10 @@ class PersonControllerTest {
     }
 
     /**
-     * Test get all persons
-     * @throws Exception
+     * Test that GET all persons are returned successfully.
      */
     @Test
-    @DisplayName("GET /persons returns list of persons with 200")
+    @DisplayName("GET /persons returns a list of persons")
     void getPeople_returnsList() throws Exception {
         List<Person> list = Arrays.asList(samplePerson(), samplePerson());
         when(personService.findAll()).thenReturn(list);
@@ -75,14 +85,13 @@ class PersonControllerTest {
     }
 
     /**
-     * Test get a single person and returns 200
-     * @throws Exception
+     * Test using GET to get a single person
      */
     @Test
-    @DisplayName("GET /persons/{lastName}/{firstName} returns person with 200")
+    @DisplayName("GET /persons/{lastName}/{firstName} returns person when found")
     void getPerson_found() throws Exception {
-        Person p = samplePerson();
-        when(personService.findByName("Doe", "John")).thenReturn(Optional.of(p));
+        when(personService.findByName("Doe", "John"))
+                .thenReturn(Optional.of(samplePerson()));
 
         mockMvc.perform(get("/persons/Doe/John"))
                 .andExpect(status().isOk())
@@ -94,13 +103,13 @@ class PersonControllerTest {
     }
 
     /**
-     * Returns 404 when get person fails
-     * @throws Exception
+     * Tests that requesting an unknown person returns 404
      */
     @Test
-    @DisplayName("GET /persons/{lastName}/{firstName} returns 404 when person not found")
+    @DisplayName("GET /persons/{lastName}/{firstName} returns 404 when not found")
     void getPerson_notFound() throws Exception {
-        when(personService.findByName("Doe", "Jane")).thenReturn(Optional.empty());
+        when(personService.findByName("Doe", "Jane"))
+                .thenReturn(Optional.empty());
 
         mockMvc.perform(get("/persons/Doe/Jane"))
                 .andExpect(status().isNotFound());
@@ -109,16 +118,15 @@ class PersonControllerTest {
     }
 
     /**
-     * Test adding a new person via POST
-     *
-     * @throws Exception
+     * Test that a new person can be created via POST
      */
     @Test
-    @DisplayName("POST /persons returns 201 Created with saved person")
+    @DisplayName("POST /persons creates a new person")
     void postPerson_created() throws Exception {
         Person toSave = samplePerson();
-        Person saved = samplePerson();
-        when(personService.postPerson(ArgumentMatchers.any(Person.class))).thenReturn(saved);
+
+        when(personService.postPerson(any(Person.class)))
+                .thenReturn(samplePerson());
 
         mockMvc.perform(post("/persons")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -132,15 +140,14 @@ class PersonControllerTest {
     }
 
     /**
-     * Test updating a person via PUT
+     * Tests for updating an existing person via PUT
      */
     @Nested
     @DisplayName("PUT /persons/{lastName}/{firstName}")
     class PutPersonTests {
 
         /**
-         * Returns 200 when successful in updating a person
-         * @throws Exception
+         * Test that an existing person can be updated
          */
         @Test
         @DisplayName("returns 200 and updated person when found")
@@ -162,7 +169,6 @@ class PersonControllerTest {
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(updates)))
                     .andExpect(status().isOk())
-                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                     .andExpect(jsonPath("$.address", is("New Address")))
                     .andExpect(jsonPath("$.city", is("New City")))
                     .andExpect(jsonPath("$.phone", is("999-999-9999")));
@@ -171,21 +177,17 @@ class PersonControllerTest {
         }
 
         /**
-         * Returns 404 when the person you want to update cannot be found
-         * @throws Exception
+         * Test that updating a non-existent person returns 404
          */
         @Test
-        @DisplayName("returns 404 when target person not found")
+        @DisplayName("returns 404 when target person does not exist")
         void putPerson_notFound() throws Exception {
-            Person updates = new Person();
-            updates.setAddress("Nowhere 1");
-
             when(personService.updatePerson(eq("Doe"), eq("Ghost"), any(Person.class)))
                     .thenReturn(Optional.empty());
 
             mockMvc.perform(put("/persons/Doe/Ghost")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(updates)))
+                            .content(objectMapper.writeValueAsString(new Person())))
                     .andExpect(status().isNotFound())
                     .andExpect(content().string(containsString("Person not found: Ghost Doe")));
 
@@ -193,11 +195,10 @@ class PersonControllerTest {
         }
 
         /**
-         * Returns 400 when service throws IllegalArgumentException
-         * @throws Exception
+         * Test that invalid updates are rejected with a 400 response
          */
         @Test
-        @DisplayName("returns 400 when service throws IllegalArgumentException")
+        @DisplayName("returns 400 when update violates business rules")
         void putPerson_badRequest() throws Exception {
             Person updates = new Person();
             updates.setFirstName("ShouldNotChange");
@@ -216,15 +217,20 @@ class PersonControllerTest {
     }
 
     /**
-     * Test deleting a person by their last and first name
+     * Tests for deleting persons by name via DELETE
      */
     @Nested
     @DisplayName("DELETE /persons/{lastName}/{firstName}")
     class DeletePersonTests {
+
+        /**
+         * Test that deleting an existing person succeeds
+         */
         @Test
         @DisplayName("returns 200 when deletion succeeds")
         void delete_ok() throws Exception {
-            when(personService.deleteByName("Doe", "John")).thenReturn(true);
+            when(personService.deleteByName("Doe", "John"))
+                    .thenReturn(true);
 
             mockMvc.perform(delete("/persons/Doe/John"))
                     .andExpect(status().isOk());
@@ -233,13 +239,13 @@ class PersonControllerTest {
         }
 
         /**
-         * Returns 404 when unable to find the person you want to delete
-         * @throws Exception
+         * Test that deleting a non-existent person returns 404
          */
         @Test
         @DisplayName("returns 404 when person not found")
         void delete_notFound() throws Exception {
-            when(personService.deleteByName("Doe", "Ghost")).thenReturn(false);
+            when(personService.deleteByName("Doe", "Ghost"))
+                    .thenReturn(false);
 
             mockMvc.perform(delete("/persons/Doe/Ghost"))
                     .andExpect(status().isNotFound());

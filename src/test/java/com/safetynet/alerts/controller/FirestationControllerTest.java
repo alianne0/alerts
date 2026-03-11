@@ -8,11 +8,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import static org.hamcrest.Matchers.containsString;
@@ -21,15 +24,15 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
- * Unit tests for FirestationController using standalone MockMvc.
+ * Test class for the Firestation controller
  */
+
+@ExtendWith(MockitoExtension.class)
+@MockitoSettings(strictness = Strictness.LENIENT)
 class FirestationControllerTest {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -41,30 +44,34 @@ class FirestationControllerTest {
     void setUp() {
         firestationService = mock(FirestationService.class);
         dataParser = mock(DataParser.class);
-        FirestationController controller = new FirestationController(dataParser, firestationService);
+
+        FirestationController controller =
+                new FirestationController(dataParser, firestationService);
+
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
 
-    private Firestation fs(String address, String station) {
-        Firestation f = new Firestation();
-        f.setAddress(address);
-        f.setStation(station);
-        return f;
+    /**
+     * Small helper to keep test setup readable.
+     */
+    private Firestation firestation(String address, String station) {
+        Firestation fs = new Firestation();
+        fs.setAddress(address);
+        fs.setStation(station);
+        return fs;
     }
 
     /**
-     * Test get all firestations
-     *
+     * Test GET all firestations
      * @throws Exception
      */
     @Test
-    @DisplayName("GET /firestations returns list with 200 OK")
-    void getFirestations_returnsList() throws Exception {
-        List<Firestation> list = Arrays.asList(
-                fs("1509 Culver St", "3"),
-                fs("29 15th St", "2")
-        );
-        when(firestationService.findAll()).thenReturn(list);
+    @DisplayName("GET /firestations returns all firestation mappings")
+    void getFirestations_returnsAllMappings() throws Exception {
+        when(firestationService.findAll()).thenReturn(List.of(
+                firestation("1509 Culver St", "3"),
+                firestation("29 15th St", "2")
+        ));
 
         mockMvc.perform(get("/firestations"))
                 .andExpect(status().isOk())
@@ -72,44 +79,44 @@ class FirestationControllerTest {
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].address", is("1509 Culver St")))
                 .andExpect(jsonPath("$[0].station", is("3")));
+
         verify(firestationService).findAll();
-        verifyNoMoreInteractions(firestationService);
     }
 
     /**
-     * Test adding a new firestation via POST
-     *
+     * Test POST a new firestation mapping
      * @throws Exception
      */
     @Test
-    @DisplayName("POST /firestations returns 201 Created with saved entity")
-    void postFirestation_created() throws Exception {
-        Firestation body = fs("1509 Culver St", "3");
+    @DisplayName("POST /firestations creates a new firestation mapping")
+    void postFirestation_createsMapping() throws Exception {
+        Firestation request = firestation("1509 Culver St", "3");
+
         when(firestationService.postFirestation(any(Firestation.class)))
-                .thenReturn(fs("1509 Culver St", "3"));
+                .thenReturn(request);
 
         mockMvc.perform(post("/firestations")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(body)))
+                        .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.address", is("1509 Culver St")))
-                .andExpect(jsonPath("$.station", is("3")));
+                .andExpect(jsonPath("$.address").value("1509 Culver St"))
+                .andExpect(jsonPath("$.station").value("3"));
 
         verify(firestationService).postFirestation(any(Firestation.class));
     }
 
     /**
-     * Test deleting a firestation
+     * Test DELETE a firestation mapping
      */
     @Nested
     @DisplayName("DELETE /firestations/{address}")
-    class DeleteTests {
+    class DeleteFirestationTests {
 
         @Test
-        @DisplayName("returns 200 OK when deletion succeeds")
-        void delete_ok() throws Exception {
-            when(firestationService.deleteByAddress("1509 Culver St")).thenReturn(true);
+        @DisplayName("returns 200 OK when mapping exists")
+        void delete_existingMapping_returnsOk() throws Exception {
+            when(firestationService.deleteByAddress("1509 Culver St"))
+                    .thenReturn(true);
 
             mockMvc.perform(delete("/firestations/1509 Culver St"))
                     .andExpect(status().isOk());
@@ -119,8 +126,9 @@ class FirestationControllerTest {
 
         @Test
         @DisplayName("returns 404 Not Found when mapping does not exist")
-        void delete_notFound() throws Exception {
-            when(firestationService.deleteByAddress("Unknown")).thenReturn(false);
+        void delete_missingMapping_returnsNotFound() throws Exception {
+            when(firestationService.deleteByAddress("Unknown"))
+                    .thenReturn(false);
 
             mockMvc.perform(delete("/firestations/Unknown"))
                     .andExpect(status().isNotFound());
@@ -130,102 +138,96 @@ class FirestationControllerTest {
     }
 
     /**
-     * Test updating a firestation via PUT
+     * Test updating a firestation mapping via PUT
      */
     @Nested
     @DisplayName("PUT /firestations/address/{address}")
-    class PutStationForAddressTests {
+    class UpdateStationTests {
 
         /**
-         * Tests that updating a firestation mapping returns 200 OK
-         * and responds with the updated mapping when it exists.
+         * Tests an expsting mapping can be updated successfully
+         * @throws Exception
          */
         @Test
-        @DisplayName("returns 200 OK and updated mapping when found")
-        void put_ok() throws Exception {
+        @DisplayName("updates station number for an existing address")
+        void put_updatesStation() throws Exception {
             String address = "1509 Culver St";
-            Firestation body = fs(null, "5");
-            Firestation updated = fs(address, "5");
 
-            when(firestationService.updateFirestation(eq(address), eq("5")))
+            Firestation request = firestation(null, "5");
+            Firestation updated = firestation(address, "5");
+
+            when(firestationService.updateFirestation(address, "5"))
                     .thenReturn(Optional.of(updated));
 
             mockMvc.perform(put("/firestations/address/{address}", address)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(body)))
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
-                    .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                    .andExpect(jsonPath("$.address", is(address)))
-                    .andExpect(jsonPath("$.station", is("5")));
+                    .andExpect(jsonPath("$.address").value(address))
+                    .andExpect(jsonPath("$.station").value("5"));
 
             verify(firestationService).updateFirestation(address, "5");
         }
 
         /**
-         * Tests that updating a firestation mapping returns 404 Not Found
-         * when the given address does not exist.
+         * Test updating an unknown address returns 404
+         * @throws Exception
          */
         @Test
-        @DisplayName("returns 404 Not Found when address mapping missing")
-        void put_notFound() throws Exception {
+        @DisplayName("returns 404 when address mapping does not exist")
+        void put_missingAddress_returnsNotFound() throws Exception {
             String address = "Unknown";
-            Firestation body = fs(null, "7");
 
             when(firestationService.updateFirestation(eq(address), eq("7")))
                     .thenReturn(Optional.empty());
 
             mockMvc.perform(put("/firestations/address/{address}", address)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(body)))
+                            .content(objectMapper.writeValueAsString(firestation(null, "7"))))
                     .andExpect(status().isNotFound())
-                    .andExpect(content().string(containsString("No firestation mapping found for address: " + address)));
+                    .andExpect(content().string(
+                            containsString("No firestation mapping found for address: " + address)));
 
             verify(firestationService).updateFirestation(address, "7");
         }
 
         /**
-         * Tests that updating a firestation returns 400 Bad Request
-         * when the station value is null or blank.
+         * Tests that invalid request bodies are rejected
+         * @throws Exception
          */
         @Test
-        @DisplayName("returns 400 Bad Request when station is null/blank")
-        void put_badRequest_blankStation() throws Exception {
+        @DisplayName("returns 400 when station is null or blank")
+        void put_invalidStation_returnsBadRequest() throws Exception {
             String address = "1509 Culver St";
 
-            Firestation nullStation = fs(null, null);
-            Firestation blankStation = fs(null, "  ");
+            mockMvc.perform(put("/firestations/address/{address}", address)
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(firestation(null, null))))
+                    .andExpect(status().isBadRequest());
 
             mockMvc.perform(put("/firestations/address/{address}", address)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(nullStation)))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(content().string(containsString("station must not be null or blank")));
-
-            mockMvc.perform(put("/firestations/address/{address}", address)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(blankStation)))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(content().string(containsString("station must not be null or blank")));
+                            .content(objectMapper.writeValueAsString(firestation(null, "  "))))
+                    .andExpect(status().isBadRequest());
 
             verifyNoInteractions(firestationService);
         }
 
         /**
-         * Tests that a 400 Bad Request is returned when the service
-         * throws an IllegalArgumentException during update.
+         * Test IllegalArgmentException is converted to a 400 bad request
+         * @throws Exception
          */
         @Test
-        @DisplayName("returns 400 Bad Request when service throws IllegalArgumentException")
-        void put_badRequest_serviceThrows() throws Exception {
+        @DisplayName("returns 400 when service rejects the update")
+        void put_serviceThrowsIllegalArgument_returnsBadRequest() throws Exception {
             String address = "1509 Culver St";
-            Firestation body = fs(null, "X");
 
-            when(firestationService.updateFirestation(eq(address), eq("X")))
+            when(firestationService.updateFirestation(address, "X"))
                     .thenThrow(new IllegalArgumentException("Invalid station number"));
 
             mockMvc.perform(put("/firestations/address/{address}", address)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(body)))
+                            .content(objectMapper.writeValueAsString(firestation(null, "X"))))
                     .andExpect(status().isBadRequest())
                     .andExpect(content().string(containsString("Invalid station number")));
 

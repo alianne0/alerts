@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.safetynet.alerts.controller.PersonControllerTest" time="0.076" tests="0" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report.xsd" version="3.0.2" name="com.safetynet.alerts.controller.PersonControllerTest" time="0.055" tests="0" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="25"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -13,7 +13,8 @@
     <property name="user.country" value="US"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/25/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="/Users/annerutecki/Documents/GitHub/alerts/target/surefire/surefirebooter-20260226181556867_3.jar /Users/annerutecki/Documents/GitHub/alerts/target/surefire 2026-02-26T18-15-56_830-jvmRun1 surefire-20260226181556867_1tmp surefire_0-20260226181556867_2tmp"/>
+    <property name="sun.java.command" value="/Users/annerutecki/Documents/GitHub/alerts/target/surefire/surefirebooter-20260311163703847_3.jar /Users/annerutecki/Documents/GitHub/alerts/target/surefire 2026-03-11T16-37-03_810-jvmRun1 surefire-20260311163703847_1tmp surefire_0-20260311163703847_2tmp"/>
+    <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/Users/annerutecki/Documents/GitHub/alerts/target/test-classes:/Users/annerutecki/Documents/GitHub/alerts/target/classes:/Users/annerutecki/.m2/repository/org/springframework/boot/spring-boot-starter-thymeleaf/3.5.9/spring-boot-starter-thymeleaf-3.5.9.jar:/Users/annerutecki/.m2/repository/org/springframework/boot/spring-boot-starter/3.5.9/spring-boot-starter-3.5.9.jar:/Users/annerutecki/.m2/repository/org/springframework/boot/spring-boot-starter-logging/3.5.9/spring-boot-starter-logging-3.5.9.jar:/Users/annerutecki/.m2/repository/ch/qos/logback/logback-classic/1.5.22/logback-classic-1.5.22.jar:/Users/annerutecki/.m2/repository/ch/qos/logback/logback-core/1.5.22/logback-core-1.5.22.jar:/Users/annerutecki/.m2/repository/org/apache/logging/log4j/log4j-to-slf4j/2.24.3/log4j-to-slf4j-2.24.3.jar:/Users/annerutecki/.m2/repository/org/apache/logging/log4j/log4j-api/2.24.3/log4j-api-2.24.3.jar:/Users/annerutecki/.m2/repository/org/slf4j/jul-to-slf4j/2.0.17/jul-to-slf4j-2.0.17.jar:/Users/annerutecki/.m2/repository/jakarta/annotation/jakarta.annotation-api/2.1.1/jakarta.annotation-api-2.1.1.jar:/Users/annerutecki/.m2/repository/org/yaml/snakeyaml/2.4/snakeyaml-2.4.jar:/Users/annerutecki/.m2/repository/org/thymeleaf/thymeleaf-spring6/3.1.3.RELEASE/thymeleaf-spring6-3.1.3.RELEASE.jar:/Users/annerutecki/.m2/repository/org/thymeleaf/thymeleaf/3.1.3.RELEASE/thymeleaf-3.1.3.RELEASE.jar:/Users/annerutecki/.m2/repository/org/attoparser/attoparser/2.0.7.RELEASE/attoparser-2.0.7.RELEASE.jar:/Users/annerutecki/.m2/repository/org/unbescape/unbescape/1.1.6.RELEASE/unbescape-1.1.6.RELEASE.jar:/Users/annerutecki/.m2/repository/org/slf4j/slf4j-api/2.0.17/slf4j-api-2.0.17.jar:/Users/annerutecki/.m2/repository/org/springframework/boot/spring-boot-starter-web/3.5.9/spring-boot-starter-web-3.5.9.jar:/Users/annerutecki/.m2/repository/org/springframework/boot/spring-boot-starter-json/3.5.9/spring-boot-starter-json-3.5.9.jar:/Users/annerutecki/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.19.4/jackson-databind-2.19.4.jar:/Users/annerutecki/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.19.4/jackson-core-2.19.4.jar:/Users/annerutecki/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.19.4/jackson-datatype-jdk8-2.19.4.jar:/Users/annerutecki/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.19.4/jackson-datatype-jsr310-2.19.4.jar:/Users/annerutecki/.m2/repository/com/fasterxml/jackson/module/jackson-module-parameter-names/2.19.4/jackson-module-parameter-names-2.19.4.jar:/Users/annerutecki/.m2/repository/org/springframework/boot/spring-boot-starter-tomcat/3.5.9/spring-boot-starter-tomcat-3.5.9.jar:/Users/annerutecki/.m2/repository/org/apache/tomcat/embed/tomcat-embed-core/10.1.50/tomcat-embed-core-10.1.50.jar:/Users/annerutecki/.m2/repository/org/apache/tomcat/embed/tomcat-embed-el/10.1.50/tomcat-embed-el-10.1.50.jar:/Users/annerutecki/.m2/repository/org/apache/tomcat/embed/tomcat-embed-websocket/10.1.50/tomcat-embed-websocket-10.1.50.jar:/Users/annerutecki/.m2/repository/org/springframework/spring-web/6.2.15/spring-web-6.2.15.jar:/Users/annerutecki/.m2/repository/org/springframework/spring-beans/6.2.15/spring-beans-6.2.15.jar:/Users/annerutecki/.m2/repository/io/micrometer/micrometer-observation/1.15.7/micrometer-observation-1.15.7.jar:/Users/annerutecki/.m2/repository/io/micrometer/micrometer-commons/1.15.7/micrometer-commons-1.15.7.jar:/Users/annerutecki/.m2/repository/org/springframework/spring-webmvc/6.2.15/spring-webmvc-6.2.15.jar:/Users/annerutecki/.m2/repository/org/springframework/spring-aop/6.2.15/spring-aop-6.2.15.jar:/Users/annerutecki/.m2/repository/org/springframework/spring-context/6.2.15/spring-context-6.2.15.jar:/Users/annerutecki/.m2/repository/org/springframework/spring-expression/6.2.15/spring-expression-6.2.15.jar:/Users/annerutecki/.m2/repository/org/springframework/boot/spring-boot-devtools/3.5.9/spring-boot-devtools-3.5.9.jar:/Users/annerutecki/.m2/repository/org/springframework/boot/spring-boot/3.5.9/spring-boot-3.5.9.jar:/Users/annerutecki/.m2/repository/org/springframework/boot/spring-boot-autoconfigure/3.5.9/spring-boot-autoconfigure-3.5.9.jar:/Users/annerutecki/.m2/repository/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar:/Users/annerutecki/.m2/repository/org/springframework/boot/spring-boot-starter-test/3.5.9/spring-boot-starter-test-3.5.9.jar:/Users/annerutecki/.m2/repository/org/springframework/boot/spring-boot-test/3.5.9/spring-boot-test-3.5.9.jar:/Users/annerutecki/.m2/repository/org/springframework/boot/spring-boot-test-autoconfigure/3.5.9/spring-boot-test-autoconfigure-3.5.9.jar:/Users/annerutecki/.m2/repository/com/jayway/jsonpath/json-path/2.9.0/json-path-2.9.0.jar:/Users/annerutecki/.m2/repository/jakarta/xml/bind/jakarta.xml.bind-api/4.0.4/jakarta.xml.bind-api-4.0.4.jar:/Users/annerutecki/.m2/repository/jakarta/activation/jakarta.activation-api/2.1.4/jakarta.activation-api-2.1.4.jar:/Users/annerutecki/.m2/repository/net/minidev/json-smart/2.5.2/json-smart-2.5.2.jar:/Users/annerutecki/.m2/repository/net/minidev/accessors-smart/2.5.2/accessors-smart-2.5.2.jar:/Users/annerutecki/.m2/repository/org/ow2/asm/asm/9.7.1/asm-9.7.1.jar:/Users/annerutecki/.m2/repository/org/assertj/assertj-core/3.27.6/assertj-core-3.27.6.jar:/Users/annerutecki/.m2/repository/net/bytebuddy/byte-buddy/1.17.8/byte-buddy-1.17.8.jar:/Users/annerutecki/.m2/repository/org/awaitility/awaitility/4.2.2/awaitility-4.2.2.jar:/Users/annerutecki/.m2/repository/org/hamcrest/hamcrest/3.0/hamcrest-3.0.jar:/Users/annerutecki/.m2/repository/org/junit/jupiter/junit-jupiter/5.12.2/junit-jupiter-5.12.2.jar:/Users/annerutecki/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.12.2/junit-jupiter-params-5.12.2.jar:/Users/annerutecki/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.12.2/junit-jupiter-engine-5.12.2.jar:/Users/annerutecki/.m2/repository/org/junit/platform/junit-platform-engine/1.12.2/junit-platform-engine-1.12.2.jar:/Users/annerutecki/.m2/repository/org/mockito/mockito-core/5.17.0/mockito-core-5.17.0.jar:/Users/annerutecki/.m2/repository/net/bytebuddy/byte-buddy-agent/1.17.8/byte-buddy-agent-1.17.8.jar:/Users/annerutecki/.m2/repository/org/objenesis/objenesis/3.3/objenesis-3.3.jar:/Users/annerutecki/.m2/repository/org/skyscreamer/jsonassert/1.5.3/jsonassert-1.5.3.jar:/Users/annerutecki/.m2/repository/com/vaadin/external/google/android-json/0.0.20131108.vaadin1/android-json-0.0.20131108.vaadin1.jar:/Users/annerutecki/.m2/repository/org/springframework/spring-core/6.2.15/spring-core-6.2.15.jar:/Users/annerutecki/.m2/repository/org/springframework/spring-jcl/6.2.15/spring-jcl-6.2.15.jar:/Users/annerutecki/.m2/repository/org/springframework/spring-test/6.2.15/spring-test-6.2.15.jar:/Users/annerutecki/.m2/repository/org/xmlunit/xmlunit-core/2.10.4/xmlunit-core-2.10.4.jar:/Users/annerutecki/.m2/repository/tools/jackson/core/jackson-databind/3.0.3/jackson-databind-3.0.3.jar:/Users/annerutecki/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.19.4/jackson-annotations-2.19.4.jar:/Users/annerutecki/.m2/repository/tools/jackson/core/jackson-core/3.0.3/jackson-core-3.0.3.jar:/Users/annerutecki/.m2/repository/junit/junit/4.13.2/junit-4.13.2.jar:/Users/annerutecki/.m2/repository/org/hamcrest/hamcrest-core/3.0/hamcrest-core-3.0.jar:/Users/annerutecki/.m2/repository/org/mockito/mockito-junit-jupiter/5.17.0/mockito-junit-jupiter-5.17.0.jar:/Users/annerutecki/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.12.2/junit-jupiter-api-5.12.2.jar:/Users/annerutecki/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/Users/annerutecki/.m2/repository/org/junit/platform/junit-platform-commons/1.12.2/junit-platform-commons-1.12.2.jar:/Users/annerutecki/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -25,13 +26,14 @@
     <property name="file.separator" value="/"/>
     <property name="basedir" value="/Users/annerutecki/Documents/GitHub/alerts"/>
     <property name="style.color" value="always"/>
-    <property name="java.vm.compressedOopsMode" value="Non-zero based"/>
+    <property name="java.vm.compressedOopsMode" value="Zero based"/>
     <property name="line.separator" value="&#10;"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="apple.awt.application.name" value="ForkedBooter"/>
-    <property name="surefire.real.class.path" value="/Users/annerutecki/Documents/GitHub/alerts/target/surefire/surefirebooter-20260226181556867_3.jar"/>
+    <property name="surefire.real.class.path" value="/Users/annerutecki/Documents/GitHub/alerts/target/surefire/surefirebooter-20260311163703847_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="ftp.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.runtime.version" value="25"/>
     <property name="user.name" value="annerutecki"/>
     <property name="stdout.encoding" value="UTF-8"/>
@@ -60,67 +62,187 @@
     <property name="stdin.encoding" value="UTF-8"/>
     <property name="sun.io.unicode.encoding" value="UnicodeBig"/>
     <property name="maven.repo.local" value="/Users/annerutecki/.m2/repository"/>
+    <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="69.0"/>
   </properties>
-  <testcase name="getPerson_notFound" classname="com.safetynet.alerts.controller.PersonControllerTest" time="0.012">
-    <system-out><![CDATA[18:16:03.875 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
-18:16:03.875 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
-18:16:03.875 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+  <testcase name="getPerson_notFound" classname="com.safetynet.alerts.controller.PersonControllerTest" time="0.007">
+    <system-out><![CDATA[16:37:05.713 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+16:37:05.714 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+16:37:05.714 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+16:37:05.715 [main] INFO com.safetynet.alerts.controller.PersonController -- GET /persons/Doe/Jane - Retrieving person
+16:37:05.715 [main] WARN com.safetynet.alerts.controller.PersonController -- Person not found: Jane Doe
 ]]></system-out>
   </testcase>
-  <testcase name="getPeople_returnsList" classname="com.safetynet.alerts.controller.PersonControllerTest" time="0.008">
-    <system-out><![CDATA[18:16:03.886 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
-18:16:03.886 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
-18:16:03.886 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
-18:16:03.887 [main] INFO com.safetynet.alerts.controller.PersonController -- Getting all of the people...
+  <testcase name="getPeople_returnsList" classname="com.safetynet.alerts.controller.PersonControllerTest" time="0.006">
+    <system-out><![CDATA[16:37:05.720 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+16:37:05.720 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+16:37:05.720 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+16:37:05.721 [main] INFO com.safetynet.alerts.controller.PersonController -- GET /persons - Retrieving all persons
+16:37:05.721 [main] INFO com.safetynet.alerts.controller.PersonController -- Successfully retrieved 2 persons
 ]]></system-out>
   </testcase>
-  <testcase name="getPerson_found" classname="com.safetynet.alerts.controller.PersonControllerTest" time="0.009">
-    <system-out><![CDATA[18:16:03.897 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
-18:16:03.897 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
-18:16:03.897 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+  <testcase name="getPerson_found" classname="com.safetynet.alerts.controller.PersonControllerTest" time="0.005">
+    <system-out><![CDATA[16:37:05.726 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+16:37:05.726 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+16:37:05.727 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 1 ms
+16:37:05.727 [main] INFO com.safetynet.alerts.controller.PersonController -- GET /persons/Doe/John - Retrieving person
+16:37:05.727 [main] INFO com.safetynet.alerts.controller.PersonController -- Person found: John Doe
 ]]></system-out>
   </testcase>
-  <testcase name="postPerson_created" classname="com.safetynet.alerts.controller.PersonControllerTest" time="0.009">
-    <system-out><![CDATA[18:16:03.904 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
-18:16:03.904 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
-18:16:03.904 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
-18:16:03.907 [main] INFO com.safetynet.alerts.controller.PersonController -- Posting a new person...
+  <testcase name="postPerson_created" classname="com.safetynet.alerts.controller.PersonControllerTest" time="0.006">
+    <system-out><![CDATA[16:37:05.732 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+16:37:05.732 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+16:37:05.732 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+16:37:05.734 [main] INFO com.safetynet.alerts.controller.PersonController -- POST /persons - Creating person John Doe
+16:37:05.734 [main] INFO com.safetynet.alerts.controller.PersonController -- Person successfully created: John Doe
 ]]></system-out>
   </testcase>
   <testcase name="delete_ok" classname="DELETE /persons/{lastName}/{firstName}" time="0.005">
-    <system-out><![CDATA[18:16:03.913 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
-18:16:03.913 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
-18:16:03.913 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
-18:16:03.914 [main] INFO com.safetynet.alerts.controller.PersonController -- Deleting a person...
+    <system-out><![CDATA[16:37:05.739 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+16:37:05.739 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+16:37:05.739 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+16:37:05.740 [main] INFO com.safetynet.alerts.controller.PersonController -- DELETE /persons/Doe/John - Deleting person
+16:37:05.740 [main] INFO com.safetynet.alerts.controller.PersonController -- Person deleted successfully: John Doe
 ]]></system-out>
   </testcase>
   <testcase name="delete_notFound" classname="DELETE /persons/{lastName}/{firstName}" time="0.004">
-    <system-out><![CDATA[18:16:03.918 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
-18:16:03.918 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
-18:16:03.918 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
-18:16:03.919 [main] INFO com.safetynet.alerts.controller.PersonController -- Deleting a person...
+    <system-out><![CDATA[16:37:05.744 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+16:37:05.744 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+16:37:05.744 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+16:37:05.745 [main] INFO com.safetynet.alerts.controller.PersonController -- DELETE /persons/Doe/Ghost - Deleting person
+16:37:05.745 [main] WARN com.safetynet.alerts.controller.PersonController -- Person not found for deletion: Ghost Doe
 ]]></system-out>
   </testcase>
-  <testcase name="putPerson_ok" classname="PUT /persons/{lastName}/{firstName}" time="0.01">
-    <system-out><![CDATA[18:16:03.925 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
-18:16:03.925 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
-18:16:03.925 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
-18:16:03.928 [main] INFO com.safetynet.alerts.controller.PersonController -- Updating an existing person...
+  <testcase name="putPerson_ok" classname="PUT /persons/{lastName}/{firstName}" time="0.007">
+    <system-out><![CDATA[16:37:05.749 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+16:37:05.749 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+16:37:05.749 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+16:37:05.752 [main] INFO com.safetynet.alerts.controller.PersonController -- PUT /persons/Doe/John - Updating person
+16:37:05.752 [main] INFO com.safetynet.alerts.controller.PersonController -- Person updated successfully: John Doe
 ]]></system-out>
   </testcase>
-  <testcase name="putPerson_notFound" classname="PUT /persons/{lastName}/{firstName}" time="0.007">
-    <system-out><![CDATA[18:16:03.934 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
-18:16:03.934 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
-18:16:03.934 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
-18:16:03.937 [main] INFO com.safetynet.alerts.controller.PersonController -- Updating an existing person...
+  <testcase name="putPerson_notFound" classname="PUT /persons/{lastName}/{firstName}" time="0.005">
+    <system-out><![CDATA[16:37:05.757 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+16:37:05.757 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+16:37:05.757 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+16:37:05.758 [main] INFO com.safetynet.alerts.controller.PersonController -- PUT /persons/Doe/Ghost - Updating person
+16:37:05.759 [main] WARN com.safetynet.alerts.controller.PersonController -- Person not found for update: Ghost Doe
 ]]></system-out>
   </testcase>
-  <testcase name="putPerson_badRequest" classname="PUT /persons/{lastName}/{firstName}" time="0.006">
-    <system-out><![CDATA[18:16:03.941 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
-18:16:03.941 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
-18:16:03.941 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
-18:16:03.943 [main] INFO com.safetynet.alerts.controller.PersonController -- Updating an existing person...
+  <testcase name="putPerson_badRequest" classname="PUT /persons/{lastName}/{firstName}" time="0.004">
+    <system-out><![CDATA[16:37:05.762 [main] INFO org.springframework.mock.web.MockServletContext -- Initializing Spring TestDispatcherServlet ''
+16:37:05.762 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Initializing Servlet ''
+16:37:05.762 [main] INFO org.springframework.test.web.servlet.TestDispatcherServlet -- Completed initialization in 0 ms
+16:37:05.763 [main] INFO com.safetynet.alerts.controller.PersonController -- PUT /persons/Doe/John - Updating person
+16:37:05.764 [main] ERROR com.safetynet.alerts.controller.PersonController -- Invalid update request for John Doe: Name cannot be changed
+java.lang.IllegalArgumentException: Name cannot be changed
+	at com.safetynet.alerts.service.PersonService.updatePerson(PersonService.java:97)
+	at com.safetynet.alerts.controller.PersonController.putPerson(PersonController.java:125)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:258)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:191)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:118)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:991)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:896)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:87)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:1089)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:979)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1014)
+	at org.springframework.web.servlet.FrameworkServlet.doPut(FrameworkServlet.java:925)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:593)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:885)
+	at org.springframework.test.web.servlet.TestDispatcherServlet.service(TestDispatcherServlet.java:72)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:658)
+	at org.springframework.mock.web.MockFilterChain$ServletFilterProxy.doFilter(MockFilterChain.java:165)
+	at org.springframework.mock.web.MockFilterChain.doFilter(MockFilterChain.java:132)
+	at org.springframework.test.web.servlet.MockMvc.perform(MockMvc.java:201)
+	at com.safetynet.alerts.controller.PersonControllerTest$PutPersonTests.putPerson_badRequest(PersonControllerTest.java:209)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:104)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:565)
+	at org.junit.platform.commons.util.ReflectionUtils.invokeMethod(ReflectionUtils.java:775)
+	at org.junit.platform.commons.support.ReflectionSupport.invokeMethod(ReflectionSupport.java:479)
+	at org.junit.jupiter.engine.execution.MethodInvocation.proceed(MethodInvocation.java:60)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$ValidatingInvocation.proceed(InvocationInterceptorChain.java:131)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.intercept(TimeoutExtension.java:161)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestableMethod(TimeoutExtension.java:152)
+	at org.junit.jupiter.engine.extension.TimeoutExtension.interceptTestMethod(TimeoutExtension.java:91)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker$ReflectiveInterceptorCall.lambda$ofVoidMethod$0(InterceptingExecutableInvoker.java:112)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.lambda$invoke$0(InterceptingExecutableInvoker.java:94)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain$InterceptedInvocation.proceed(InvocationInterceptorChain.java:106)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.proceed(InvocationInterceptorChain.java:64)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.chainAndInvoke(InvocationInterceptorChain.java:45)
+	at org.junit.jupiter.engine.execution.InvocationInterceptorChain.invoke(InvocationInterceptorChain.java:37)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:93)
+	at org.junit.jupiter.engine.execution.InterceptingExecutableInvoker.invoke(InterceptingExecutableInvoker.java:87)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.lambda$invokeTestMethod$7(TestMethodTestDescriptor.java:216)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.invokeTestMethod(TestMethodTestDescriptor.java:212)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:137)
+	at org.junit.jupiter.engine.descriptor.TestMethodTestDescriptor.execute(TestMethodTestDescriptor.java:69)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:156)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.invokeAll(SameThreadHierarchicalTestExecutorService.java:41)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$6(NodeTestTask.java:160)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$8(NodeTestTask.java:146)
+	at org.junit.platform.engine.support.hierarchical.Node.around(Node.java:137)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.lambda$executeRecursively$9(NodeTestTask.java:144)
+	at org.junit.platform.engine.support.hierarchical.ThrowableCollector.execute(ThrowableCollector.java:73)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.executeRecursively(NodeTestTask.java:143)
+	at org.junit.platform.engine.support.hierarchical.NodeTestTask.execute(NodeTestTask.java:100)
+	at org.junit.platform.engine.support.hierarchical.SameThreadHierarchicalTestExecutorService.submit(SameThreadHierarchicalTestExecutorService.java:35)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestExecutor.execute(HierarchicalTestExecutor.java:57)
+	at org.junit.platform.engine.support.hierarchical.HierarchicalTestEngine.execute(HierarchicalTestEngine.java:54)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:201)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:170)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:94)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.lambda$execute$0(EngineExecutionOrchestrator.java:59)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.withInterceptedStreams(EngineExecutionOrchestrator.java:142)
+	at org.junit.platform.launcher.core.EngineExecutionOrchestrator.execute(EngineExecutionOrchestrator.java:58)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:103)
+	at org.junit.platform.launcher.core.DefaultLauncher.execute(DefaultLauncher.java:85)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.junit.platform.launcher.core.InterceptingLauncher.lambda$execute$1(InterceptingLauncher.java:39)
+	at org.junit.platform.launcher.core.ClasspathAlignmentCheckingLauncherInterceptor.intercept(ClasspathAlignmentCheckingLauncherInterceptor.java:25)
+	at org.junit.platform.launcher.core.InterceptingLauncher.execute(InterceptingLauncher.java:38)
+	at org.junit.platform.launcher.core.DelegatingLauncher.execute(DelegatingLauncher.java:47)
+	at org.apache.maven.surefire.junitplatform.LauncherAdapter.executeWithoutCancellationToken(LauncherAdapter.java:60)
+	at org.apache.maven.surefire.junitplatform.LauncherAdapter.execute(LauncherAdapter.java:52)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.execute(JUnitPlatformProvider.java:203)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invokeAllTests(JUnitPlatformProvider.java:168)
+	at org.apache.maven.surefire.junitplatform.JUnitPlatformProvider.invoke(JUnitPlatformProvider.java:136)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:385)
+	at org.apache.maven.surefire.booter.ForkedBooter.execute(ForkedBooter.java:162)
+	at org.apache.maven.surefire.booter.ForkedBooter.run(ForkedBooter.java:507)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
 ]]></system-out>
   </testcase>
 </testsuite>

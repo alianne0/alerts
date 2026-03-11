@@ -64,30 +64,46 @@ public class MedicalRecordService {
      * @param updates
      * @return
      */
-    public Optional <MedicalRecord> updateMedicalRecord(String lastName, String firstName, MedicalRecord updates) {
+    public Optional<MedicalRecord> updateMedicalRecord(
+            String lastName,
+            String firstName,
+            MedicalRecord updates) {
+
         Objects.requireNonNull(updates, "updates cant be null");
-        if (updates.getLastName() != null && !equalsTrimmed(updates.getLastName(), lastName)){
+
+        if (updates.getLastName() != null &&
+                !equalsTrimmed(updates.getLastName(), lastName)) {
             throw new IllegalArgumentException("last name cannot be changed");
         }
-        if (updates.getFirstName() != null && !equalsTrimmed(updates.getFirstName(), firstName)) {
+
+        if (updates.getFirstName() != null &&
+                !equalsTrimmed(updates.getFirstName(), firstName)) {
             throw new IllegalArgumentException("first name cannot be changed");
         }
+
         for (MedicalRecord existing : data.getMedicalRecords()) {
+
             if (equalsTrimmed(existing.getLastName(), lastName) &&
                     equalsTrimmed(existing.getFirstName(), firstName)) {
 
                 if (updates.getMedications() != null) {
                     existing.setMedications(updates.getMedications());
                 }
+
                 if (updates.getAllergies() != null) {
                     existing.setAllergies(updates.getAllergies());
                 }
-                if (updates.getBirthdate() != null) {
-                    existing.setBirthdate(updates.getBirthdate());
+
+                if (updates.getBirthdate() == null) {
+                    return Optional.empty();
                 }
+
+                existing.setBirthdate(updates.getBirthdate());
+
                 return Optional.of(existing);
             }
         }
+
         return Optional.empty();
     }
 

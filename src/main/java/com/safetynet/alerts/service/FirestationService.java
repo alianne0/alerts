@@ -23,8 +23,6 @@ public class FirestationService{
         this.data = data;
     }
 
-    //TODO: testing
-
     /**
      * Returns all of the information in the firestation object
      * @return

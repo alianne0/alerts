@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MedicalRecordController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.controller</a> &gt; <span class="el_source">MedicalRecordController.java</span></div><h1>MedicalRecordController.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.controller;
-//add logs for mapping , log error for try catch
 
 import com.safetynet.alerts.domain.MedicalRecord;
 import com.safetynet.alerts.service.MedicalRecordService;
@@ -15,10 +14,11 @@ import java.util.List;
 /**
  * Controller class for the Medical Records
  */
-<span class="fc" id="L18">@Slf4j</span>
+<span class="fc" id="L17">@Slf4j</span>
 @RestController
 @RequestMapping(&quot;/medicalRecords&quot;)
 public class MedicalRecordController {
+
     private final MedicalRecordService medicalRecordService;
 
     /**
@@ -28,32 +28,56 @@ public class MedicalRecordController {
      * @param personService
      */
     @Autowired
-<span class="fc" id="L31">    public MedicalRecordController(MedicalRecordService medicalRecordService, PersonService personService) {</span>
-<span class="fc" id="L32">        this.medicalRecordService = medicalRecordService;</span>
-<span class="fc" id="L33">    }</span>
+    public MedicalRecordController(MedicalRecordService medicalRecordService,
+<span class="fc" id="L32">                                   PersonService personService) {</span>
+<span class="fc" id="L33">        this.medicalRecordService = medicalRecordService;</span>
+<span class="fc" id="L34">    }</span>
 
     /**
      * Get all the medical records
      *
-     * @return
+     * @return list of medical records
      */
     @GetMapping
     public List&lt;MedicalRecord&gt; getAllMedicalRecords() {
-<span class="fc" id="L42">        log.info(&quot;Getting all of the medical records...&quot;);</span>
-<span class="fc" id="L43">    return medicalRecordService.findAll();</span>
+<span class="fc" id="L43">        log.info(&quot;GET /medicalRecords - Retrieving all medical records&quot;);</span>
+<span class="fc" id="L44">        List&lt;MedicalRecord&gt; records = medicalRecordService.findAll();</span>
+<span class="fc" id="L45">        log.info(&quot;Successfully retrieved {} medical records&quot;, records.size());</span>
+
+<span class="fc" id="L47">        return records;</span>
     }
 
     /**
      * Add a new medical record
      *
      * @param newMedicalRecord
-     * @return
+     * @return created medical record
      */
     @PostMapping
-    public ResponseEntity&lt;MedicalRecord&gt; postMedicalRecord(@RequestBody MedicalRecord newMedicalRecord) {
-<span class="fc" id="L54">        MedicalRecord savedMedicalRecord = medicalRecordService.postMedicalRecord(newMedicalRecord);</span>
-<span class="fc" id="L55">        log.info(&quot;Posting a new medical record...&quot;);</span>
-<span class="fc" id="L56">        return new ResponseEntity&lt;&gt;(savedMedicalRecord, HttpStatus.CREATED);</span>
+    public ResponseEntity&lt;MedicalRecord&gt; postMedicalRecord(
+            @RequestBody MedicalRecord newMedicalRecord) {
+
+<span class="fc" id="L60">        log.info(&quot;POST /medicalRecords - Creating medical record for {} {}&quot;,</span>
+<span class="fc" id="L61">                newMedicalRecord.getFirstName(),</span>
+<span class="fc" id="L62">                newMedicalRecord.getLastName());</span>
+
+        try {
+<span class="fc" id="L65">            MedicalRecord savedMedicalRecord =</span>
+<span class="fc" id="L66">                    medicalRecordService.postMedicalRecord(newMedicalRecord);</span>
+
+<span class="fc" id="L68">            log.info(&quot;Medical record successfully created for {} {}&quot;,</span>
+<span class="fc" id="L69">                    savedMedicalRecord.getFirstName(),</span>
+<span class="fc" id="L70">                    savedMedicalRecord.getLastName());</span>
+
+<span class="fc" id="L72">            return new ResponseEntity&lt;&gt;(savedMedicalRecord, HttpStatus.CREATED);</span>
+
+<span class="nc" id="L74">        } catch (Exception ex) {</span>
+<span class="nc" id="L75">            log.error(&quot;Error while creating medical record for {} {}&quot;,</span>
+<span class="nc" id="L76">                    newMedicalRecord.getFirstName(),</span>
+<span class="nc" id="L77">                    newMedicalRecord.getLastName(),</span>
+                    ex);
+<span class="nc" id="L79">            throw ex;</span>
+        }
     }
 
     /**
@@ -62,21 +86,34 @@ public class MedicalRecordController {
      * @param lastName
      * @param firstName
      * @param updates
-     * @return
+     * @return updated medical record or error
      */
     @PutMapping(&quot;/{lastName}/{firstName}&quot;)
-    public ResponseEntity&lt;?&gt; updateMedicalRecord (
+    public ResponseEntity&lt;?&gt; updateMedicalRecord(
             @PathVariable String lastName,
             @PathVariable String firstName,
             @RequestBody MedicalRecord updates) {
+
+<span class="fc" id="L97">        log.info(&quot;PUT /medicalRecords/{}/{} - Updating medical record&quot;,</span>
+                lastName, firstName);
+
         try {
-<span class="fc" id="L73">            log.info(&quot;Updating a medical record...&quot;);</span>
-<span class="fc" id="L74">            return medicalRecordService.updateMedicalRecord(lastName, firstName, updates)</span>
-<span class="fc" id="L75">                    .&lt;ResponseEntity&lt;?&gt;&gt;map(ResponseEntity::ok)</span>
-<span class="fc" id="L76">                    .orElseGet(() -&gt; ResponseEntity.status(HttpStatus.NOT_FOUND)</span>
-<span class="fc" id="L77">                            .body(&quot;person not found: &quot; + lastName + &quot;&quot; + firstName));</span>
-<span class="fc" id="L78">        } catch (IllegalArgumentException ex) {</span>
-<span class="fc" id="L79">            return ResponseEntity.badRequest().body(ex.getMessage());</span>
+<span class="fc" id="L101">            return medicalRecordService.updateMedicalRecord(lastName, firstName, updates)</span>
+<span class="fc" id="L102">                    .&lt;ResponseEntity&lt;?&gt;&gt;map(updated -&gt; {</span>
+<span class="fc" id="L103">                        log.info(&quot;Medical record updated successfully for {} {}&quot;,</span>
+                                firstName, lastName);
+<span class="fc" id="L105">                        return ResponseEntity.ok(updated);</span>
+                    })
+<span class="fc" id="L107">                    .orElseGet(() -&gt; {</span>
+<span class="fc" id="L108">                        log.warn(&quot;Medical record not found for {} {}&quot;, firstName, lastName);</span>
+<span class="fc" id="L109">                        return ResponseEntity.status(HttpStatus.NOT_FOUND)</span>
+<span class="fc" id="L110">                                .body(&quot;person not found: &quot; + lastName + &quot; &quot; + firstName);</span>
+                    });
+
+<span class="fc" id="L113">        } catch (IllegalArgumentException ex) {</span>
+<span class="fc" id="L114">            log.error(&quot;Invalid update request for {} {}: {}&quot;,</span>
+<span class="fc" id="L115">                    firstName, lastName, ex.getMessage(), ex);</span>
+<span class="fc" id="L116">            return ResponseEntity.badRequest().body(ex.getMessage());</span>
         }
     }
 
@@ -85,14 +122,32 @@ public class MedicalRecordController {
      *
      * @param lastName
      * @param firstName
-     * @return
+     * @return response status
      */
     @DeleteMapping(&quot;/{lastName}/{firstName}&quot;)
-    public ResponseEntity&lt;Void&gt; delete (
-            @PathVariable String lastName, @PathVariable String firstName) {
-<span class="fc" id="L93">        boolean deleted = medicalRecordService.deleteByName(lastName, firstName);</span>
-<span class="fc" id="L94">        log.info(&quot;Deleting a medical record...&quot;);</span>
-<span class="fc bfc" id="L95" title="All 2 branches covered.">        return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();</span>
+    public ResponseEntity&lt;Void&gt; delete(
+            @PathVariable String lastName,
+            @PathVariable String firstName) {
+
+<span class="fc" id="L132">        log.info(&quot;DELETE /medicalRecords/{}/{} - Deleting medical record&quot;,</span>
+                lastName, firstName);
+
+        try {
+<span class="fc" id="L136">            boolean deleted = medicalRecordService.deleteByName(lastName, firstName);</span>
+
+<span class="fc bfc" id="L138" title="All 2 branches covered.">            if (deleted) {</span>
+<span class="fc" id="L139">                log.info(&quot;Medical record deleted successfully for {} {}&quot;, firstName, lastName);</span>
+<span class="fc" id="L140">                return ResponseEntity.ok().build();</span>
+            } else {
+<span class="fc" id="L142">                log.warn(&quot;Medical record not found for deletion: {} {}&quot;, firstName, lastName);</span>
+<span class="fc" id="L143">                return ResponseEntity.notFound().build();</span>
+            }
+
+<span class="nc" id="L146">        } catch (Exception ex) {</span>
+<span class="nc" id="L147">            log.error(&quot;Error while deleting medical record for {} {}&quot;,</span>
+                    firstName, lastName, ex);
+<span class="nc" id="L149">            throw ex;</span>
+        }
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

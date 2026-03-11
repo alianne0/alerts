@@ -1,26 +1,194 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FirstResponderController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.controller</a> &gt; <span class="el_source">FirstResponderController.java</span></div><h1>FirstResponderController.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.controller;
-import com.safetynet.alerts.view.PeoplePerStation;
+
+import com.safetynet.alerts.service.FirstResponderService;
+import com.safetynet.alerts.view.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.safetynet.alerts.service.FirstResponderService;
 
+import java.util.List;
+
+/**
+ * Controller for the FirstResponder class
+ */
 @RestController
-<span class="fc" id="L10">@Slf4j</span>
+<span class="fc" id="L16">@Slf4j</span>
 public class FirstResponderController {
+
     private final FirstResponderService firstResponderService;
 
-<span class="fc" id="L14">    public FirstResponderController(FirstResponderService firstResponderService) {</span>
+    /**
+     * Constructor for the first responder controller
+     *
+     * @param firstResponderService
+     */
+<span class="fc" id="L26">    public FirstResponderController(FirstResponderService firstResponderService) {</span>
+<span class="fc" id="L27">        this.firstResponderService = firstResponderService;</span>
+<span class="fc" id="L28">    }</span>
 
-<span class="fc" id="L16">        this.firstResponderService = firstResponderService;</span>
-<span class="fc" id="L17">    }</span>
-
+    /**
+     * Gets all of the people for a corresponding firestation
+     *
+     * @param stationNumber
+     * @return
+     */
     @GetMapping(&quot;/firestation&quot;)
     public PeoplePerStation getPeopleByStation(@RequestParam String stationNumber) {
-<span class="nc" id="L21">        log.info(&quot;Searching for people by station:&quot;, stationNumber);</span>
-        //create local field in the method for the result and then return the result
-<span class="nc" id="L23">        return firstResponderService.getPeopleByStation(stationNumber);</span>
+<span class="fc" id="L38">        log.info(&quot;GET /firestation - Retrieving people for station {}&quot;, stationNumber);</span>
+
+        try {
+<span class="fc" id="L41">            PeoplePerStation result =</span>
+<span class="fc" id="L42">                    firstResponderService.getPeopleByStation(stationNumber);</span>
+
+<span class="fc" id="L44">            log.info(&quot;Successfully retrieved people for station {}&quot;, stationNumber);</span>
+<span class="fc" id="L45">            return result;</span>
+
+<span class="nc" id="L47">        } catch (Exception ex) {</span>
+<span class="nc" id="L48">            log.error(&quot;Error retrieving people for station {}&quot;, stationNumber, ex);</span>
+<span class="nc" id="L49">            throw ex;</span>
+        }
+    }
+
+    /**
+     * Returns the list of children by address
+     *
+     * @param address
+     * @return
+     */
+    @GetMapping(&quot;/childAlert&quot;)
+    public ChildrenByAddress getChildrenByAddress(@RequestParam String address) {
+<span class="fc" id="L61">        log.info(&quot;GET /childAlert - Retrieving children for address {}&quot;, address);</span>
+
+        try {
+<span class="fc" id="L64">            ChildrenByAddress result =</span>
+<span class="fc" id="L65">                    firstResponderService.getChildrenByAddress(address);</span>
+
+<span class="fc" id="L67">            log.info(&quot;Child alert lookup completed for address {}&quot;, address);</span>
+<span class="fc" id="L68">            return result;</span>
+
+<span class="nc" id="L70">        } catch (Exception ex) {</span>
+<span class="nc" id="L71">            log.error(&quot;Error retrieving children for address {}&quot;, address, ex);</span>
+<span class="nc" id="L72">            throw ex;</span>
+        }
+    }
+
+    /**
+     * Returns the list of phone numbers serviced by a fire station
+     *
+     * @param firestation
+     * @return
+     */
+    @GetMapping(&quot;/phoneAlert&quot;)
+    public PhonesPerStation getPhonesPerStation(
+            @RequestParam(name = &quot;firestation&quot;) String firestation) {
+
+<span class="fc" id="L86">        log.info(&quot;GET /phoneAlert - Retrieving phone numbers for station {}&quot;, firestation);</span>
+
+        try {
+<span class="fc" id="L89">            PhonesPerStation result =</span>
+<span class="fc" id="L90">                    firstResponderService.getPhonesPerStation(firestation);</span>
+
+<span class="fc" id="L92">            log.info(&quot;Phone alert lookup completed for station {}&quot;, firestation);</span>
+<span class="fc" id="L93">            return result;</span>
+
+<span class="nc" id="L95">        } catch (Exception ex) {</span>
+<span class="nc" id="L96">            log.error(&quot;Error retrieving phone numbers for station {}&quot;, firestation, ex);</span>
+<span class="nc" id="L97">            throw ex;</span>
+        }
+    }
+
+    /**
+     * Returns the list of residents living at the provided address
+     *
+     * @param address
+     * @return
+     */
+    @GetMapping(&quot;/fire&quot;)
+    public ResidentsPerAddress getResidentsPerAddress(@RequestParam String address) {
+<span class="fc" id="L109">        log.info(&quot;GET /fire - Retrieving residents for address {}&quot;, address);</span>
+
+        try {
+<span class="fc" id="L112">            ResidentsPerAddress result =</span>
+<span class="fc" id="L113">                    firstResponderService.getResidentsPerAddress(address);</span>
+
+<span class="fc" id="L115">            log.info(&quot;Successfully retrieved residents for address {}&quot;, address);</span>
+<span class="fc" id="L116">            return result;</span>
+
+<span class="nc" id="L118">        } catch (Exception ex) {</span>
+<span class="nc" id="L119">            log.error(&quot;Error retrieving residents for address {}&quot;, address, ex);</span>
+<span class="nc" id="L120">            throw ex;</span>
+        }
+    }
+
+    /**
+     * Returns households served by firestations
+     *
+     * @param stations
+     * @return
+     */
+    @GetMapping(&quot;/flood&quot;)
+    public List&lt;HouseholdsByStation&gt; getHouseholdsByFirestation(
+            @RequestParam List&lt;String&gt; stations) {
+
+<span class="fc" id="L134">        log.info(&quot;GET /flood - Retrieving households for station(s) {}&quot;, stations);</span>
+
+        try {
+<span class="fc" id="L137">            List&lt;HouseholdsByStation&gt; result =</span>
+<span class="fc" id="L138">                    firstResponderService.getHouseholdsByFirestation(stations);</span>
+
+<span class="fc" id="L140">            log.info(&quot;Successfully retrieved households for station(s) {}&quot;, (stations));</span>
+<span class="fc" id="L141">            return result;</span>
+
+<span class="nc" id="L143">        } catch (Exception ex) {</span>
+<span class="nc" id="L144">            log.error(&quot;Error retrieving households for station(s) {}&quot;, stations, ex);</span>
+<span class="nc" id="L145">            throw ex;</span>
+        }
+    }
+
+    /**
+     * Returns person information by last name
+     *
+     * @param lastName
+     * @return
+     */
+    @GetMapping(&quot;/personInfo&quot;)
+    public PersonInfo getPersonInfo(@RequestParam String lastName) {
+<span class="fc" id="L157">        log.info(&quot;GET /personInfo - Retrieving person info for lastName {}&quot;, lastName);</span>
+
+        try {
+<span class="fc" id="L160">            PersonInfo result = firstResponderService.getPersonInfo(lastName);</span>
+
+<span class="fc" id="L162">            log.info(&quot;Successfully retrieved person info for lastName {}&quot;, lastName);</span>
+<span class="fc" id="L163">            return result;</span>
+
+<span class="nc" id="L165">        } catch (Exception ex) {</span>
+<span class="nc" id="L166">            log.error(&quot;Error retrieving person info for lastName {}&quot;, lastName, ex);</span>
+<span class="nc" id="L167">            throw ex;</span>
+        }
+    }
+
+    /**
+     * Returns resident emails by city
+     *
+     * @param city
+     * @return
+     */
+    @GetMapping(&quot;/communityEmail&quot;)
+    public ResidentEmails getResidentEmails(@RequestParam String city) {
+<span class="fc" id="L179">        log.info(&quot;GET /communityEmail - Retrieving resident emails for city {}&quot;, city);</span>
+
+        try {
+<span class="fc" id="L182">            ResidentEmails result =</span>
+<span class="fc" id="L183">                    firstResponderService.getResidentEmails(city);</span>
+
+<span class="fc" id="L185">            log.info(&quot;Successfully retrieved resident emails for city {}&quot;, city);</span>
+<span class="fc" id="L186">            return result;</span>
+
+<span class="nc" id="L188">        } catch (Exception ex) {</span>
+<span class="nc" id="L189">            log.error(&quot;Error retrieving resident emails for city {}&quot;, city, ex);</span>
+<span class="nc" id="L190">            throw ex;</span>
+        }
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

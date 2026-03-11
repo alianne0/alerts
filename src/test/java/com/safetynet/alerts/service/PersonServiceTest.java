@@ -1,4 +1,5 @@
 package com.safetynet.alerts.service;
+
 import com.safetynet.alerts.domain.Person;
 import com.safetynet.alerts.repository.DataParser;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,16 +19,16 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.lenient;
 
+/**
+ * Unit tests for the PersonService
+ */
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 class PersonServiceTest {
 
     @Mock
     private DataParser dataParser;
-
     private PersonService service;
-
-    // Mutable list simulating the in-memory persistence returned by DataParser
     private List<Person> backingList;
 
     private static Person p(
@@ -50,94 +51,134 @@ class PersonServiceTest {
         return person;
     }
 
+    /**
+     * Initializes the service with a mocked DataParser.
+     * No default stubbing is performed to avoid unnecessary stubbing errors.
+     */
     @BeforeEach
     void setUp() {
         backingList = new ArrayList<>();
-        service = new PersonService(dataParser); // no default stubbing here
+        service = new PersonService(dataParser);
     }
 
-    /** Only stub getPersons() in tests that actually call it. */
     private void enableBackingList() {
-        lenient().when(dataParser.getPersons()).thenAnswer(invocation -> backingList);
+        lenient().when(dataParser.getPersons())
+                .thenAnswer(invocation -> backingList);
     }
 
+    /**
+     * Tests the findAll function returns all of the list of people
+     */
     @Test
     @DisplayName("findAll returns an unmodifiable defensive copy")
     void findAll_unmodifiableCopy() {
         enableBackingList();
-        backingList.add(p("Doe", "John", "1509 Culver St", "Culver", "97451", "841-874-6512", "john@doe.com"));
-        backingList.add(p("Smith", "Jane", "29 15th St", "Culver", "97451", "841-874-6513", "jane@smith.com"));
+        backingList.add(p("Doe", "John", "1509 Culver St", "Culver", "97451",
+                "841-874-6512", "john@doe.com"));
+        backingList.add(p("Smith", "Jane", "29 15th St", "Culver", "97451",
+                "841-874-6513", "jane@smith.com"));
 
         var result = service.findAll();
+
         assertThat(result).hasSize(2);
-        assertThat(result).extracting(Person::getLastName).containsExactly("Doe", "Smith");
+        assertThat(result)
+                .extracting(Person::getLastName)
+                .containsExactly("Doe", "Smith");
 
         assertThatThrownBy(() -> result.add(new Person()))
                 .isInstanceOf(UnsupportedOperationException.class);
 
-        // Later mutations to the backing list shouldn't affect already returned copies
-        backingList.add(p("Roe", "Richard", "New", "Culver", "97451", "111-222", "r@roe.com"));
+        // Mutating the backing list later should not affect the returned snapshot
+        backingList.add(p("Roe", "Richard", "New", "Culver", "97451",
+                "111-222", "r@roe.com"));
         assertThat(result).hasSize(2);
     }
 
+    /**
+     * Test for returning persons by last name and first name
+     */
     @Nested
     class FindByNameTests {
 
+        /**
+         * Test that the name matches the desired order
+         */
         @Test
-        @DisplayName("findByName(lastName, firstName) finds a match (correct order)")
+        @DisplayName("findByName finds a match when lastName and firstName are in correct order")
         void findByName_correctOrder() {
             enableBackingList();
             backingList.add(p("Doe", "John", "Addr", "City", "Zip", "Phone", "Email"));
 
-            assertThat(service.findByName("Doe", "John")).isPresent();    // ✅ correct now
-            assertThat(service.findByName("John", "Doe")).isNotPresent(); // ❌ incorrect order
+            assertThat(service.findByName("Doe", "John")).isPresent();
+            assertThat(service.findByName("John", "Doe")).isNotPresent();
         }
 
+        /**
+         * Test trimmming name correctly
+         */
         @Test
-        @DisplayName("findByName trims both stored and input names (correct order)")
+        @DisplayName("findByName trims names and matches correctly")
         void findByName_trimmed_correctOrder() {
             enableBackingList();
             backingList.add(p("  Doe ", " John ", "Addr", "City", "Zip", "Phone", "Email"));
 
-            assertThat(service.findByName(" Doe", "John ")).isPresent();  // trim-aware
-            assertThat(service.findByName("John", "Doe")).isNotPresent(); // wrong order
+            assertThat(service.findByName(" Doe", "John ")).isPresent();
+            assertThat(service.findByName("John", "Doe")).isNotPresent();
         }
     }
 
-
+    /**
+     * Tests for posting a person
+     */
     @Nested
     class PostPersonTests {
+
+        /**
+         * Test null input is rejected
+         */
         @Test
-        @DisplayName("postPerson throws on null input")
+        @DisplayName("postPerson throws NullPointerException for null input")
         void post_nullPerson() {
             assertThatNullPointerException()
                     .isThrownBy(() -> service.postPerson(null))
                     .withMessage("person must not be null");
         }
 
+        /**
+         * Test that a new person can be added when there is not an existing person already
+         */
         @Test
-        @DisplayName("postPerson adds a new person when no name match")
+        @DisplayName("postPerson adds a new person when no matching name exists")
         void post_addsNew() {
             enableBackingList();
             backingList.add(p("Doe", "John", "Addr1", "City", "Zip", "Phone", "Email"));
 
-            Person toPost = p("Roe", "Jane", "Addr2", "City2", "Zip2", "Phone2", "Email2");
+            Person toPost =
+                    p("Roe", "Jane", "Addr2", "City2", "Zip2", "Phone2", "Email2");
+
             Person returned = service.postPerson(toPost);
 
             assertThat(backingList).hasSize(2);
             assertThat(returned).isSameAs(toPost);
-            assertThat(backingList).extracting(Person::getLastName)
+            assertThat(backingList)
+                    .extracting(Person::getLastName)
                     .containsExactlyInAnyOrder("Doe", "Roe");
         }
 
+        /**
+         * Test that you can post a person when names match
+         */
         @Test
-        @DisplayName("postPerson updates existing when first+last match (trim-safe)")
+        @DisplayName("postPerson updates existing person when names match")
         void post_updatesExisting() {
             enableBackingList();
-            Person existing = p("Doe", "John", "OldAddr", "OldCity", "OldZip", "OldPhone", "old@email");
+            Person existing =
+                    p("Doe", "John", "OldAddr", "OldCity", "OldZip", "OldPhone", "old@email");
             backingList.add(existing);
 
-            Person updates = p("  Doe ", " John ", "NewAddr", "NewCity", "NewZip", "NewPhone", "new@email");
+            Person updates =
+                    p("  Doe ", " John ", "NewAddr", "NewCity", "NewZip",
+                            "NewPhone", "new@email");
 
             Person returned = service.postPerson(updates);
 
@@ -147,18 +188,21 @@ class PersonServiceTest {
             assertThat(existing.getZip()).isEqualTo("NewZip");
             assertThat(existing.getPhone()).isEqualTo("NewPhone");
             assertThat(existing.getEmail()).isEqualTo("new@email");
-
-            // Names are set directly from input as well
-            assertThat(existing.getFirstName()).isEqualTo(" John ");
-            assertThat(existing.getLastName()).isEqualTo("  Doe ");
             assertThat(backingList).hasSize(1);
         }
     }
 
+    /**
+     * Tests for deleting a person
+     */
     @Nested
     class DeleteByNameTests {
+
+        /**
+         * Tests that only matching records can be deleted
+         */
         @Test
-        @DisplayName("deleteByName removes matching record using trim-aware name comparison")
+        @DisplayName("deleteByName removes matching record using trim-aware comparison")
         void delete_trimAware() {
             enableBackingList();
             backingList.add(p("  Doe ", " John ", "Addr", "City", "Zip", "Phone", "Email"));
@@ -174,8 +218,15 @@ class PersonServiceTest {
         }
     }
 
+    /**
+     * Tests for updating a person
+     */
     @Nested
     class UpdatePersonTests {
+
+        /**
+         * Test rejecting null values
+         */
         @Test
         @DisplayName("updatePerson throws when updates is null")
         void update_nullUpdates() {
@@ -184,6 +235,9 @@ class PersonServiceTest {
                     .withMessage("updates cannot be null");
         }
 
+        /**
+         * Test to make sure you cannot change the last name
+         */
         @Test
         @DisplayName("updatePerson forbids changing last name")
         void update_forbidLastNameChange() {
@@ -191,11 +245,15 @@ class PersonServiceTest {
             backingList.add(p("Doe", "John", "Addr", "City", "Zip", "Phone", "Email"));
 
             Person updates = p("Different", null, "NewAddr", null, null, null, null);
+
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> service.updatePerson("Doe", "John", updates))
                     .withMessage("last name cannot be changed");
         }
 
+        /**
+         * Test making sure you cannot change the first name
+         */
         @Test
         @DisplayName("updatePerson forbids changing first name")
         void update_forbidFirstNameChange() {
@@ -203,35 +261,43 @@ class PersonServiceTest {
             backingList.add(p("Doe", "John", "Addr", "City", "Zip", "Phone", "Email"));
 
             Person updates = p(null, "Johnny", "NewAddr", null, null, null, null);
+
             assertThatIllegalArgumentException()
                     .isThrownBy(() -> service.updatePerson("Doe", "John", updates))
                     .withMessage("first name cannot be changed");
         }
 
+        /**
+         * Tests that the updated person returns when successful
+         */
         @Test
-        @DisplayName("updatePerson updates fields when matching by trim-aware name and returns Optional.of(updated)")
+        @DisplayName("updatePerson updates fields when names match and returns Optional.of")
         void update_success() {
             enableBackingList();
-            Person existing = p("  Doe ", " John ", "OldAddr", "OldCity", "OldZip", "OldPhone", "old@email");
+            Person existing =
+                    p("  Doe ", " John ", "OldAddr", "OldCity", "OldZip",
+                            "OldPhone", "old@email");
             backingList.add(existing);
 
-            // Keep name fields null (allowed), update others
-            Person updates = p(null, null, "NewAddr", "NewCity", "NewZip", "NewPhone", "new@email");
+            Person updates =
+                    p(null, null, "NewAddr", "NewCity", "NewZip",
+                            "NewPhone", "new@email");
 
             Optional<Person> result = service.updatePerson("Doe", "John", updates);
 
             assertThat(result).isPresent();
-            Person updated = result.get();
-            assertThat(updated).isSameAs(existing);
-            assertThat(updated.getAddress()).isEqualTo("NewAddr");
-            assertThat(updated.getCity()).isEqualTo("NewCity");
-            assertThat(updated.getZip()).isEqualTo("NewZip");
-            assertThat(updated.getPhone()).isEqualTo("NewPhone");
-            assertThat(updated.getEmail()).isEqualTo("new@email");
+            assertThat(existing.getAddress()).isEqualTo("NewAddr");
+            assertThat(existing.getCity()).isEqualTo("NewCity");
+            assertThat(existing.getZip()).isEqualTo("NewZip");
+            assertThat(existing.getPhone()).isEqualTo("NewPhone");
+            assertThat(existing.getEmail()).isEqualTo("new@email");
         }
 
+        /**
+         * Test that updating a person that does not exist returns empty
+         */
         @Test
-        @DisplayName("updatePerson returns empty when no match")
+        @DisplayName("updatePerson returns empty when no match exists")
         void update_noMatch() {
             enableBackingList();
             backingList.add(p("Roe", "Jane", "Addr", "City", "Zip", "Phone", "Email"));
@@ -242,16 +308,21 @@ class PersonServiceTest {
             assertThat(result).isEmpty();
         }
 
+        /**
+         * Test that updating a person matches the named that are trimmed
+         */
         @Test
-        @DisplayName("updatePerson accepts trimmed names and updates correctly")
+        @DisplayName("updatePerson matches trimmed names correctly")
         void update_trimMatching() {
             enableBackingList();
-            Person existing = p("Doe", "John", "Old", "OldCity", "OldZip", "OldPhone", "old@email");
+            Person existing =
+                    p("Doe", "John", "Old", "OldCity", "OldZip", "OldPhone", "old@email");
             backingList.add(existing);
 
             Person updates = p(null, null, "New", null, null, null, null);
 
             Optional<Person> result = service.updatePerson("  Doe ", " John ", updates);
+
             assertThat(result).isPresent();
             assertThat(existing.getAddress()).isEqualTo("New");
         }

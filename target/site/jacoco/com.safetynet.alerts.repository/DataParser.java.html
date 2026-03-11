@@ -6,6 +6,8 @@ import com.safetynet.alerts.domain.Firestation;
 import com.safetynet.alerts.domain.MedicalRecord;
 import com.safetynet.alerts.domain.Person;
 import jakarta.annotation.PostConstruct;
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -13,105 +15,96 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
+@Data
+<span class="fc" id="L20">@Slf4j</span>
 @Repository
 public class DataParser {
 
-    // Path to the external JSON file (configured in application.properties)
     private final Path filePath;
     private final ObjectMapper mapper;
 
-    // Keep these MUTABLE so services can modify them in memory
-<span class="fc" id="L26">    private List&lt;Person&gt; persons = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L27">    private List&lt;Firestation&gt; firestations = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L28">    private List&lt;MedicalRecord&gt; medicalRecords = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L27">    private List&lt;Person&gt; persons = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L28">    private List&lt;Firestation&gt; firestations = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L29">    private List&lt;MedicalRecord&gt; medicalRecords = new ArrayList&lt;&gt;();</span>
 
-<span class="fc" id="L30">    public DataParser(@Value(&quot;${data.file:./data/data.json}&quot;) String filePath) {</span>
-<span class="fc" id="L31">        this.filePath = Paths.get(filePath).toAbsolutePath().normalize();</span>
-<span class="fc" id="L32">        this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);</span>
-<span class="fc" id="L33">    }</span>
+<span class="fc" id="L31">    public DataParser(@Value(&quot;${data.file:./data/data.json}&quot;) String filePath) {</span>
+<span class="fc" id="L32">        this.filePath = Paths.get(filePath).toAbsolutePath().normalize();</span>
+<span class="fc" id="L33">        this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);</span>
+<span class="fc" id="L34">    }</span>
 
     @PostConstruct
     public void load() {
         try {
-            // Create file &amp; parent directories on first run if missing
 <span class="pc bpc" id="L39" title="1 of 2 branches missed.">            if (Files.notExists(filePath)) {</span>
-<span class="nc" id="L40">                Files.createDirectories(filePath.getParent());</span>
-                // initialize an empty wrapper and write it down
-<span class="nc" id="L42">                DataWrapper empty = new DataWrapper();</span>
-<span class="nc" id="L43">                empty.setPersons(new ArrayList&lt;&gt;());</span>
-<span class="nc" id="L44">                empty.setFirestations(new ArrayList&lt;&gt;());</span>
-<span class="nc" id="L45">                empty.setMedicalrecords(new ArrayList&lt;&gt;());</span>
-<span class="nc" id="L46">                writeWrapperAtomically(empty);</span>
+<span class="nc" id="L40">                createEmptyFile();</span>
             }
 
-<span class="fc" id="L49">            DataWrapper data = mapper.readValue(Files.newInputStream(filePath), DataWrapper.class);</span>
+<span class="fc" id="L43">            DataWrapper data =</span>
+<span class="fc" id="L44">                    mapper.readValue(Files.newInputStream(filePath), DataWrapper.class);</span>
 
-<span class="fc" id="L51">            this.persons = new ArrayList&lt;&gt;(Optional.ofNullable(data.getPersons()).orElseGet(ArrayList::new));</span>
-<span class="fc" id="L52">            this.firestations = new ArrayList&lt;&gt;(Optional.ofNullable(data.getFirestations()).orElseGet(ArrayList::new));</span>
-<span class="fc" id="L53">            this.medicalRecords = new ArrayList&lt;&gt;(Optional.ofNullable(data.getMedicalrecords()).orElseGet(ArrayList::new));</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">            if (data.getPersons() != null) {</span>
+<span class="fc" id="L47">                persons = new ArrayList&lt;&gt;(data.getPersons());</span>
+            }
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">            if (data.getFirestations() != null) {</span>
+<span class="fc" id="L50">                firestations = new ArrayList&lt;&gt;(data.getFirestations());</span>
+            }
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">            if (data.getMedicalrecords() != null) {</span>
+<span class="fc" id="L53">                medicalRecords = new ArrayList&lt;&gt;(data.getMedicalrecords());</span>
+            }
 
-<span class="fc" id="L55">            System.out.printf(</span>
-                    &quot;[DataParser] Loaded: persons=%d, firestations=%d, medicalrecords=%d from %s%n&quot;,
-<span class="fc" id="L57">                    persons.size(), firestations.size(), medicalRecords.size(), filePath</span>
-            );
-<span class="nc" id="L59">        } catch (Exception e) {</span>
-<span class="nc" id="L60">            throw new RuntimeException(&quot;Failed to load &quot; + filePath, e);</span>
-<span class="fc" id="L61">        }</span>
-<span class="fc" id="L62">    }</span>
+<span class="nc" id="L56">        } catch (IOException e) {</span>
+<span class="nc" id="L57">            throw new RuntimeException(&quot;Unable to load data file: &quot; + filePath, e);</span>
+<span class="fc" id="L58">        }</span>
+<span class="fc" id="L59">    }</span>
 
-    // --- Accessors return the LIVE lists (services can mutate them) ---
-<span class="nc" id="L65">    public List&lt;Person&gt; getPersons() { return persons; }</span>
-<span class="nc" id="L66">    public List&lt;Firestation&gt; getFirestations() { return firestations; }</span>
-<span class="nc" id="L67">    public List&lt;MedicalRecord&gt; getMedicalRecords() { return medicalRecords; }</span>
-
-    /**
-     * Persist current in-memory state to disk safely.
-     * Synchronized to avoid concurrent writes from multiple requests/threads.
-     */
     public synchronized void saveToFile() {
         try {
-<span class="nc" id="L75">            DataWrapper wrapper = new DataWrapper();</span>
-<span class="nc" id="L76">            wrapper.setPersons(this.persons);</span>
-<span class="nc" id="L77">            wrapper.setFirestations(this.firestations);</span>
-<span class="nc" id="L78">            wrapper.setMedicalrecords(this.medicalRecords);</span>
-<span class="nc" id="L79">            writeWrapperAtomically(wrapper);</span>
-<span class="nc" id="L80">        } catch (IOException e) {</span>
-<span class="nc" id="L81">            throw new RuntimeException(&quot;Failed to save to &quot; + filePath, e);</span>
-<span class="nc" id="L82">        }</span>
-<span class="nc" id="L83">    }</span>
+<span class="nc" id="L63">            DataWrapper wrapper = new DataWrapper();</span>
+<span class="nc" id="L64">            wrapper.setPersons(persons);</span>
+<span class="nc" id="L65">            wrapper.setFirestations(firestations);</span>
+<span class="nc" id="L66">            wrapper.setMedicalrecords(medicalRecords);</span>
 
-    /**
-     * Write to a temporary file first, then atomically move into place.
-     * Prevents corrupted JSON if the app crashes during write.
-     */
-    private void writeWrapperAtomically(DataWrapper wrapper) throws IOException {
-<span class="nc" id="L90">        Path tmp = Files.createTempFile(filePath.getParent(), &quot;data-&quot;, &quot;.json.tmp&quot;);</span>
+<span class="nc" id="L68">            writeAtomically(wrapper);</span>
+
+<span class="nc" id="L70">        } catch (IOException e) {</span>
+<span class="nc" id="L71">            throw new RuntimeException(&quot;Unable to save data file: &quot; + filePath, e);</span>
+<span class="nc" id="L72">        }</span>
+<span class="nc" id="L73">    }</span>
+
+    private void createEmptyFile() throws IOException {
+<span class="nc" id="L76">        Files.createDirectories(filePath.getParent());</span>
+
+<span class="nc" id="L78">        DataWrapper empty = new DataWrapper();</span>
+<span class="nc" id="L79">        empty.setPersons(new ArrayList&lt;&gt;());</span>
+<span class="nc" id="L80">        empty.setFirestations(new ArrayList&lt;&gt;());</span>
+<span class="nc" id="L81">        empty.setMedicalrecords(new ArrayList&lt;&gt;());</span>
+
+<span class="nc" id="L83">        writeAtomically(empty);</span>
+<span class="nc" id="L84">    }</span>
+
+    private void writeAtomically(DataWrapper wrapper) throws IOException {
+<span class="nc" id="L87">        Path tempFile =</span>
+<span class="nc" id="L88">                Files.createTempFile(filePath.getParent(), &quot;data-&quot;, &quot;.json&quot;);</span>
+
         try {
-<span class="nc" id="L92">            mapper.writeValue(tmp.toFile(), wrapper);</span>
-<span class="nc" id="L93">            Files.move(tmp, filePath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);</span>
+<span class="nc" id="L91">            mapper.writeValue(tempFile.toFile(), wrapper);</span>
+<span class="nc" id="L92">            Files.move(</span>
+                    tempFile,
+                    filePath,
+                    StandardCopyOption.REPLACE_EXISTING,
+                    StandardCopyOption.ATOMIC_MOVE
+            );
         } finally {
-            // In case move fails, ensure temp is cleaned up
-<span class="nc" id="L96">            try { Files.deleteIfExists(tmp); } catch (Exception ignore) {}</span>
+<span class="nc" id="L99">            Files.deleteIfExists(tempFile);</span>
         }
-<span class="nc" id="L98">    }</span>
+<span class="nc" id="L101">    }</span>
 
-    // Wrapper matches the structure of data.json
-<span class="fc" id="L101">    public static class DataWrapper {</span>
+    @Data
+    public static class DataWrapper {
         private List&lt;Person&gt; persons;
         private List&lt;Firestation&gt; firestations;
         private List&lt;MedicalRecord&gt; medicalrecords;
-
-<span class="fc" id="L106">        public List&lt;Person&gt; getPersons() { return persons; }</span>
-<span class="fc" id="L107">        public void setPersons(List&lt;Person&gt; persons) { this.persons = persons; }</span>
-        //can apply object stream here to map to a list of person per station object
-        //list of firestations, list of people, compare their addresses
-<span class="fc" id="L110">        public List&lt;Firestation&gt; getFirestations() { return firestations; }</span>
-<span class="fc" id="L111">        public void setFirestations(List&lt;Firestation&gt; firestations) { this.firestations = firestations; }</span>
-
-<span class="fc" id="L113">        public List&lt;MedicalRecord&gt; getMedicalrecords() { return medicalrecords; }</span>
-<span class="fc" id="L114">        public void setMedicalrecords(List&lt;MedicalRecord&gt; medicalrecords) { this.medicalrecords = medicalrecords; }</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

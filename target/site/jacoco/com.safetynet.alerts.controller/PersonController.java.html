@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PersonController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.controller</a> &gt; <span class="el_source">PersonController.java</span></div><h1>PersonController.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.controller;
-//add logs
+
 import com.safetynet.alerts.domain.Person;
 import com.safetynet.alerts.repository.DataParser;
+import com.safetynet.alerts.service.PersonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.safetynet.alerts.service.PersonService;
+
 import java.util.List;
 
 /**
@@ -15,7 +16,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(&quot;/persons&quot;)
-<span class="fc" id="L18">@Slf4j</span>
+<span class="fc" id="L19">@Slf4j</span>
 public class PersonController {
 
     private final DataParser data;
@@ -28,21 +29,24 @@ public class PersonController {
      * @param personService
      */
     @Autowired
-<span class="fc" id="L31">    public PersonController(DataParser data, PersonService personService) {</span>
-<span class="fc" id="L32">        this.data = data;</span>
-<span class="fc" id="L33">        this.personService = personService;</span>
-<span class="fc" id="L34">    }</span>
+<span class="fc" id="L32">    public PersonController(DataParser data, PersonService personService) {</span>
+<span class="fc" id="L33">        this.data = data;</span>
+<span class="fc" id="L34">        this.personService = personService;</span>
+<span class="fc" id="L35">    }</span>
 
     /**
-     * Gets all the people
+     * Get all the people
      *
-     * @return
+     * @return list of people
      */
     @GetMapping
     public List&lt;Person&gt; getPeople() {
-<span class="fc" id="L43">        log.info(&quot;Getting all of the people...&quot;);</span>
-<span class="fc" id="L44">        return personService.findAll();</span>
+<span class="fc" id="L44">        log.info(&quot;GET /persons - Retrieving all persons&quot;);</span>
 
+<span class="fc" id="L46">        List&lt;Person&gt; people = personService.findAll();</span>
+<span class="fc" id="L47">        log.info(&quot;Successfully retrieved {} persons&quot;, people.size());</span>
+
+<span class="fc" id="L49">        return people;</span>
     }
 
     /**
@@ -50,31 +54,56 @@ public class PersonController {
      *
      * @param lastName
      * @param firstName
-     * @return
+     * @return person if found
      */
     @GetMapping(&quot;/{lastName}/{firstName}&quot;)
     public ResponseEntity&lt;Person&gt; getPerson(
             @PathVariable String lastName,
             @PathVariable String firstName) {
-        //break up into two parts to do logging
-<span class="fc" id="L60">        return personService.findByName(lastName, firstName)</span>
-<span class="fc" id="L61">                .map(ResponseEntity::ok)</span>
-<span class="fc" id="L62">                .orElse(ResponseEntity.notFound().build());</span>
+
+<span class="fc" id="L64">        log.info(&quot;GET /persons/{}/{} - Retrieving person&quot;, lastName, firstName);</span>
+
+<span class="fc" id="L66">        return personService.findByName(lastName, firstName)</span>
+<span class="fc" id="L67">                .map(person -&gt; {</span>
+<span class="fc" id="L68">                    log.info(&quot;Person found: {} {}&quot;, firstName, lastName);</span>
+<span class="fc" id="L69">                    return ResponseEntity.ok(person);</span>
+                })
+<span class="fc" id="L71">                .orElseGet(() -&gt; {</span>
+<span class="fc" id="L72">                    log.warn(&quot;Person not found: {} {}&quot;, firstName, lastName);</span>
+<span class="fc" id="L73">                    return ResponseEntity.notFound().build();</span>
+                });
     }
 
     /**
      * Add a new person
      *
      * @param newPerson
-     * @return
+     * @return created person
      */
     @PostMapping
     public ResponseEntity&lt;Person&gt; postPerson(@RequestBody Person newPerson) {
-<span class="fc" id="L73">        Person savedPerson = personService.postPerson(newPerson);</span>
-<span class="fc" id="L74">        log.info(&quot;Posting a new person...&quot;);</span>
-<span class="fc" id="L75">        return new ResponseEntity&lt;&gt;(savedPerson, HttpStatus.CREATED);</span>
-    }
 
+<span class="fc" id="L86">        log.info(&quot;POST /persons - Creating person {} {}&quot;,</span>
+<span class="fc" id="L87">                newPerson.getFirstName(),</span>
+<span class="fc" id="L88">                newPerson.getLastName());</span>
+
+        try {
+<span class="fc" id="L91">            Person savedPerson = personService.postPerson(newPerson);</span>
+
+<span class="fc" id="L93">            log.info(&quot;Person successfully created: {} {}&quot;,</span>
+<span class="fc" id="L94">                    savedPerson.getFirstName(),</span>
+<span class="fc" id="L95">                    savedPerson.getLastName());</span>
+
+<span class="fc" id="L97">            return new ResponseEntity&lt;&gt;(savedPerson, HttpStatus.CREATED);</span>
+
+<span class="nc" id="L99">        } catch (Exception ex) {</span>
+<span class="nc" id="L100">            log.error(&quot;Error while creating person {} {}&quot;,</span>
+<span class="nc" id="L101">                    newPerson.getFirstName(),</span>
+<span class="nc" id="L102">                    newPerson.getLastName(),</span>
+                    ex);
+<span class="nc" id="L104">            throw ex;</span>
+        }
+    }
 
     /**
      * Update an existing person, not changing the name
@@ -82,21 +111,32 @@ public class PersonController {
      * @param lastName
      * @param firstName
      * @param updates
-     * @return
+     * @return updated person or error
      */
-    @PutMapping(path = &quot;/{lastName}/{firstName}&quot;)
+    @PutMapping(&quot;/{lastName}/{firstName}&quot;)
     public ResponseEntity&lt;?&gt; putPerson(
             @PathVariable String lastName,
             @PathVariable String firstName,
             @RequestBody Person updates) {
+
+<span class="fc" id="L122">        log.info(&quot;PUT /persons/{}/{} - Updating person&quot;, lastName, firstName);</span>
+
         try {
-<span class="fc" id="L93">            log.info(&quot;Updating an existing person...&quot;);</span>
-<span class="fc" id="L94">            return personService.updatePerson(lastName, firstName, updates)</span>
-<span class="fc" id="L95">                    .&lt;ResponseEntity&lt;?&gt;&gt;map(ResponseEntity::ok)</span>
-<span class="fc" id="L96">                    .orElseGet(() -&gt; ResponseEntity.status(HttpStatus.NOT_FOUND)</span>
-<span class="fc" id="L97">                            .body(&quot;Person not found: &quot; + firstName  + &quot; &quot; + lastName));</span>
-<span class="fc" id="L98">        } catch (IllegalArgumentException ex) {</span>
-<span class="fc" id="L99">            return ResponseEntity.badRequest().body(ex.getMessage());</span>
+<span class="fc" id="L125">            return personService.updatePerson(lastName, firstName, updates)</span>
+<span class="fc" id="L126">                    .&lt;ResponseEntity&lt;?&gt;&gt;map(updated -&gt; {</span>
+<span class="fc" id="L127">                        log.info(&quot;Person updated successfully: {} {}&quot;, firstName, lastName);</span>
+<span class="fc" id="L128">                        return ResponseEntity.ok(updated);</span>
+                    })
+<span class="fc" id="L130">                    .orElseGet(() -&gt; {</span>
+<span class="fc" id="L131">                        log.warn(&quot;Person not found for update: {} {}&quot;, firstName, lastName);</span>
+<span class="fc" id="L132">                        return ResponseEntity.status(HttpStatus.NOT_FOUND)</span>
+<span class="fc" id="L133">                                .body(&quot;Person not found: &quot; + firstName + &quot; &quot; + lastName);</span>
+                    });
+
+<span class="fc" id="L136">        } catch (IllegalArgumentException ex) {</span>
+<span class="fc" id="L137">            log.error(&quot;Invalid update request for {} {}: {}&quot;,</span>
+<span class="fc" id="L138">                    firstName, lastName, ex.getMessage(), ex);</span>
+<span class="fc" id="L139">            return ResponseEntity.badRequest().body(ex.getMessage());</span>
         }
     }
 
@@ -105,17 +145,31 @@ public class PersonController {
      *
      * @param lastName
      * @param firstName
-     * @return
+     * @return response status
      */
     @DeleteMapping(&quot;/{lastName}/{firstName}&quot;)
     public ResponseEntity&lt;Void&gt; delete(
             @PathVariable String lastName,
             @PathVariable String firstName) {
 
-<span class="fc" id="L115">        boolean deleted = personService.deleteByName(lastName, firstName);</span>
-<span class="fc" id="L116">        log.info(&quot;Deleting a person...&quot;);</span>
-<span class="fc bfc" id="L117" title="All 2 branches covered.">        return deleted ? ResponseEntity.ok().build()</span>
-<span class="fc" id="L118">                : ResponseEntity.notFound().build();</span>
+<span class="fc" id="L155">        log.info(&quot;DELETE /persons/{}/{} - Deleting person&quot;, lastName, firstName);</span>
+
+        try {
+<span class="fc" id="L158">            boolean deleted = personService.deleteByName(lastName, firstName);</span>
+
+<span class="fc bfc" id="L160" title="All 2 branches covered.">            if (deleted) {</span>
+<span class="fc" id="L161">                log.info(&quot;Person deleted successfully: {} {}&quot;, firstName, lastName);</span>
+<span class="fc" id="L162">                return ResponseEntity.ok().build();</span>
+            } else {
+<span class="fc" id="L164">                log.warn(&quot;Person not found for deletion: {} {}&quot;, firstName, lastName);</span>
+<span class="fc" id="L165">                return ResponseEntity.notFound().build();</span>
+            }
+
+<span class="nc" id="L168">        } catch (Exception ex) {</span>
+<span class="nc" id="L169">            log.error(&quot;Error while deleting person {} {}&quot;,</span>
+                    firstName, lastName, ex);
+<span class="nc" id="L171">            throw ex;</span>
+        }
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

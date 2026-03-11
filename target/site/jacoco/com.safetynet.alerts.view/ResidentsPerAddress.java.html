@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ResidentsPerAddress.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.view</a> &gt; <span class="el_source">ResidentsPerAddress.java</span></div><h1>ResidentsPerAddress.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.view;
+
+import com.safetynet.alerts.dto.ResidentsPerAddressDTO;
+import lombok.Data;
+import java.util.List;
+
+/**
+ * Class to hold the information for residents per address
+ * Plus the firestation number
+ */
+@Data
+public class ResidentsPerAddress {
+    private List&lt;ResidentsPerAddressDTO&gt; residents;
+    private String stationNumber;
+
+    /**
+     * Constructor for the ResidentsPerAddress view
+     * @param residents
+     * @param stationNumber
+     */
+<span class="nc" id="L21">    public ResidentsPerAddress(List&lt;ResidentsPerAddressDTO&gt; residents, String stationNumber) {</span>
+<span class="nc" id="L22">        this.residents = residents;</span>
+<span class="nc" id="L23">        this.stationNumber = stationNumber;</span>
+<span class="nc" id="L24">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
