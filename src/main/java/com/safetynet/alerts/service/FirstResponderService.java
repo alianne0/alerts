@@ -39,7 +39,7 @@ public class FirstResponderService {
     private static Integer computeAge(MedicalRecord mr) {
         if (mr == null) return null;
         try {
-            String birthdate = mr.getBirthdate(); // e.g., "03/06/1984"
+            String birthdate = mr.getBirthdate();
             if (birthdate != null && !birthdate.isBlank()) {
                 DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM/dd/yyyy");
                 LocalDate dob = LocalDate.parse(birthdate, fmt);
@@ -54,42 +54,45 @@ public class FirstResponderService {
 
     /**
      * Obtains the list of people serviced by a particular fire station number
-     * Finds the addresses for a fire station, then finds the people with that address
-     * Counts the adults and children by lookup of birthdate by name
+     * First finds all the addresses and errors out if the station number does not exist
+     * Then it filters the people who live at those addresses, then does a medical record lookup
+     * Finally it maps the data to the DTO and counts the adults/children
      * @param stationNumber
      * @return
      */
     public PeoplePerStation getPeopleByStation(String stationNumber) {
-        // find all addresses for this firestation
         List<String> addresses = new ArrayList<>();
-        for(Firestation fs : data.getFirestations()){
-            if(fs != null && fs.getStation().equals(stationNumber)) {
+        for (Firestation fs : data.getFirestations()) {
+            if (fs != null && fs.getStation().equals(stationNumber)) {
                 addresses.add(fs.getAddress());
             }
         }
-        //filter persons who live at those addresses
+
+        if (addresses.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Firestation not found for station number: " + stationNumber
+            );
+        }
+
         List<Person> personsCovered = new ArrayList<>();
-        for(Person p : data.getPersons()){
-            if(p != null &&  addresses.contains(p.getAddress())) {
+        for (Person p : data.getPersons()) {
+            if (p != null && addresses.contains(p.getAddress())) {
                 personsCovered.add(p);
             }
         }
 
-        //count adults and children (requires medical records)
-        //linear lookup of birthday by name
         Map<String, MedicalRecord> medicalRecordSearch = new HashMap<>();
-        for (MedicalRecord mr : data.getMedicalRecords()){
+        for (MedicalRecord mr : data.getMedicalRecords()) {
             if (mr != null && mr.getFirstName() != null && mr.getLastName() != null) {
-
                 String key = normalizeName(mr.getFirstName(), mr.getLastName());
                 medicalRecordSearch.put(key, mr);
             }
         }
 
-        //map them to DTO
         List<CoveredPersonsDTO> personToDto = new ArrayList<>();
         int adultCount = 0;
         int childCount = 0;
+
         for (Person p : personsCovered) {
             CoveredPersonsDTO dto = new CoveredPersonsDTO(
                     p.getFirstName(),
@@ -98,10 +101,12 @@ public class FirstResponderService {
                     p.getPhone()
             );
             personToDto.add(dto);
+
             String key = normalizeName(p.getFirstName(), p.getLastName());
             MedicalRecord mr = medicalRecordSearch.get(key);
             Integer age = computeAge(mr);
-            if(age != null) {
+
+            if (age != null) {
                 if (age < 18) {
                     childCount++;
                 } else {
@@ -109,16 +114,16 @@ public class FirstResponderService {
                 }
             }
         }
+
         return new PeoplePerStation(personToDto, adultCount, childCount);
     }
     /**
      * Returns children (age 18 or younger) living at the given address,
-     * including their names, ages, and a list of other household members.
-     * Returns an empty result object if no children are found.
+     * First find the people living at an address and errors if its unknown
+     * Then builds lookup for medical records and determines which people are children by age
+     * Finally it obtains other household members by searching by address
      */
     public ChildrenByAddress getChildrenByAddress(String address) {
-
-        // 1. Find persons living at the given address
         List<Person> personsAtAddress = new ArrayList<>();
         for (Person p : data.getPersons()) {
             if (p != null && address.equalsIgnoreCase(p.getAddress())) {
@@ -126,7 +131,12 @@ public class FirstResponderService {
             }
         }
 
-        // 2. Build lookup map for medical records
+        if (personsAtAddress.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Address not found: " + address
+            );
+        }
+
         Map<String, MedicalRecord> recordLookup = new HashMap<>();
         for (MedicalRecord mr : data.getMedicalRecords()) {
             if (mr != null && mr.getFirstName() != null && mr.getLastName() != null) {
@@ -135,7 +145,6 @@ public class FirstResponderService {
             }
         }
 
-        // 3. Determine which persons are children
         List<ChildrenByAddressDTO> children = new ArrayList<>();
 
         for (Person p : personsAtAddress) {
@@ -145,11 +154,9 @@ public class FirstResponderService {
             Integer age = computeAge(mr);
             if (age != null && age <= 18) {
 
-                // Child DTO
                 ChildrenByAddressDTO childDto =
                         new ChildrenByAddressDTO(p.getFirstName(), p.getLastName(), age);
 
-                // Build household member list (everyone except child)
                 List<HouseholdMembersDTO> householdMembers = new ArrayList<>();
                 for (Person other : personsAtAddress) {
                     if (!other.getFirstName().equalsIgnoreCase(p.getFirstName()) ||
@@ -167,17 +174,17 @@ public class FirstResponderService {
             }
         }
 
-        // 4. Wrap in view object to match other endpoint conventions
         return new ChildrenByAddress(children);
     }
 
     /**
      * Returns a list of unique phone numbers for residents served by the given fire station.
+     * First finds all addresses for that firestation, then filters the people who live at those addresses
+     * Extracts unique, non-blank numbers and then sorts them
      * @param fireStation the fire station number
      * @return PhonesPerStation view containing the list of phone numbers
      */
     public PhonesPerStation getPhonesPerStation(String fireStation) {
-        // 1) find all addresses for this firestation
         List<String> addresses = new ArrayList<>();
         for (Firestation fs : data.getFirestations()) {
             if (fs != null && fs.getStation() != null && fs.getStation().equals(fireStation)) {
@@ -187,7 +194,12 @@ public class FirstResponderService {
             }
         }
 
-        // 2) filter persons who live at those addresses
+        if (addresses.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Firestation not found for station number: " + fireStation
+            );
+        }
+
         List<Person> personsCovered = new ArrayList<>();
         for (Person p : data.getPersons()) {
             if (p != null && p.getAddress() != null && addresses.contains(p.getAddress())) {
@@ -195,7 +207,6 @@ public class FirstResponderService {
             }
         }
 
-        // 3) extract unique, non-blank phone numbers
         Set<String> uniquePhones = new LinkedHashSet<>();
         for (Person p : personsCovered) {
             String phone = (p != null) ? p.getPhone() : null;
@@ -207,7 +218,6 @@ public class FirstResponderService {
             }
         }
 
-        // 4) sort for deterministic responses
         List<String> phones = new ArrayList<>(uniquePhones);
         Collections.sort(phones);
 
@@ -216,12 +226,14 @@ public class FirstResponderService {
 
     /**
      * Returns the list of residents living at the given address and the fire station number serving it.
+     * First finds the station number associated with the address
+     * Filter the people who live at that address
+     * Also maps medical record information to that person
      *
      * @param address the address to search
      * @return ResidentsPerAddress view containing the residents and the station number
      */
     public ResidentsPerAddress getResidentsPerAddress(String address) {
-        // 1) find the fire station number for this address
         String stationNumber = null;
         for (Firestation fs : data.getFirestations()) {
             if (fs != null && fs.getAddress() != null && fs.getAddress().equals(address)) {
@@ -230,7 +242,12 @@ public class FirstResponderService {
             }
         }
 
-        // 2) filter persons who live at this address
+        if (stationNumber == null) {
+            throw new IllegalArgumentException(
+                    "Address not found: " + address
+            );
+        }
+
         List<Person> residentsAtAddress = new ArrayList<>();
         for (Person p : data.getPersons()) {
             if (p != null && address != null && address.equals(p.getAddress())) {
@@ -238,7 +255,6 @@ public class FirstResponderService {
             }
         }
 
-        // 3) build a lookup of medical records by normalized full name
         Map<String, MedicalRecord> medicalRecordSearch = new HashMap<>();
         for (MedicalRecord mr : data.getMedicalRecords()) {
             if (mr != null && mr.getFirstName() != null && mr.getLastName() != null) {
@@ -247,7 +263,6 @@ public class FirstResponderService {
             }
         }
 
-        // 4) map residents to DTOs: name, phone, age, medications, allergies
         List<ResidentsPerAddressDTO> residents = new ArrayList<>();
         for (Person p : residentsAtAddress) {
             String key = normalizeName(p.getFirstName(), p.getLastName());
@@ -279,17 +294,17 @@ public class FirstResponderService {
     }
     /**
      * Returns all households served by the given fire station numbers.
+     * Collects addresses for the station numbers and group by those who live at that address.
+     * Builds a lookup of medical records for each person
      *
      * @param stations the list of station numbers
      * @return a list of households (one per address) with residents and their medical info
      */
     public List<HouseholdsByStation> getHouseholdsByFirestation(List<String> stations) {
-        // Guard clauses (optional, adjust to your project standards)
         if (stations == null || stations.isEmpty()) {
             return Collections.emptyList();
         }
 
-        // 1) Collect all addresses for the provided station numbers
         Set<String> stationSet = new HashSet<>(stations);
         Set<String> addresses = new LinkedHashSet<>();
         for (Firestation fs : data.getFirestations()) {
@@ -301,15 +316,21 @@ public class FirstResponderService {
             }
         }
 
-        // 2) Group persons who live at those addresses by address
+        if (addresses.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Firestation not found for station numbers: " + stations
+            );
+        }
+
         Map<String, List<Person>> personsByAddress = new LinkedHashMap<>();
         for (Person p : data.getPersons()) {
             if (p != null && p.getAddress() != null && addresses.contains(p.getAddress())) {
-                personsByAddress.computeIfAbsent(p.getAddress(), k -> new ArrayList<>()).add(p);
+                personsByAddress
+                        .computeIfAbsent(p.getAddress(), k -> new ArrayList<>())
+                        .add(p);
             }
         }
 
-        // 3) Build a lookup of medical records by normalized full name
         Map<String, MedicalRecord> medicalRecordSearch = new HashMap<>();
         for (MedicalRecord mr : data.getMedicalRecords()) {
             if (mr != null && mr.getFirstName() != null && mr.getLastName() != null) {
@@ -318,7 +339,6 @@ public class FirstResponderService {
             }
         }
 
-        // 4) For each address, map residents to DTOs: name, phone, age, medications, allergies
         List<HouseholdsByStation> households = new ArrayList<>();
         for (Map.Entry<String, List<Person>> entry : personsByAddress.entrySet()) {
             String address = entry.getKey();
@@ -330,7 +350,7 @@ public class FirstResponderService {
                 MedicalRecord mr = medicalRecordSearch.get(key);
 
                 Integer maybeAge = computeAge(mr);
-                int age = (maybeAge != null) ? maybeAge : 0; // DTO uses primitive int
+                int age = (maybeAge != null) ? maybeAge : 0;
 
                 List<String> medications = (mr != null && mr.getMedications() != null)
                         ? mr.getMedications()
@@ -340,15 +360,14 @@ public class FirstResponderService {
                         ? mr.getAllergies()
                         : Collections.emptyList();
 
-                ResidentsPerAddressDTO dto = new ResidentsPerAddressDTO(
+                residents.add(new ResidentsPerAddressDTO(
                         p.getFirstName(),
                         p.getLastName(),
                         p.getPhone(),
                         age,
                         medications,
                         allergies
-                );
-                residents.add(dto);
+                ));
             }
             households.add(new HouseholdsByStation(address, residents));
         }
@@ -363,12 +382,11 @@ public class FirstResponderService {
      * @return PersonInfo view containing a list of PersonInfoDTO
      */
     public PersonInfo getPersonInfo(String lastName) {
+
         if (lastName == null || lastName.isBlank()) {
-            // Keep response shape stable with an empty list
             return new PersonInfo(new ArrayList<>());
         }
 
-        // 1) Build a lookup map for medical records by normalized "first:last"
         Map<String, MedicalRecord> medicalRecordSearch = new HashMap<>();
         for (MedicalRecord mr : data.getMedicalRecords()) {
             if (mr != null && mr.getFirstName() != null && mr.getLastName() != null) {
@@ -377,7 +395,6 @@ public class FirstResponderService {
             }
         }
 
-        // 2) Filter persons who match the last name (case-insensitive)
         List<Person> personsMatched = new ArrayList<>();
         for (Person p : data.getPersons()) {
             if (p != null && p.getLastName() != null) {
@@ -387,29 +404,29 @@ public class FirstResponderService {
             }
         }
 
-        // 3) Map to DTO
+        if (personsMatched.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "No person found with last name: " + lastName
+            );
+        }
+
         List<PersonInfoDTO> result = new ArrayList<>();
         for (Person p : personsMatched) {
             String key = normalizeName(p.getFirstName(), p.getLastName());
             MedicalRecord mr = medicalRecordSearch.get(key);
 
-            // Use provided computeAge helper; DTO has primitive int, so null -> 0
             Integer ageObj = computeAge(mr);
             int age = (ageObj != null) ? ageObj : 0;
 
-            List<String> medications;
-            if (mr != null && mr.getMedications() != null) {
-                medications = mr.getMedications();
-            } else {
-                medications = Collections.emptyList();
-            }
+            List<String> medications =
+                    (mr != null && mr.getMedications() != null)
+                            ? mr.getMedications()
+                            : Collections.emptyList();
 
-            List<String> allergies;
-            if (mr != null && mr.getAllergies() != null) {
-                allergies = mr.getAllergies();
-            } else {
-                allergies = Collections.emptyList();
-            }
+            List<String> allergies =
+                    (mr != null && mr.getAllergies() != null)
+                            ? mr.getAllergies()
+                            : Collections.emptyList();
 
             PersonInfoDTO dto = new PersonInfoDTO(
                     p.getLastName(),
@@ -422,7 +439,6 @@ public class FirstResponderService {
             );
             result.add(dto);
         }
-
         return new PersonInfo(result);
     }
 
@@ -433,19 +449,14 @@ public class FirstResponderService {
      * @return ResidentEmails view containing a unique list of emails
      */
     public ResidentEmails getResidentEmails(String city) {
-        // Defensive: empty response if city is blank
         if (city == null || city.isBlank()) {
             return new ResidentEmails(new ArrayList<>());
         }
 
-        // Use a LinkedHashSet to keep uniqueness + insertion order
         Set<String> uniqueEmails = new LinkedHashSet<>();
-
-        // Loop over all persons in memory (style consistent with your example)
         for (Person p : data.getPersons()) {
             if (p == null) continue;
 
-            // Match by city (case-insensitive), ignore nulls
             String personCity = p.getCity();
             if (personCity != null && personCity.equalsIgnoreCase(city)) {
                 String email = p.getEmail();
@@ -455,19 +466,14 @@ public class FirstResponderService {
             }
         }
 
-        // Convert to list (maintains first-seen order)
-        List<String> emails = new ArrayList<>();
-        for (String e : uniqueEmails) {
-            emails.add(e);
+        if (uniqueEmails.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "City not found: " + city
+            );
         }
 
-        // If your ResidentEmails has a setter:
-        // ResidentEmails view = new ResidentEmails();
-        // view.setEmails(emails);
-        // return view;
+        List<String> emails = new ArrayList<>(uniqueEmails);
 
-        // If your ResidentEmails has a constructor that takes the list:
         return new ResidentEmails(emails);
     }
-
 }

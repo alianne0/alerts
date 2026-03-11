@@ -8,7 +8,6 @@ import java.util.List;
  * Includes first and last name, address, age, email,
  * medications, and allergies
  */
-//TODO: add @data for getter setter
 @Data
 public class PersonInfoDTO {
     private String lastName;

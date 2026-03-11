@@ -1,5 +1,4 @@
 package com.safetynet.alerts.controller;
-//add logs for mapping , log error for try catch
 
 import com.safetynet.alerts.domain.MedicalRecord;
 import com.safetynet.alerts.service.MedicalRecordService;
@@ -19,6 +18,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/medicalRecords")
 public class MedicalRecordController {
+
     private final MedicalRecordService medicalRecordService;
 
     /**
@@ -28,32 +28,56 @@ public class MedicalRecordController {
      * @param personService
      */
     @Autowired
-    public MedicalRecordController(MedicalRecordService medicalRecordService, PersonService personService) {
+    public MedicalRecordController(MedicalRecordService medicalRecordService,
+                                   PersonService personService) {
         this.medicalRecordService = medicalRecordService;
     }
 
     /**
      * Get all the medical records
      *
-     * @return
+     * @return list of medical records
      */
     @GetMapping
     public List<MedicalRecord> getAllMedicalRecords() {
-        log.info("Getting all of the medical records...");
-    return medicalRecordService.findAll();
+        log.info("GET /medicalRecords - Retrieving all medical records");
+        List<MedicalRecord> records = medicalRecordService.findAll();
+        log.info("Successfully retrieved {} medical records", records.size());
+
+        return records;
     }
 
     /**
      * Add a new medical record
      *
      * @param newMedicalRecord
-     * @return
+     * @return created medical record
      */
     @PostMapping
-    public ResponseEntity<MedicalRecord> postMedicalRecord(@RequestBody MedicalRecord newMedicalRecord) {
-        MedicalRecord savedMedicalRecord = medicalRecordService.postMedicalRecord(newMedicalRecord);
-        log.info("Posting a new medical record...");
-        return new ResponseEntity<>(savedMedicalRecord, HttpStatus.CREATED);
+    public ResponseEntity<MedicalRecord> postMedicalRecord(
+            @RequestBody MedicalRecord newMedicalRecord) {
+
+        log.info("POST /medicalRecords - Creating medical record for {} {}",
+                newMedicalRecord.getFirstName(),
+                newMedicalRecord.getLastName());
+
+        try {
+            MedicalRecord savedMedicalRecord =
+                    medicalRecordService.postMedicalRecord(newMedicalRecord);
+
+            log.info("Medical record successfully created for {} {}",
+                    savedMedicalRecord.getFirstName(),
+                    savedMedicalRecord.getLastName());
+
+            return new ResponseEntity<>(savedMedicalRecord, HttpStatus.CREATED);
+
+        } catch (Exception ex) {
+            log.error("Error while creating medical record for {} {}",
+                    newMedicalRecord.getFirstName(),
+                    newMedicalRecord.getLastName(),
+                    ex);
+            throw ex;
+        }
     }
 
     /**
@@ -62,20 +86,33 @@ public class MedicalRecordController {
      * @param lastName
      * @param firstName
      * @param updates
-     * @return
+     * @return updated medical record or error
      */
     @PutMapping("/{lastName}/{firstName}")
-    public ResponseEntity<?> updateMedicalRecord (
+    public ResponseEntity<?> updateMedicalRecord(
             @PathVariable String lastName,
             @PathVariable String firstName,
             @RequestBody MedicalRecord updates) {
+
+        log.info("PUT /medicalRecords/{}/{} - Updating medical record",
+                lastName, firstName);
+
         try {
-            log.info("Updating a medical record...");
             return medicalRecordService.updateMedicalRecord(lastName, firstName, updates)
-                    .<ResponseEntity<?>>map(ResponseEntity::ok)
-                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND)
-                            .body("person not found: " + lastName + " " + firstName));
+                    .<ResponseEntity<?>>map(updated -> {
+                        log.info("Medical record updated successfully for {} {}",
+                                firstName, lastName);
+                        return ResponseEntity.ok(updated);
+                    })
+                    .orElseGet(() -> {
+                        log.warn("Medical record not found for {} {}", firstName, lastName);
+                        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                                .body("person not found: " + lastName + " " + firstName);
+                    });
+
         } catch (IllegalArgumentException ex) {
+            log.error("Invalid update request for {} {}: {}",
+                    firstName, lastName, ex.getMessage(), ex);
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
@@ -85,14 +122,31 @@ public class MedicalRecordController {
      *
      * @param lastName
      * @param firstName
-     * @return
+     * @return response status
      */
     @DeleteMapping("/{lastName}/{firstName}")
-    public ResponseEntity<Void> delete (
-            @PathVariable String lastName, @PathVariable String firstName) {
-        boolean deleted = medicalRecordService.deleteByName(lastName, firstName);
-        //TODO: logging
-        log.info("Deleting a medical record...");
-        return deleted ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> delete(
+            @PathVariable String lastName,
+            @PathVariable String firstName) {
+
+        log.info("DELETE /medicalRecords/{}/{} - Deleting medical record",
+                lastName, firstName);
+
+        try {
+            boolean deleted = medicalRecordService.deleteByName(lastName, firstName);
+
+            if (deleted) {
+                log.info("Medical record deleted successfully for {} {}", firstName, lastName);
+                return ResponseEntity.ok().build();
+            } else {
+                log.warn("Medical record not found for deletion: {} {}", firstName, lastName);
+                return ResponseEntity.notFound().build();
+            }
+
+        } catch (Exception ex) {
+            log.error("Error while deleting medical record for {} {}",
+                    firstName, lastName, ex);
+            throw ex;
+        }
     }
 }

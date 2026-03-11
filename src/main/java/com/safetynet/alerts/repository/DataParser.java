@@ -42,6 +42,7 @@ public class DataParser {
     public DataParser(@Value("${data.file:./data/data.json}") String filePath) {
         this.filePath = Paths.get(filePath).toAbsolutePath().normalize();
         this.mapper = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
+        log.debug("DataParser instantiated with filePath={}", this.filePath);
     }
 
     /**
@@ -50,14 +51,17 @@ public class DataParser {
      */
     @PostConstruct
     public void load() {
+        log.info("Initializing data load from {}", filePath);
         try {
             if (Files.notExists(filePath)) {
+                log.warn("Data file does not exist at {}. Creating a new empty data file.", filePath);
                 Files.createDirectories(filePath.getParent());
                 DataWrapper empty = new DataWrapper();
                 empty.setPersons(new ArrayList<>());
                 empty.setFirestations(new ArrayList<>());
                 empty.setMedicalrecords(new ArrayList<>());
                 writeWrapperAtomically(empty);
+                log.info("Created new empty data file at {}", filePath);
             }
 
             DataWrapper data = mapper.readValue(Files.newInputStream(filePath), DataWrapper.class);
@@ -66,30 +70,36 @@ public class DataParser {
             this.firestations = new ArrayList<>(Optional.ofNullable(data.getFirestations()).orElseGet(ArrayList::new));
             this.medicalRecords = new ArrayList<>(Optional.ofNullable(data.getMedicalrecords()).orElseGet(ArrayList::new));
 
-            System.out.printf(
-                    "[DataParser] Loaded: persons=%d, firestations=%d, medicalrecords=%d from %s%n",
-                    persons.size(), firestations.size(), medicalRecords.size(), filePath
-            );
+            log.info("Data load complete from {}", filePath);
+            log.debug("Loaded counts: persons={}, firestations={}, medicalRecords={}",
+                    persons.size(), firestations.size(), medicalRecords.size());
         } catch (Exception e) {
+            log.error("Failed to load data from {}", filePath, e);
             throw new RuntimeException("Failed to load " + filePath, e);
         }
     }
-
 
     /**
      * Saves all in‑memory data to the JSON file.
      * Synchronized to avoid concurrent writes.
      */
     public void saveToFile() {
+        log.info("Persisting data to {}", filePath);
         try {
             DataWrapper wrapper = new DataWrapper();
             wrapper.setPersons(this.persons);
             wrapper.setFirestations(this.firestations);
             wrapper.setMedicalrecords(this.medicalRecords);
+
+            log.debug("Persisting counts: persons={}, firestations={}, medicalRecords={}",
+                    (persons != null ? persons.size() : 0),
+                    (firestations != null ? firestations.size() : 0),
+                    (medicalRecords != null ? medicalRecords.size() : 0));
+
             writeWrapperAtomically(wrapper);
+            log.info("Persisted data successfully to {}", filePath);
         } catch (IOException e) {
-            //TODO: log at error level
-            log.error("Failed to save to file ",  e);
+            log.error("Failed to save to file {}", filePath, e);
             throw new RuntimeException("Failed to save to " + filePath, e);
         }
     }
@@ -100,11 +110,19 @@ public class DataParser {
      */
     private void writeWrapperAtomically(DataWrapper wrapper) throws IOException {
         Path tmp = Files.createTempFile(filePath.getParent(), "data-", ".json.tmp");
+        log.debug("Writing to temporary file {} before atomic move to {}", tmp, filePath);
         try {
             mapper.writeValue(tmp.toFile(), wrapper);
             Files.move(tmp, filePath, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+            log.debug("Atomic move to {} completed", filePath);
         } finally {
-            try { Files.deleteIfExists(tmp); } catch (Exception ignore) {}
+            try {
+                if (Files.deleteIfExists(tmp)) {
+                    log.trace("Temporary file {} deleted", tmp);
+                }
+            } catch (Exception ignore) {
+                log.warn("Could not delete temporary file {}", tmp, ignore);
+            }
         }
     }
 

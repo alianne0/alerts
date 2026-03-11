@@ -72,18 +72,20 @@ public class MedicalRecordService {
         if (updates.getFirstName() != null && !equalsTrimmed(updates.getFirstName(), firstName)) {
             throw new IllegalArgumentException("first name cannot be changed");
         }
-        for(MedicalRecord existing : data.getMedicalRecords()) {
-            if (equalsTrimmed(existing.getLastName(), lastName) && equalsTrimmed(existing.getFirstName(), firstName)) {
+        for (MedicalRecord existing : data.getMedicalRecords()) {
+            if (equalsTrimmed(existing.getLastName(), lastName) &&
+                    equalsTrimmed(existing.getFirstName(), firstName)) {
+
                 if (updates.getMedications() != null) {
                     existing.setMedications(updates.getMedications());
                 }
                 if (updates.getAllergies() != null) {
                     existing.setAllergies(updates.getAllergies());
                 }
-                if(updates.getBirthdate() !=null) {
+                if (updates.getBirthdate() != null) {
                     existing.setBirthdate(updates.getBirthdate());
-                    return Optional.of(existing);
                 }
+                return Optional.of(existing);
             }
         }
         return Optional.empty();
