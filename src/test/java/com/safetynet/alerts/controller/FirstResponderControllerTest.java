@@ -18,6 +18,9 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * Test class for the FirstResponderController class
+ */
 @ExtendWith(MockitoExtension.class)
 class FirstResponderControllerTest {
 
@@ -36,6 +39,10 @@ class FirstResponderControllerTest {
                 .build();
     }
 
+    /**
+     * Test successflly getting people by station
+     * @throws Exception
+     */
     @Test
     void getPeopleByStation_shouldReturnOk() throws Exception {
         when(firstResponderService.getPeopleByStation("1"))
@@ -46,6 +53,10 @@ class FirstResponderControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Test successfully getting children by address
+     * @throws Exception
+     */
     @Test
     void getChildrenByAddress_shouldReturnOk() throws Exception {
         when(firstResponderService.getChildrenByAddress("1509 Culver St"))
@@ -56,6 +67,10 @@ class FirstResponderControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Test getting the phones per station
+     * @throws Exception
+     */
     @Test
     void getPhonesPerStation_shouldReturnOk() throws Exception {
         when(firstResponderService.getPhonesPerStation("2"))
@@ -66,6 +81,10 @@ class FirstResponderControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Tests getting the residents per address
+     * @throws Exception
+     */
     @Test
     void getResidentsPerAddress_shouldReturnOk() throws Exception {
         when(firstResponderService.getResidentsPerAddress("29 15th St"))
@@ -76,6 +95,10 @@ class FirstResponderControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Test getting the households by firestation
+     * @throws Exception
+     */
     @Test
     void getHouseholdsByFirestation_shouldReturnOk() throws Exception {
         when(firstResponderService.getHouseholdsByFirestation(List.of("1", "2")))
@@ -86,6 +109,10 @@ class FirstResponderControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Tests getting the person info
+     * @throws Exception
+     */
     @Test
     void getPersonInfo_shouldReturnOk() throws Exception {
         when(firstResponderService.getPersonInfo("Doe"))
@@ -96,6 +123,10 @@ class FirstResponderControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * Tests getting the resident emails
+     * @throws Exception
+     */
     @Test
     void getResidentEmails_shouldReturnOk() throws Exception {
         when(firstResponderService.getResidentEmails("Culver"))

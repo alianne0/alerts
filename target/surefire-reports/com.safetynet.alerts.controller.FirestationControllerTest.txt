@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.safetynet.alerts.controller.FirestationControllerTest
 -------------------------------------------------------------------------------
-Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.129 s -- in com.safetynet.alerts.controller.FirestationControllerTest
+Tests run: 0, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.161 s -- in com.safetynet.alerts.controller.FirestationControllerTest

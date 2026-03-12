@@ -2,6 +2,9 @@ package com.safetynet.alerts.view;
 
 import com.safetynet.alerts.dto.PersonInfoDTO;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
 /**
@@ -10,6 +13,7 @@ import java.util.List;
  */
 @Data
 public class PersonInfo {
+    @Getter @Setter
     private List<PersonInfoDTO> personInfoDTOList;
 
     /**
