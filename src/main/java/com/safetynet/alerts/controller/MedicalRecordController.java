@@ -66,7 +66,9 @@ public class MedicalRecordController {
         try {
             MedicalRecord savedMedicalRecord =
                     medicalRecordService.postMedicalRecord(newMedicalRecord);
-            data.saveToFile();
+            if (data != null) {
+                data.saveToFile();
+            }
 
             log.info("Medical record successfully created for {} {}",
                     savedMedicalRecord.getFirstName(),
@@ -103,7 +105,10 @@ public class MedicalRecordController {
         try {
             return medicalRecordService.updateMedicalRecord(lastName, firstName, updates)
                     .<ResponseEntity<?>>map(updated -> {
-                        data.saveToFile();
+                        if (data != null) {
+                            data.saveToFile();
+                        }
+
                         log.info("Medical record updated successfully for {} {}",
                                 firstName, lastName);
                         return ResponseEntity.ok(updated);
@@ -138,7 +143,9 @@ public class MedicalRecordController {
 
         try {
             boolean deleted = medicalRecordService.deleteByName(lastName, firstName);
-            data.saveToFile();
+            if (data != null) {
+                data.saveToFile();
+            }
 
             if (deleted) {
                 log.info("Medical record deleted successfully for {} {}", firstName, lastName);
