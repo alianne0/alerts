@@ -1,10 +1,9 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.controller.PersonController;
 import com.safetynet.alerts.domain.Person;
+import com.safetynet.alerts.repository.DataParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.safetynet.alerts.repository.DataParser;
 
 import java.util.*;
 
@@ -18,6 +17,7 @@ public class PersonService {
 
     /**
      * Constructor for the person service
+     *
      * @param data
      */
     @Autowired
@@ -27,6 +27,7 @@ public class PersonService {
 
     /**
      * Returns all of the mappings in Person
+     *
      * @return
      */
     public List<Person> findAll() {
@@ -35,6 +36,7 @@ public class PersonService {
 
     /**
      * Returns a person mapping and all of their information given their first and last name
+     *
      * @param lastName
      * @param firstName
      * @return
@@ -43,11 +45,12 @@ public class PersonService {
         return data.getPersons().stream()
                 .filter(p -> equalsTrimmed(p.getLastName(), lastName)
                         && equalsTrimmed(p.getFirstName(), firstName))
-                .findFirst( );
+                .findFirst();
     }
 
     /**
      * Posts a new person mapping
+     *
      * @param person
      * @return
      */
@@ -75,6 +78,7 @@ public class PersonService {
 
     /**
      * Deletes a person mapping given their first and last name
+     *
      * @param lastName
      * @param firstName
      * @return
@@ -88,6 +92,7 @@ public class PersonService {
 
     /**
      * Updates a person mapping given their first and last name
+     *
      * @param lastName
      * @param firstName
      * @param updates
@@ -98,7 +103,7 @@ public class PersonService {
         if (updates.getLastName() != null && !equalsTrimmed(updates.getLastName(), lastName)) {
             throw new IllegalArgumentException("last name cannot be changed");
         }
-        if (updates.getFirstName() != null && !equalsTrimmed(updates.getFirstName(), firstName)){
+        if (updates.getFirstName() != null && !equalsTrimmed(updates.getFirstName(), firstName)) {
             throw new IllegalArgumentException("first name cannot be changed");
         }
         for (Person existing : data.getPersons()) {
@@ -109,10 +114,10 @@ public class PersonService {
                 if (updates.getCity() != null) {
                     existing.setCity(updates.getCity());
                 }
-                if(updates.getZip() != null) {
+                if (updates.getZip() != null) {
                     existing.setZip(updates.getZip());
                 }
-                if(updates.getPhone() != null) {
+                if (updates.getPhone() != null) {
                     existing.setPhone(updates.getPhone());
                 }
                 if (updates.getEmail() != null) {

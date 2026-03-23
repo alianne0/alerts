@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for the Firestation Service class
@@ -48,7 +48,6 @@ class FirestationServiceTest {
         when(dataParser.getFirestations()).thenReturn(backingList);
         service = new FirestationService(dataParser);
     }
-
 
 
     /**

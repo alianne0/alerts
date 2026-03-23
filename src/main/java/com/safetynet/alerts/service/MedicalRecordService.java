@@ -1,10 +1,9 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.controller.MedicalRecordController;
 import com.safetynet.alerts.domain.MedicalRecord;
+import com.safetynet.alerts.repository.DataParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.safetynet.alerts.repository.DataParser;
 
 import java.util.*;
 
@@ -17,6 +16,7 @@ public class MedicalRecordService {
 
     /**
      * Constructor for the medical record and instantiates our data parser
+     *
      * @param data
      */
     @Autowired
@@ -26,6 +26,7 @@ public class MedicalRecordService {
 
     /**
      * Returns all of the medical records
+     *
      * @return
      */
     public List<MedicalRecord> findAll() {
@@ -34,17 +35,18 @@ public class MedicalRecordService {
 
     /**
      * Posts a new medical record mapping
+     *
      * @param medicalRecord
      * @return
      */
     public MedicalRecord postMedicalRecord(MedicalRecord medicalRecord) {
-        Objects.requireNonNull(medicalRecord,"medical record cannot be null");
+        Objects.requireNonNull(medicalRecord, "medical record cannot be null");
         List<MedicalRecord> medicalRecords = data.getMedicalRecords();
 
-        for(int i = 0; i < medicalRecords.size(); i++) {
+        for (int i = 0; i < medicalRecords.size(); i++) {
             MedicalRecord existing = medicalRecords.get(i);
-            if(equalsTrimmed(existing.getLastName(), medicalRecord.getLastName())
-            && equalsTrimmed(existing.getFirstName(), medicalRecord.getFirstName())){
+            if (equalsTrimmed(existing.getLastName(), medicalRecord.getLastName())
+                    && equalsTrimmed(existing.getFirstName(), medicalRecord.getFirstName())) {
                 existing.setFirstName(medicalRecord.getFirstName());
                 existing.setLastName(medicalRecord.getLastName());
                 existing.setBirthdate(medicalRecord.getBirthdate());
@@ -59,6 +61,7 @@ public class MedicalRecordService {
 
     /**
      * Updates a particular medical record given their first and last name
+     *
      * @param lastName
      * @param firstName
      * @param updates
@@ -109,6 +112,7 @@ public class MedicalRecordService {
 
     /**
      * Deletes a mapping for a medical record given their name
+     *
      * @param lastName
      * @param firstName
      * @return
@@ -116,7 +120,7 @@ public class MedicalRecordService {
     public boolean deleteByName(String lastName, String firstName) {
         return data.getMedicalRecords().removeIf(
                 m -> equalsTrimmed(m.getLastName(), lastName)
-                && equalsTrimmed(m.getFirstName(), firstName)
+                        && equalsTrimmed(m.getFirstName(), firstName)
         );
     }
 

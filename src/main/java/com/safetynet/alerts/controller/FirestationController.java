@@ -4,9 +4,9 @@ import com.safetynet.alerts.domain.Firestation;
 import com.safetynet.alerts.repository.DataParser;
 import com.safetynet.alerts.service.FirestationService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -65,6 +65,7 @@ public class FirestationController {
             boolean deleted = firestationService.deleteByAddress(address);
 
             if (deleted) {
+                data.saveToFile();
                 log.info("Successfully deleted firestation mapping for address={}", address);
             } else {
                 log.warn("No firestation mapping found to delete for address={}", address);
@@ -92,6 +93,7 @@ public class FirestationController {
                     (body != null ? body.getStation() : null));
 
             Firestation saved = firestationService.postFirestation(body);
+            data.saveToFile();
 
             log.info("Created firestation: address={}, station={}",
                     (saved != null ? saved.getAddress() : null),
@@ -132,6 +134,7 @@ public class FirestationController {
 
             return firestationService.updateFirestation(address, trimmedStation)
                     .<ResponseEntity<?>>map(updated -> {
+                        data.saveToFile();
                         log.info("Successfully updated station for address={} to station={}", address, trimmedStation);
                         return ResponseEntity.ok(updated);
                     })

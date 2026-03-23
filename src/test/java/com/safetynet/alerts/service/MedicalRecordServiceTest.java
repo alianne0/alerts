@@ -60,10 +60,6 @@ class MedicalRecordServiceTest {
                 .thenAnswer(invocation -> backingList);
     }
 
-    // -------------------------------------------------------------------------
-    // findAll
-    // -------------------------------------------------------------------------
-
     /**
      * Test that the function findAll returns the list of medical records
      */

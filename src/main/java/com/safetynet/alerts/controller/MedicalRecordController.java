@@ -1,8 +1,8 @@
 package com.safetynet.alerts.controller;
 
 import com.safetynet.alerts.domain.MedicalRecord;
+import com.safetynet.alerts.repository.DataParser;
 import com.safetynet.alerts.service.MedicalRecordService;
-import com.safetynet.alerts.service.PersonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,18 +19,20 @@ import java.util.List;
 @RequestMapping("/medicalRecords")
 public class MedicalRecordController {
 
+    private final DataParser data;
     private final MedicalRecordService medicalRecordService;
 
     /**
      * Constructor for the Medical Record controller
      *
      * @param medicalRecordService
-     * @param personService
+     * @param data
      */
     @Autowired
-    public MedicalRecordController(MedicalRecordService medicalRecordService,
-                                   PersonService personService) {
+    public MedicalRecordController(MedicalRecordService medicalRecordService, DataParser data) {
         this.medicalRecordService = medicalRecordService;
+        this.data = data;
+
     }
 
     /**
@@ -64,6 +66,7 @@ public class MedicalRecordController {
         try {
             MedicalRecord savedMedicalRecord =
                     medicalRecordService.postMedicalRecord(newMedicalRecord);
+            data.saveToFile();
 
             log.info("Medical record successfully created for {} {}",
                     savedMedicalRecord.getFirstName(),
@@ -100,6 +103,7 @@ public class MedicalRecordController {
         try {
             return medicalRecordService.updateMedicalRecord(lastName, firstName, updates)
                     .<ResponseEntity<?>>map(updated -> {
+                        data.saveToFile();
                         log.info("Medical record updated successfully for {} {}",
                                 firstName, lastName);
                         return ResponseEntity.ok(updated);
@@ -134,6 +138,7 @@ public class MedicalRecordController {
 
         try {
             boolean deleted = medicalRecordService.deleteByName(lastName, firstName);
+            data.saveToFile();
 
             if (deleted) {
                 log.info("Medical record deleted successfully for {} {}", firstName, lastName);

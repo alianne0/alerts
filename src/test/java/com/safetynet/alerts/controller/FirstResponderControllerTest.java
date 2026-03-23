@@ -41,6 +41,7 @@ class FirstResponderControllerTest {
 
     /**
      * Test successflly getting people by station
+     *
      * @throws Exception
      */
     @Test
@@ -55,6 +56,7 @@ class FirstResponderControllerTest {
 
     /**
      * Test successfully getting children by address
+     *
      * @throws Exception
      */
     @Test
@@ -69,6 +71,7 @@ class FirstResponderControllerTest {
 
     /**
      * Test getting the phones per station
+     *
      * @throws Exception
      */
     @Test
@@ -83,6 +86,7 @@ class FirstResponderControllerTest {
 
     /**
      * Tests getting the residents per address
+     *
      * @throws Exception
      */
     @Test
@@ -97,6 +101,7 @@ class FirstResponderControllerTest {
 
     /**
      * Test getting the households by firestation
+     *
      * @throws Exception
      */
     @Test
@@ -111,6 +116,7 @@ class FirstResponderControllerTest {
 
     /**
      * Tests getting the person info
+     *
      * @throws Exception
      */
     @Test
@@ -125,6 +131,7 @@ class FirstResponderControllerTest {
 
     /**
      * Tests getting the resident emails
+     *
      * @throws Exception
      */
     @Test

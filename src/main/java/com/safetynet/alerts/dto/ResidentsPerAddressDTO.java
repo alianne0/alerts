@@ -1,6 +1,7 @@
 package com.safetynet.alerts.dto;
 
 import lombok.Data;
+
 import java.util.List;
 
 /**
@@ -19,6 +20,7 @@ public class ResidentsPerAddressDTO {
 
     /**
      * Constructor for ResidentsPerAddress DTO
+     *
      * @param firstName
      * @param lastName
      * @param phone

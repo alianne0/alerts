@@ -1,16 +1,18 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.domain.*;
-import com.safetynet.alerts.dto.*;
+import com.safetynet.alerts.domain.Firestation;
+import com.safetynet.alerts.domain.MedicalRecord;
+import com.safetynet.alerts.domain.Person;
+import com.safetynet.alerts.dto.ChildrenByAddressDTO;
+import com.safetynet.alerts.dto.HouseholdMembersDTO;
+import com.safetynet.alerts.dto.PersonInfoDTO;
 import com.safetynet.alerts.repository.DataParser;
 import com.safetynet.alerts.view.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -21,8 +23,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalArgumentException;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for the FirstResponderService class
@@ -287,9 +290,9 @@ class FirstResponderServiceTest {
         }
 
         /**
-//         * Blank or null last names should not throw,
-//         * but simply return an empty result.
-//         */
+         //         * Blank or null last names should not throw,
+         //         * but simply return an empty result.
+         //         */
 //        @Test
 //        @DisplayName("getPersonInfo returns empty list for null or blank input")
 //        void nullOrBlankLastName() {

@@ -14,6 +14,7 @@ public class CoveredPersonsDTO {
 
     /**
      * Constructor for the covered persons DTO
+     *
      * @param firstName
      * @param lastName
      * @param address

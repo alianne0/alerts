@@ -12,6 +12,7 @@ public class HouseholdMembersDTO {
 
     /**
      * Constructor for household members
+     *
      * @param firstName
      * @param lastName
      */

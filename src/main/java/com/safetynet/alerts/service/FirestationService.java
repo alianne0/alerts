@@ -1,9 +1,9 @@
 package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.domain.Firestation;
+import com.safetynet.alerts.repository.DataParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.safetynet.alerts.repository.DataParser;
 
 import java.util.*;
 
@@ -11,11 +11,12 @@ import java.util.*;
  * Service class for the firestation
  */
 @Service
-public class FirestationService{
+public class FirestationService {
     private final DataParser data;
 
     /**
      * Constructor for the firestation service and instantiates the data parser
+     *
      * @param data
      */
     @Autowired
@@ -25,14 +26,16 @@ public class FirestationService{
 
     /**
      * Returns all of the information in the firestation object
+     *
      * @return
      */
     public List<Firestation> findAll() {
-        return Collections.unmodifiableList(new ArrayList<> (data.getFirestations()));
+        return Collections.unmodifiableList(new ArrayList<>(data.getFirestations()));
     }
 
     /**
      * Gets a specific firestation when provided its address
+     *
      * @param address
      * @return
      */
@@ -43,6 +46,7 @@ public class FirestationService{
 
     /**
      * Gets a specific firestation when provided its station number
+     *
      * @param station
      * @return
      */
@@ -53,23 +57,24 @@ public class FirestationService{
 
     /**
      * Posts a firestation mapping
+     *
      * @param firestation
      * @return
      */
     public Firestation postFirestation(Firestation firestation) {
         Objects.requireNonNull(firestation, "firestation must not be null");
 
-        if (firestation.getAddress() == null || firestation.getAddress().trim().isEmpty()){
+        if (firestation.getAddress() == null || firestation.getAddress().trim().isEmpty()) {
             throw new IllegalArgumentException("address cannot be null");
         }
-        if (firestation.getStation() == null || firestation.getStation().trim().isEmpty()){
+        if (firestation.getStation() == null || firestation.getStation().trim().isEmpty()) {
             throw new IllegalArgumentException("station cannot be null");
         }
         List<Firestation> firestations = data.getFirestations();
 
-        for(int i = 0; i< firestations.size(); i++){
+        for (int i = 0; i < firestations.size(); i++) {
             Firestation existing = firestations.get(i);
-            if(equalsTrimmed(existing.getAddress(), firestation.getAddress())){
+            if (equalsTrimmed(existing.getAddress(), firestation.getAddress())) {
                 existing.setAddress(firestation.getAddress());
                 existing.setStation(firestation.getStation());
                 return existing;
@@ -81,6 +86,7 @@ public class FirestationService{
 
     /**
      * Deletes a firestation mapping by providing its address
+     *
      * @param address
      * @return
      */
@@ -90,6 +96,7 @@ public class FirestationService{
 
     /**
      * Updates a firestation's station number based on the address provided
+     *
      * @param address
      * @param newStation
      * @return
@@ -113,6 +120,7 @@ public class FirestationService{
 
     /**
      * Helper method to compare two strings
+     *
      * @param a
      * @param b
      * @return

@@ -1,6 +1,8 @@
 package com.safetynet.alerts.controller;
 
+import com.safetynet.alerts.repository.DataParser;
 import com.safetynet.alerts.service.FirstResponderService;
+import com.safetynet.alerts.repository.DataParser;
 import com.safetynet.alerts.view.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +18,7 @@ import java.util.List;
 @Slf4j
 public class FirstResponderController {
 
+    private final DataParser data;
     private final FirstResponderService firstResponderService;
 
     /**
@@ -23,8 +26,9 @@ public class FirstResponderController {
      *
      * @param firstResponderService
      */
-    public FirstResponderController(FirstResponderService firstResponderService) {
+    public FirstResponderController(FirstResponderService firstResponderService, DataParser data) {
         this.firstResponderService = firstResponderService;
+        this.data = data;
     }
 
     /**

@@ -89,6 +89,7 @@ public class PersonController {
 
         try {
             Person savedPerson = personService.postPerson(newPerson);
+            data.saveToFile();
 
             log.info("Person successfully created: {} {}",
                     savedPerson.getFirstName(),
@@ -124,6 +125,7 @@ public class PersonController {
         try {
             return personService.updatePerson(lastName, firstName, updates)
                     .<ResponseEntity<?>>map(updated -> {
+                        data.saveToFile();
                         log.info("Person updated successfully: {} {}", firstName, lastName);
                         return ResponseEntity.ok(updated);
                     })
@@ -158,6 +160,7 @@ public class PersonController {
             boolean deleted = personService.deleteByName(lastName, firstName);
 
             if (deleted) {
+                data.saveToFile();
                 log.info("Person deleted successfully: {} {}", firstName, lastName);
                 return ResponseEntity.ok().build();
             } else {

@@ -18,9 +18,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.List;
 import java.util.Optional;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -63,6 +62,7 @@ class FirestationControllerTest {
 
     /**
      * Test GET all firestations
+     *
      * @throws Exception
      */
     @Test
@@ -85,6 +85,7 @@ class FirestationControllerTest {
 
     /**
      * Test POST a new firestation mapping
+     *
      * @throws Exception
      */
     @Test
@@ -146,6 +147,7 @@ class FirestationControllerTest {
 
         /**
          * Tests an expsting mapping can be updated successfully
+         *
          * @throws Exception
          */
         @Test
@@ -171,6 +173,7 @@ class FirestationControllerTest {
 
         /**
          * Test updating an unknown address returns 404
+         *
          * @throws Exception
          */
         @Test
@@ -193,6 +196,7 @@ class FirestationControllerTest {
 
         /**
          * Tests that invalid request bodies are rejected
+         *
          * @throws Exception
          */
         @Test
@@ -215,6 +219,7 @@ class FirestationControllerTest {
 
         /**
          * Test IllegalArgmentException is converted to a 400 bad request
+         *
          * @throws Exception
          */
         @Test

@@ -1,6 +1,7 @@
 package com.safetynet.alerts.dto;
 
 import lombok.Data;
+
 import java.util.List;
 
 /**
@@ -14,7 +15,8 @@ public class ChildrenByAddressDTO {
     private List<HouseholdMembersDTO> householdMembersList;
 
     /**
-     * Construcfor for children by address DTO
+     * Constructor for children by address DTO
+     *
      * @param firstName
      * @param lastName
      * @param age

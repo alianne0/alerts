@@ -1,11 +1,13 @@
 package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.domain.*;
+import com.safetynet.alerts.domain.Firestation;
+import com.safetynet.alerts.domain.MedicalRecord;
+import com.safetynet.alerts.domain.Person;
 import com.safetynet.alerts.dto.*;
+import com.safetynet.alerts.repository.DataParser;
 import com.safetynet.alerts.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.safetynet.alerts.repository.DataParser;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -21,10 +23,13 @@ public class FirstResponderService {
 
     /**
      * Constructor for the first responder service and instantiates our data parser
+     *
      * @param data
      */
     @Autowired
-    public FirstResponderService(DataParser data) { this.data = data; }
+    public FirstResponderService(DataParser data) {
+        this.data = data;
+    }
 
     private static String normalizeName(String firstName, String lastName) {
         return ((firstName) + "|" + (lastName)).toLowerCase(Locale.ROOT).trim();
@@ -33,6 +38,7 @@ public class FirstResponderService {
 
     /**
      * Helper method for computing the age
+     *
      * @param mr
      * @return
      */
@@ -57,6 +63,7 @@ public class FirstResponderService {
      * First finds all the addresses and errors out if the station number does not exist
      * Then it filters the people who live at those addresses, then does a medical record lookup
      * Finally it maps the data to the DTO and counts the adults/children
+     *
      * @param stationNumber
      * @return
      */
@@ -117,6 +124,7 @@ public class FirstResponderService {
 
         return new PeoplePerStation(personToDto, adultCount, childCount);
     }
+
     /**
      * Returns children (age 18 or younger) living at the given address,
      * First find the people living at an address and errors if its unknown
@@ -181,6 +189,7 @@ public class FirstResponderService {
      * Returns a list of unique phone numbers for residents served by the given fire station.
      * First finds all addresses for that firestation, then filters the people who live at those addresses
      * Extracts unique, non-blank numbers and then sorts them
+     *
      * @param fireStation the fire station number
      * @return PhonesPerStation view containing the list of phone numbers
      */
@@ -292,6 +301,7 @@ public class FirstResponderService {
 
         return new ResidentsPerAddress(residents, stationNumber);
     }
+
     /**
      * Returns all households served by the given fire station numbers.
      * Collects addresses for the station numbers and group by those who live at that address.
@@ -378,6 +388,7 @@ public class FirstResponderService {
      * Obtains the list of residents matching a given last name.
      * Returns their first/last name, address, age, email, medications (with dosages), and allergies.
      * If multiple people share the last name, they will all appear.
+     *
      * @param lastName the last name to search
      * @return PersonInfo view containing a list of PersonInfoDTO
      */
@@ -445,6 +456,7 @@ public class FirstResponderService {
     /**
      * Obtains unique email addresses for all residents in the given city.
      * Case-insensitive city match. Keeps stable order by first appearance.
+     *
      * @param city the city to search
      * @return ResidentEmails view containing a unique list of emails
      */

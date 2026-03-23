@@ -43,8 +43,7 @@ class PersonControllerTest {
         personService = mock(PersonService.class);
         dataParser = mock(DataParser.class);
 
-        PersonController controller =
-                new PersonController(dataParser, personService);
+        PersonController controller = new PersonController(dataParser, personService);
 
         mockMvc = MockMvcBuilders.standaloneSetup(controller).build();
     }
@@ -73,12 +72,7 @@ class PersonControllerTest {
         List<Person> list = Arrays.asList(samplePerson(), samplePerson());
         when(personService.findAll()).thenReturn(list);
 
-        mockMvc.perform(get("/persons"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$", hasSize(2)))
-                .andExpect(jsonPath("$[0].firstName", is("John")))
-                .andExpect(jsonPath("$[0].lastName", is("Doe")));
+        mockMvc.perform(get("/persons")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$", hasSize(2))).andExpect(jsonPath("$[0].firstName", is("John"))).andExpect(jsonPath("$[0].lastName", is("Doe")));
 
         verify(personService).findAll();
         verifyNoMoreInteractions(personService);
@@ -90,14 +84,9 @@ class PersonControllerTest {
     @Test
     @DisplayName("GET /persons/{lastName}/{firstName} returns person when found")
     void getPerson_found() throws Exception {
-        when(personService.findByName("Doe", "John"))
-                .thenReturn(Optional.of(samplePerson()));
+        when(personService.findByName("Doe", "John")).thenReturn(Optional.of(samplePerson()));
 
-        mockMvc.perform(get("/persons/Doe/John"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.firstName", is("John")))
-                .andExpect(jsonPath("$.lastName", is("Doe")));
+        mockMvc.perform(get("/persons/Doe/John")).andExpect(status().isOk()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.firstName", is("John"))).andExpect(jsonPath("$.lastName", is("Doe")));
 
         verify(personService).findByName("Doe", "John");
     }
@@ -108,11 +97,9 @@ class PersonControllerTest {
     @Test
     @DisplayName("GET /persons/{lastName}/{firstName} returns 404 when not found")
     void getPerson_notFound() throws Exception {
-        when(personService.findByName("Doe", "Jane"))
-                .thenReturn(Optional.empty());
+        when(personService.findByName("Doe", "Jane")).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/persons/Doe/Jane"))
-                .andExpect(status().isNotFound());
+        mockMvc.perform(get("/persons/Doe/Jane")).andExpect(status().isNotFound());
 
         verify(personService).findByName("Doe", "Jane");
     }
@@ -125,16 +112,9 @@ class PersonControllerTest {
     void postPerson_created() throws Exception {
         Person toSave = samplePerson();
 
-        when(personService.postPerson(any(Person.class)))
-                .thenReturn(samplePerson());
+        when(personService.postPerson(any(Person.class))).thenReturn(samplePerson());
 
-        mockMvc.perform(post("/persons")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(toSave)))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.firstName", is("John")))
-                .andExpect(jsonPath("$.lastName", is("Doe")));
+        mockMvc.perform(post("/persons").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(toSave))).andExpect(status().isCreated()).andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.firstName", is("John"))).andExpect(jsonPath("$.lastName", is("Doe")));
 
         verify(personService).postPerson(any(Person.class));
     }
@@ -162,16 +142,9 @@ class PersonControllerTest {
             updated.setCity(updates.getCity());
             updated.setPhone(updates.getPhone());
 
-            when(personService.updatePerson(eq("Doe"), eq("John"), any(Person.class)))
-                    .thenReturn(Optional.of(updated));
+            when(personService.updatePerson(eq("Doe"), eq("John"), any(Person.class))).thenReturn(Optional.of(updated));
 
-            mockMvc.perform(put("/persons/Doe/John")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(updates)))
-                    .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.address", is("New Address")))
-                    .andExpect(jsonPath("$.city", is("New City")))
-                    .andExpect(jsonPath("$.phone", is("999-999-9999")));
+            mockMvc.perform(put("/persons/Doe/John").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(updates))).andExpect(status().isOk()).andExpect(jsonPath("$.address", is("New Address"))).andExpect(jsonPath("$.city", is("New City"))).andExpect(jsonPath("$.phone", is("999-999-9999")));
 
             verify(personService).updatePerson(eq("Doe"), eq("John"), any(Person.class));
         }
@@ -182,14 +155,9 @@ class PersonControllerTest {
         @Test
         @DisplayName("returns 404 when target person does not exist")
         void putPerson_notFound() throws Exception {
-            when(personService.updatePerson(eq("Doe"), eq("Ghost"), any(Person.class)))
-                    .thenReturn(Optional.empty());
+            when(personService.updatePerson(eq("Doe"), eq("Ghost"), any(Person.class))).thenReturn(Optional.empty());
 
-            mockMvc.perform(put("/persons/Doe/Ghost")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(new Person())))
-                    .andExpect(status().isNotFound())
-                    .andExpect(content().string(containsString("Person not found: Ghost Doe")));
+            mockMvc.perform(put("/persons/Doe/Ghost").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new Person()))).andExpect(status().isNotFound()).andExpect(content().string(containsString("Person not found: Ghost Doe")));
 
             verify(personService).updatePerson(eq("Doe"), eq("Ghost"), any(Person.class));
         }
@@ -203,14 +171,9 @@ class PersonControllerTest {
             Person updates = new Person();
             updates.setFirstName("ShouldNotChange");
 
-            when(personService.updatePerson(eq("Doe"), eq("John"), any(Person.class)))
-                    .thenThrow(new IllegalArgumentException("Name cannot be changed"));
+            when(personService.updatePerson(eq("Doe"), eq("John"), any(Person.class))).thenThrow(new IllegalArgumentException("Name cannot be changed"));
 
-            mockMvc.perform(put("/persons/Doe/John")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(updates)))
-                    .andExpect(status().isBadRequest())
-                    .andExpect(content().string(containsString("Name cannot be changed")));
+            mockMvc.perform(put("/persons/Doe/John").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(updates))).andExpect(status().isBadRequest()).andExpect(content().string(containsString("Name cannot be changed")));
 
             verify(personService).updatePerson(eq("Doe"), eq("John"), any(Person.class));
         }
@@ -229,11 +192,9 @@ class PersonControllerTest {
         @Test
         @DisplayName("returns 200 when deletion succeeds")
         void delete_ok() throws Exception {
-            when(personService.deleteByName("Doe", "John"))
-                    .thenReturn(true);
+            when(personService.deleteByName("Doe", "John")).thenReturn(true);
 
-            mockMvc.perform(delete("/persons/Doe/John"))
-                    .andExpect(status().isOk());
+            mockMvc.perform(delete("/persons/Doe/John")).andExpect(status().isOk());
 
             verify(personService).deleteByName("Doe", "John");
         }
@@ -244,11 +205,9 @@ class PersonControllerTest {
         @Test
         @DisplayName("returns 404 when person not found")
         void delete_notFound() throws Exception {
-            when(personService.deleteByName("Doe", "Ghost"))
-                    .thenReturn(false);
+            when(personService.deleteByName("Doe", "Ghost")).thenReturn(false);
 
-            mockMvc.perform(delete("/persons/Doe/Ghost"))
-                    .andExpect(status().isNotFound());
+            mockMvc.perform(delete("/persons/Doe/Ghost")).andExpect(status().isNotFound());
 
             verify(personService).deleteByName("Doe", "Ghost");
         }
