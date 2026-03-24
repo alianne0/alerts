@@ -34,8 +34,8 @@ public class DataParser {
     private List<MedicalRecord> medicalRecords = new ArrayList<>();
 
     public DataParser(
-            @Value("${data.file:./data/data.json}") String original,
-            @Value("${data.working-file:./data/data-working.json}") String working
+            @Value("${data.file:~/data.json}") String original,
+            @Value("${data.working-file:~/data-working.json}") String working
     ) {
         this.originalPath = Paths.get(original).toAbsolutePath().normalize();
         this.workingPath = Paths.get(working).toAbsolutePath().normalize();
