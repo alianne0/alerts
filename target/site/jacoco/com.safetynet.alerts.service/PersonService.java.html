@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PersonService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.service</a> &gt; <span class="el_source">PersonService.java</span></div><h1>PersonService.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.controller.PersonController;
 import com.safetynet.alerts.domain.Person;
+import com.safetynet.alerts.repository.DataParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.safetynet.alerts.repository.DataParser;
 
 import java.util.*;
 
@@ -18,6 +17,7 @@ public class PersonService {
 
     /**
      * Constructor for the person service
+     *
      * @param data
      */
     @Autowired
@@ -27,107 +27,112 @@ public class PersonService {
 
     /**
      * Returns all of the mappings in Person
+     *
      * @return
      */
     public List&lt;Person&gt; findAll() {
-<span class="fc" id="L33">        return Collections.unmodifiableList(new ArrayList&lt;&gt;(data.getPersons()));</span>
+<span class="fc" id="L34">        return Collections.unmodifiableList(new ArrayList&lt;&gt;(data.getPersons()));</span>
     }
 
     /**
      * Returns a person mapping and all of their information given their first and last name
+     *
      * @param lastName
      * @param firstName
      * @return
      */
     public Optional&lt;Person&gt; findByName(String lastName, String firstName) {
-<span class="fc" id="L43">        return data.getPersons().stream()</span>
-<span class="fc bfc" id="L44" title="All 2 branches covered.">                .filter(p -&gt; equalsTrimmed(p.getLastName(), lastName)</span>
-<span class="pc bpc" id="L45" title="1 of 2 branches missed.">                        &amp;&amp; equalsTrimmed(p.getFirstName(), firstName))</span>
-<span class="fc" id="L46">                .findFirst( );</span>
+<span class="fc" id="L45">        return data.getPersons().stream()</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">                .filter(p -&gt; equalsTrimmed(p.getLastName(), lastName)</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">                        &amp;&amp; equalsTrimmed(p.getFirstName(), firstName))</span>
+<span class="fc" id="L48">                .findFirst();</span>
     }
 
     /**
      * Posts a new person mapping
+     *
      * @param person
      * @return
      */
     public Person postPerson(Person person) {
-<span class="fc" id="L55">        Objects.requireNonNull(person, &quot;person must not be null&quot;);</span>
-<span class="fc" id="L56">        List&lt;Person&gt; persons = data.getPersons();</span>
+<span class="fc" id="L58">        Objects.requireNonNull(person, &quot;person must not be null&quot;);</span>
+<span class="fc" id="L59">        List&lt;Person&gt; persons = data.getPersons();</span>
 
-<span class="fc bfc" id="L58" title="All 2 branches covered.">        for (int i = 0; i &lt; persons.size(); i++) {</span>
-<span class="fc" id="L59">            Person existing = persons.get(i);</span>
-<span class="fc bfc" id="L60" title="All 2 branches covered.">            if (equalsTrimmed(existing.getLastName(), person.getLastName())</span>
-<span class="pc bpc" id="L61" title="1 of 2 branches missed.">                    &amp;&amp; equalsTrimmed(existing.getFirstName(), person.getFirstName())) {</span>
-<span class="fc" id="L62">                existing.setFirstName(person.getFirstName());</span>
-<span class="fc" id="L63">                existing.setLastName(person.getLastName());</span>
-<span class="fc" id="L64">                existing.setAddress(person.getAddress());</span>
-<span class="fc" id="L65">                existing.setCity(person.getCity());</span>
-<span class="fc" id="L66">                existing.setZip(person.getZip());</span>
-<span class="fc" id="L67">                existing.setPhone(person.getPhone());</span>
-<span class="fc" id="L68">                existing.setEmail(person.getEmail());</span>
-<span class="fc" id="L69">                return existing;</span>
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        for (int i = 0; i &lt; persons.size(); i++) {</span>
+<span class="fc" id="L62">            Person existing = persons.get(i);</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">            if (equalsTrimmed(existing.getLastName(), person.getLastName())</span>
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">                    &amp;&amp; equalsTrimmed(existing.getFirstName(), person.getFirstName())) {</span>
+<span class="fc" id="L65">                existing.setFirstName(person.getFirstName());</span>
+<span class="fc" id="L66">                existing.setLastName(person.getLastName());</span>
+<span class="fc" id="L67">                existing.setAddress(person.getAddress());</span>
+<span class="fc" id="L68">                existing.setCity(person.getCity());</span>
+<span class="fc" id="L69">                existing.setZip(person.getZip());</span>
+<span class="fc" id="L70">                existing.setPhone(person.getPhone());</span>
+<span class="fc" id="L71">                existing.setEmail(person.getEmail());</span>
+<span class="fc" id="L72">                return existing;</span>
             }
         }
-<span class="fc" id="L72">        persons.add(person);</span>
-<span class="fc" id="L73">        return person;</span>
+<span class="fc" id="L75">        persons.add(person);</span>
+<span class="fc" id="L76">        return person;</span>
     }
 
     /**
      * Deletes a person mapping given their first and last name
+     *
      * @param lastName
      * @param firstName
      * @return
      */
     public boolean deleteByName(String lastName, String firstName) {
-<span class="fc" id="L83">        return data.getPersons().removeIf(</span>
-<span class="fc bfc" id="L84" title="All 2 branches covered.">                p -&gt; equalsTrimmed(p.getLastName(), lastName)</span>
-<span class="pc bpc" id="L85" title="1 of 2 branches missed.">                        &amp;&amp; equalsTrimmed(p.getFirstName(), firstName)</span>
+<span class="fc" id="L87">        return data.getPersons().removeIf(</span>
+<span class="fc bfc" id="L88" title="All 2 branches covered.">                p -&gt; equalsTrimmed(p.getLastName(), lastName)</span>
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">                        &amp;&amp; equalsTrimmed(p.getFirstName(), firstName)</span>
         );
     }
 
     /**
      * Updates a person mapping given their first and last name
+     *
      * @param lastName
      * @param firstName
      * @param updates
      * @return
      */
     public Optional&lt;Person&gt; updatePerson(String lastName, String firstName, Person updates) {
-<span class="fc" id="L97">        Objects.requireNonNull(updates, &quot;updates cannot be null&quot;);</span>
-<span class="pc bpc" id="L98" title="1 of 4 branches missed.">        if (updates.getLastName() != null &amp;&amp; !equalsTrimmed(updates.getLastName(), lastName)) {</span>
-<span class="fc" id="L99">            throw new IllegalArgumentException(&quot;last name cannot be changed&quot;);</span>
+<span class="fc" id="L102">        Objects.requireNonNull(updates, &quot;updates cannot be null&quot;);</span>
+<span class="pc bpc" id="L103" title="1 of 4 branches missed.">        if (updates.getLastName() != null &amp;&amp; !equalsTrimmed(updates.getLastName(), lastName)) {</span>
+<span class="fc" id="L104">            throw new IllegalArgumentException(&quot;last name cannot be changed&quot;);</span>
         }
-<span class="pc bpc" id="L101" title="1 of 4 branches missed.">        if (updates.getFirstName() != null &amp;&amp; !equalsTrimmed(updates.getFirstName(), firstName)){</span>
-<span class="fc" id="L102">            throw new IllegalArgumentException(&quot;first name cannot be changed&quot;);</span>
+<span class="pc bpc" id="L106" title="1 of 4 branches missed.">        if (updates.getFirstName() != null &amp;&amp; !equalsTrimmed(updates.getFirstName(), firstName)) {</span>
+<span class="fc" id="L107">            throw new IllegalArgumentException(&quot;first name cannot be changed&quot;);</span>
         }
-<span class="fc bfc" id="L104" title="All 2 branches covered.">        for (Person existing : data.getPersons()) {</span>
-<span class="pc bpc" id="L105" title="1 of 4 branches missed.">            if (equalsTrimmed(existing.getLastName(), lastName) &amp;&amp; equalsTrimmed(existing.getFirstName(), firstName)) {</span>
-<span class="pc bpc" id="L106" title="1 of 2 branches missed.">                if (updates.getAddress() != null) {</span>
-<span class="fc" id="L107">                    existing.setAddress(updates.getAddress());</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">        for (Person existing : data.getPersons()) {</span>
+<span class="pc bpc" id="L110" title="1 of 4 branches missed.">            if (equalsTrimmed(existing.getLastName(), lastName) &amp;&amp; equalsTrimmed(existing.getFirstName(), firstName)) {</span>
+<span class="pc bpc" id="L111" title="1 of 2 branches missed.">                if (updates.getAddress() != null) {</span>
+<span class="fc" id="L112">                    existing.setAddress(updates.getAddress());</span>
                 }
-<span class="fc bfc" id="L109" title="All 2 branches covered.">                if (updates.getCity() != null) {</span>
-<span class="fc" id="L110">                    existing.setCity(updates.getCity());</span>
+<span class="fc bfc" id="L114" title="All 2 branches covered.">                if (updates.getCity() != null) {</span>
+<span class="fc" id="L115">                    existing.setCity(updates.getCity());</span>
                 }
-<span class="fc bfc" id="L112" title="All 2 branches covered.">                if(updates.getZip() != null) {</span>
-<span class="fc" id="L113">                    existing.setZip(updates.getZip());</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                if (updates.getZip() != null) {</span>
+<span class="fc" id="L118">                    existing.setZip(updates.getZip());</span>
                 }
-<span class="fc bfc" id="L115" title="All 2 branches covered.">                if(updates.getPhone() != null) {</span>
-<span class="fc" id="L116">                    existing.setPhone(updates.getPhone());</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">                if (updates.getPhone() != null) {</span>
+<span class="fc" id="L121">                    existing.setPhone(updates.getPhone());</span>
                 }
-<span class="fc bfc" id="L118" title="All 2 branches covered.">                if (updates.getEmail() != null) {</span>
-<span class="fc" id="L119">                    existing.setEmail(updates.getEmail());</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">                if (updates.getEmail() != null) {</span>
+<span class="fc" id="L124">                    existing.setEmail(updates.getEmail());</span>
                 }
-<span class="fc" id="L121">                return Optional.of(existing);</span>
+<span class="fc" id="L126">                return Optional.of(existing);</span>
             }
-<span class="fc" id="L123">        }</span>
-<span class="fc" id="L124">        return Optional.empty();</span>
+<span class="fc" id="L128">        }</span>
+<span class="fc" id="L129">        return Optional.empty();</span>
     }
 
     private boolean equalsTrimmed(String a, String b) {
-<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        String aa = (a == null) ? null : a.trim();</span>
-<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        String bb = (b == null) ? null : b.trim();</span>
-<span class="fc" id="L130">        return Objects.equals(aa, bb);</span>
+<span class="pc bpc" id="L133" title="1 of 2 branches missed.">        String aa = (a == null) ? null : a.trim();</span>
+<span class="pc bpc" id="L134" title="1 of 2 branches missed.">        String bb = (b == null) ? null : b.trim();</span>
+<span class="fc" id="L135">        return Objects.equals(aa, bb);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

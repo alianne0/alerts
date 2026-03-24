@@ -89,19 +89,22 @@ public class PersonController {
 
         try {
 <span class="fc" id="L91">            Person savedPerson = personService.postPerson(newPerson);</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">            if (data != null) {</span>
+<span class="fc" id="L93">                data.saveToFile();</span>
+            }
 
-<span class="fc" id="L93">            log.info(&quot;Person successfully created: {} {}&quot;,</span>
-<span class="fc" id="L94">                    savedPerson.getFirstName(),</span>
-<span class="fc" id="L95">                    savedPerson.getLastName());</span>
+<span class="fc" id="L96">            log.info(&quot;Person successfully created: {} {}&quot;,</span>
+<span class="fc" id="L97">                    savedPerson.getFirstName(),</span>
+<span class="fc" id="L98">                    savedPerson.getLastName());</span>
 
-<span class="fc" id="L97">            return new ResponseEntity&lt;&gt;(savedPerson, HttpStatus.CREATED);</span>
+<span class="fc" id="L100">            return new ResponseEntity&lt;&gt;(savedPerson, HttpStatus.CREATED);</span>
 
-<span class="nc" id="L99">        } catch (Exception ex) {</span>
-<span class="nc" id="L100">            log.error(&quot;Error while creating person {} {}&quot;,</span>
-<span class="nc" id="L101">                    newPerson.getFirstName(),</span>
-<span class="nc" id="L102">                    newPerson.getLastName(),</span>
+<span class="nc" id="L102">        } catch (Exception ex) {</span>
+<span class="nc" id="L103">            log.error(&quot;Error while creating person {} {}&quot;,</span>
+<span class="nc" id="L104">                    newPerson.getFirstName(),</span>
+<span class="nc" id="L105">                    newPerson.getLastName(),</span>
                     ex);
-<span class="nc" id="L104">            throw ex;</span>
+<span class="nc" id="L107">            throw ex;</span>
         }
     }
 
@@ -119,24 +122,27 @@ public class PersonController {
             @PathVariable String firstName,
             @RequestBody Person updates) {
 
-<span class="fc" id="L122">        log.info(&quot;PUT /persons/{}/{} - Updating person&quot;, lastName, firstName);</span>
+<span class="fc" id="L125">        log.info(&quot;PUT /persons/{}/{} - Updating person&quot;, lastName, firstName);</span>
 
         try {
-<span class="fc" id="L125">            return personService.updatePerson(lastName, firstName, updates)</span>
-<span class="fc" id="L126">                    .&lt;ResponseEntity&lt;?&gt;&gt;map(updated -&gt; {</span>
-<span class="fc" id="L127">                        log.info(&quot;Person updated successfully: {} {}&quot;, firstName, lastName);</span>
-<span class="fc" id="L128">                        return ResponseEntity.ok(updated);</span>
+<span class="fc" id="L128">            return personService.updatePerson(lastName, firstName, updates)</span>
+<span class="fc" id="L129">                    .&lt;ResponseEntity&lt;?&gt;&gt;map(updated -&gt; {</span>
+<span class="pc bpc" id="L130" title="1 of 2 branches missed.">                        if (data != null) {</span>
+<span class="fc" id="L131">                            data.saveToFile();</span>
+                        }
+<span class="fc" id="L133">                        log.info(&quot;Person updated successfully: {} {}&quot;, firstName, lastName);</span>
+<span class="fc" id="L134">                        return ResponseEntity.ok(updated);</span>
                     })
-<span class="fc" id="L130">                    .orElseGet(() -&gt; {</span>
-<span class="fc" id="L131">                        log.warn(&quot;Person not found for update: {} {}&quot;, firstName, lastName);</span>
-<span class="fc" id="L132">                        return ResponseEntity.status(HttpStatus.NOT_FOUND)</span>
-<span class="fc" id="L133">                                .body(&quot;Person not found: &quot; + firstName + &quot; &quot; + lastName);</span>
+<span class="fc" id="L136">                    .orElseGet(() -&gt; {</span>
+<span class="fc" id="L137">                        log.warn(&quot;Person not found for update: {} {}&quot;, firstName, lastName);</span>
+<span class="fc" id="L138">                        return ResponseEntity.status(HttpStatus.NOT_FOUND)</span>
+<span class="fc" id="L139">                                .body(&quot;Person not found: &quot; + firstName + &quot; &quot; + lastName);</span>
                     });
 
-<span class="fc" id="L136">        } catch (IllegalArgumentException ex) {</span>
-<span class="fc" id="L137">            log.error(&quot;Invalid update request for {} {}: {}&quot;,</span>
-<span class="fc" id="L138">                    firstName, lastName, ex.getMessage(), ex);</span>
-<span class="fc" id="L139">            return ResponseEntity.badRequest().body(ex.getMessage());</span>
+<span class="fc" id="L142">        } catch (IllegalArgumentException ex) {</span>
+<span class="fc" id="L143">            log.error(&quot;Invalid update request for {} {}: {}&quot;,</span>
+<span class="fc" id="L144">                    firstName, lastName, ex.getMessage(), ex);</span>
+<span class="fc" id="L145">            return ResponseEntity.badRequest().body(ex.getMessage());</span>
         }
     }
 
@@ -152,23 +158,26 @@ public class PersonController {
             @PathVariable String lastName,
             @PathVariable String firstName) {
 
-<span class="fc" id="L155">        log.info(&quot;DELETE /persons/{}/{} - Deleting person&quot;, lastName, firstName);</span>
+<span class="fc" id="L161">        log.info(&quot;DELETE /persons/{}/{} - Deleting person&quot;, lastName, firstName);</span>
 
         try {
-<span class="fc" id="L158">            boolean deleted = personService.deleteByName(lastName, firstName);</span>
+<span class="fc" id="L164">            boolean deleted = personService.deleteByName(lastName, firstName);</span>
 
-<span class="fc bfc" id="L160" title="All 2 branches covered.">            if (deleted) {</span>
-<span class="fc" id="L161">                log.info(&quot;Person deleted successfully: {} {}&quot;, firstName, lastName);</span>
-<span class="fc" id="L162">                return ResponseEntity.ok().build();</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">            if (deleted) {</span>
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">                if (data != null) {</span>
+<span class="fc" id="L168">                    data.saveToFile();</span>
+                }
+<span class="fc" id="L170">                log.info(&quot;Person deleted successfully: {} {}&quot;, firstName, lastName);</span>
+<span class="fc" id="L171">                return ResponseEntity.ok().build();</span>
             } else {
-<span class="fc" id="L164">                log.warn(&quot;Person not found for deletion: {} {}&quot;, firstName, lastName);</span>
-<span class="fc" id="L165">                return ResponseEntity.notFound().build();</span>
+<span class="fc" id="L173">                log.warn(&quot;Person not found for deletion: {} {}&quot;, firstName, lastName);</span>
+<span class="fc" id="L174">                return ResponseEntity.notFound().build();</span>
             }
 
-<span class="nc" id="L168">        } catch (Exception ex) {</span>
-<span class="nc" id="L169">            log.error(&quot;Error while deleting person {} {}&quot;,</span>
+<span class="nc" id="L177">        } catch (Exception ex) {</span>
+<span class="nc" id="L178">            log.error(&quot;Error while deleting person {} {}&quot;,</span>
                     firstName, lastName, ex);
-<span class="nc" id="L171">            throw ex;</span>
+<span class="nc" id="L180">            throw ex;</span>
         }
     }
 }

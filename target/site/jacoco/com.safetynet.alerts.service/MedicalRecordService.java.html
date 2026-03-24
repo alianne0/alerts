@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MedicalRecordService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.service</a> &gt; <span class="el_source">MedicalRecordService.java</span></div><h1>MedicalRecordService.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.controller.MedicalRecordController;
 import com.safetynet.alerts.domain.MedicalRecord;
+import com.safetynet.alerts.repository.DataParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.safetynet.alerts.repository.DataParser;
 
 import java.util.*;
 
@@ -17,6 +16,7 @@ public class MedicalRecordService {
 
     /**
      * Constructor for the medical record and instantiates our data parser
+     *
      * @param data
      */
     @Autowired
@@ -26,39 +26,42 @@ public class MedicalRecordService {
 
     /**
      * Returns all of the medical records
+     *
      * @return
      */
     public List&lt;MedicalRecord&gt; findAll() {
-<span class="fc" id="L32">        return Collections.unmodifiableList(new ArrayList&lt;&gt;(data.getMedicalRecords()));</span>
+<span class="fc" id="L33">        return Collections.unmodifiableList(new ArrayList&lt;&gt;(data.getMedicalRecords()));</span>
     }
 
     /**
      * Posts a new medical record mapping
+     *
      * @param medicalRecord
      * @return
      */
     public MedicalRecord postMedicalRecord(MedicalRecord medicalRecord) {
-<span class="fc" id="L41">        Objects.requireNonNull(medicalRecord,&quot;medical record cannot be null&quot;);</span>
-<span class="fc" id="L42">        List&lt;MedicalRecord&gt; medicalRecords = data.getMedicalRecords();</span>
+<span class="fc" id="L43">        Objects.requireNonNull(medicalRecord, &quot;medical record cannot be null&quot;);</span>
+<span class="fc" id="L44">        List&lt;MedicalRecord&gt; medicalRecords = data.getMedicalRecords();</span>
 
-<span class="fc bfc" id="L44" title="All 2 branches covered.">        for(int i = 0; i &lt; medicalRecords.size(); i++) {</span>
-<span class="fc" id="L45">            MedicalRecord existing = medicalRecords.get(i);</span>
-<span class="fc bfc" id="L46" title="All 2 branches covered.">            if(equalsTrimmed(existing.getLastName(), medicalRecord.getLastName())</span>
-<span class="pc bpc" id="L47" title="1 of 2 branches missed.">            &amp;&amp; equalsTrimmed(existing.getFirstName(), medicalRecord.getFirstName())){</span>
-<span class="fc" id="L48">                existing.setFirstName(medicalRecord.getFirstName());</span>
-<span class="fc" id="L49">                existing.setLastName(medicalRecord.getLastName());</span>
-<span class="fc" id="L50">                existing.setBirthdate(medicalRecord.getBirthdate());</span>
-<span class="fc" id="L51">                existing.setMedications(medicalRecord.getMedications());</span>
-<span class="fc" id="L52">                existing.setAllergies(medicalRecord.getAllergies());</span>
-<span class="fc" id="L53">                return existing;</span>
+<span class="fc bfc" id="L46" title="All 2 branches covered.">        for (int i = 0; i &lt; medicalRecords.size(); i++) {</span>
+<span class="fc" id="L47">            MedicalRecord existing = medicalRecords.get(i);</span>
+<span class="fc bfc" id="L48" title="All 2 branches covered.">            if (equalsTrimmed(existing.getLastName(), medicalRecord.getLastName())</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">                    &amp;&amp; equalsTrimmed(existing.getFirstName(), medicalRecord.getFirstName())) {</span>
+<span class="fc" id="L50">                existing.setFirstName(medicalRecord.getFirstName());</span>
+<span class="fc" id="L51">                existing.setLastName(medicalRecord.getLastName());</span>
+<span class="fc" id="L52">                existing.setBirthdate(medicalRecord.getBirthdate());</span>
+<span class="fc" id="L53">                existing.setMedications(medicalRecord.getMedications());</span>
+<span class="fc" id="L54">                existing.setAllergies(medicalRecord.getAllergies());</span>
+<span class="fc" id="L55">                return existing;</span>
             }
         }
-<span class="fc" id="L56">        medicalRecords.add(medicalRecord);</span>
-<span class="fc" id="L57">        return medicalRecord;</span>
+<span class="fc" id="L58">        medicalRecords.add(medicalRecord);</span>
+<span class="fc" id="L59">        return medicalRecord;</span>
     }
 
     /**
      * Updates a particular medical record given their first and last name
+     *
      * @param lastName
      * @param firstName
      * @param updates
@@ -69,61 +72,62 @@ public class MedicalRecordService {
             String firstName,
             MedicalRecord updates) {
 
-<span class="fc" id="L72">        Objects.requireNonNull(updates, &quot;updates cant be null&quot;);</span>
+<span class="fc" id="L75">        Objects.requireNonNull(updates, &quot;updates cant be null&quot;);</span>
 
-<span class="fc bfc" id="L74" title="All 2 branches covered.">        if (updates.getLastName() != null &amp;&amp;</span>
-<span class="fc bfc" id="L75" title="All 2 branches covered.">                !equalsTrimmed(updates.getLastName(), lastName)) {</span>
-<span class="fc" id="L76">            throw new IllegalArgumentException(&quot;last name cannot be changed&quot;);</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (updates.getLastName() != null &amp;&amp;</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">                !equalsTrimmed(updates.getLastName(), lastName)) {</span>
+<span class="fc" id="L79">            throw new IllegalArgumentException(&quot;last name cannot be changed&quot;);</span>
         }
 
-<span class="fc bfc" id="L79" title="All 2 branches covered.">        if (updates.getFirstName() != null &amp;&amp;</span>
-<span class="fc bfc" id="L80" title="All 2 branches covered.">                !equalsTrimmed(updates.getFirstName(), firstName)) {</span>
-<span class="fc" id="L81">            throw new IllegalArgumentException(&quot;first name cannot be changed&quot;);</span>
+<span class="fc bfc" id="L82" title="All 2 branches covered.">        if (updates.getFirstName() != null &amp;&amp;</span>
+<span class="fc bfc" id="L83" title="All 2 branches covered.">                !equalsTrimmed(updates.getFirstName(), firstName)) {</span>
+<span class="fc" id="L84">            throw new IllegalArgumentException(&quot;first name cannot be changed&quot;);</span>
         }
 
-<span class="fc bfc" id="L84" title="All 2 branches covered.">        for (MedicalRecord existing : data.getMedicalRecords()) {</span>
+<span class="fc bfc" id="L87" title="All 2 branches covered.">        for (MedicalRecord existing : data.getMedicalRecords()) {</span>
 
-<span class="fc bfc" id="L86" title="All 2 branches covered.">            if (equalsTrimmed(existing.getLastName(), lastName) &amp;&amp;</span>
-<span class="pc bpc" id="L87" title="1 of 2 branches missed.">                    equalsTrimmed(existing.getFirstName(), firstName)) {</span>
+<span class="fc bfc" id="L89" title="All 2 branches covered.">            if (equalsTrimmed(existing.getLastName(), lastName) &amp;&amp;</span>
+<span class="pc bpc" id="L90" title="1 of 2 branches missed.">                    equalsTrimmed(existing.getFirstName(), firstName)) {</span>
 
-<span class="pc bpc" id="L89" title="1 of 2 branches missed.">                if (updates.getMedications() != null) {</span>
-<span class="fc" id="L90">                    existing.setMedications(updates.getMedications());</span>
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">                if (updates.getMedications() != null) {</span>
+<span class="fc" id="L93">                    existing.setMedications(updates.getMedications());</span>
                 }
 
-<span class="pc bpc" id="L93" title="1 of 2 branches missed.">                if (updates.getAllergies() != null) {</span>
-<span class="fc" id="L94">                    existing.setAllergies(updates.getAllergies());</span>
+<span class="pc bpc" id="L96" title="1 of 2 branches missed.">                if (updates.getAllergies() != null) {</span>
+<span class="fc" id="L97">                    existing.setAllergies(updates.getAllergies());</span>
                 }
 
-<span class="fc bfc" id="L97" title="All 2 branches covered.">                if (updates.getBirthdate() == null) {</span>
-<span class="fc" id="L98">                    return Optional.empty();</span>
+<span class="fc bfc" id="L100" title="All 2 branches covered.">                if (updates.getBirthdate() == null) {</span>
+<span class="fc" id="L101">                    return Optional.empty();</span>
                 }
 
-<span class="fc" id="L101">                existing.setBirthdate(updates.getBirthdate());</span>
+<span class="fc" id="L104">                existing.setBirthdate(updates.getBirthdate());</span>
 
-<span class="fc" id="L103">                return Optional.of(existing);</span>
+<span class="fc" id="L106">                return Optional.of(existing);</span>
             }
-<span class="fc" id="L105">        }</span>
+<span class="fc" id="L108">        }</span>
 
-<span class="fc" id="L107">        return Optional.empty();</span>
+<span class="fc" id="L110">        return Optional.empty();</span>
     }
 
     /**
      * Deletes a mapping for a medical record given their name
+     *
      * @param lastName
      * @param firstName
      * @return
      */
     public boolean deleteByName(String lastName, String firstName) {
-<span class="fc" id="L117">        return data.getMedicalRecords().removeIf(</span>
-<span class="fc bfc" id="L118" title="All 2 branches covered.">                m -&gt; equalsTrimmed(m.getLastName(), lastName)</span>
-<span class="pc bpc" id="L119" title="1 of 2 branches missed.">                &amp;&amp; equalsTrimmed(m.getFirstName(), firstName)</span>
+<span class="fc" id="L121">        return data.getMedicalRecords().removeIf(</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">                m -&gt; equalsTrimmed(m.getLastName(), lastName)</span>
+<span class="pc bpc" id="L123" title="1 of 2 branches missed.">                        &amp;&amp; equalsTrimmed(m.getFirstName(), firstName)</span>
         );
     }
 
     private boolean equalsTrimmed(String a, String b) {
-<span class="pc bpc" id="L124" title="1 of 2 branches missed.">        String aa = (a == null) ? null : a.trim();</span>
-<span class="pc bpc" id="L125" title="1 of 2 branches missed.">        String bb = (b == null) ? null : b.trim();</span>
-<span class="fc" id="L126">        return Objects.equals(aa, bb);</span>
+<span class="pc bpc" id="L128" title="1 of 2 branches missed.">        String aa = (a == null) ? null : a.trim();</span>
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        String bb = (b == null) ? null : b.trim();</span>
+<span class="fc" id="L130">        return Objects.equals(aa, bb);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

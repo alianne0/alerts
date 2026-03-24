@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FirestationService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.service</a> &gt; <span class="el_source">FirestationService.java</span></div><h1>FirestationService.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.service;
 
 import com.safetynet.alerts.domain.Firestation;
+import com.safetynet.alerts.repository.DataParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.safetynet.alerts.repository.DataParser;
 
 import java.util.*;
 
@@ -11,116 +11,124 @@ import java.util.*;
  * Service class for the firestation
  */
 @Service
-public class FirestationService{
+public class FirestationService {
     private final DataParser data;
 
     /**
      * Constructor for the firestation service and instantiates the data parser
+     *
      * @param data
      */
     @Autowired
-<span class="fc" id="L22">    public FirestationService(DataParser data) {</span>
-<span class="fc" id="L23">        this.data = data;</span>
-<span class="fc" id="L24">    }</span>
+<span class="fc" id="L23">    public FirestationService(DataParser data) {</span>
+<span class="fc" id="L24">        this.data = data;</span>
+<span class="fc" id="L25">    }</span>
 
     /**
      * Returns all of the information in the firestation object
+     *
      * @return
      */
     public List&lt;Firestation&gt; findAll() {
-<span class="fc" id="L31">        return Collections.unmodifiableList(new ArrayList&lt;&gt; (data.getFirestations()));</span>
+<span class="fc" id="L33">        return Collections.unmodifiableList(new ArrayList&lt;&gt;(data.getFirestations()));</span>
     }
 
     /**
      * Gets a specific firestation when provided its address
+     *
      * @param address
      * @return
      */
     public Optional&lt;Firestation&gt; findByAddress(String address) {
-<span class="fc" id="L40">        return data.getFirestations().stream()</span>
-<span class="fc" id="L41">                .filter(f -&gt; equalsTrimmed(f.getAddress(), address)).findFirst();</span>
+<span class="fc" id="L43">        return data.getFirestations().stream()</span>
+<span class="fc" id="L44">                .filter(f -&gt; equalsTrimmed(f.getAddress(), address)).findFirst();</span>
     }
 
     /**
      * Gets a specific firestation when provided its station number
+     *
      * @param station
      * @return
      */
     public Optional&lt;Firestation&gt; findByStation(String station) {
-<span class="fc" id="L50">        return data.getFirestations().stream()</span>
-<span class="fc" id="L51">                .filter(f -&gt; equalsTrimmed(f.getStation(), station)).findFirst();</span>
+<span class="fc" id="L54">        return data.getFirestations().stream()</span>
+<span class="fc" id="L55">                .filter(f -&gt; equalsTrimmed(f.getStation(), station)).findFirst();</span>
     }
 
     /**
      * Posts a firestation mapping
+     *
      * @param firestation
      * @return
      */
     public Firestation postFirestation(Firestation firestation) {
-<span class="fc" id="L60">        Objects.requireNonNull(firestation, &quot;firestation must not be null&quot;);</span>
+<span class="fc" id="L65">        Objects.requireNonNull(firestation, &quot;firestation must not be null&quot;);</span>
 
-<span class="fc bfc" id="L62" title="All 4 branches covered.">        if (firestation.getAddress() == null || firestation.getAddress().trim().isEmpty()){</span>
-<span class="fc" id="L63">            throw new IllegalArgumentException(&quot;address cannot be null&quot;);</span>
+<span class="fc bfc" id="L67" title="All 4 branches covered.">        if (firestation.getAddress() == null || firestation.getAddress().trim().isEmpty()) {</span>
+<span class="fc" id="L68">            throw new IllegalArgumentException(&quot;address cannot be null&quot;);</span>
         }
-<span class="fc bfc" id="L65" title="All 4 branches covered.">        if (firestation.getStation() == null || firestation.getStation().trim().isEmpty()){</span>
-<span class="fc" id="L66">            throw new IllegalArgumentException(&quot;station cannot be null&quot;);</span>
+<span class="fc bfc" id="L70" title="All 4 branches covered.">        if (firestation.getStation() == null || firestation.getStation().trim().isEmpty()) {</span>
+<span class="fc" id="L71">            throw new IllegalArgumentException(&quot;station cannot be null&quot;);</span>
         }
-<span class="fc" id="L68">        List&lt;Firestation&gt; firestations = data.getFirestations();</span>
+<span class="fc" id="L73">        List&lt;Firestation&gt; firestations = data.getFirestations();</span>
 
-<span class="fc bfc" id="L70" title="All 2 branches covered.">        for(int i = 0; i&lt; firestations.size(); i++){</span>
-<span class="fc" id="L71">            Firestation existing = firestations.get(i);</span>
-<span class="fc bfc" id="L72" title="All 2 branches covered.">            if(equalsTrimmed(existing.getAddress(), firestation.getAddress())){</span>
-<span class="fc" id="L73">                existing.setAddress(firestation.getAddress());</span>
-<span class="fc" id="L74">                existing.setStation(firestation.getStation());</span>
-<span class="fc" id="L75">                return existing;</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        for (int i = 0; i &lt; firestations.size(); i++) {</span>
+<span class="fc" id="L76">            Firestation existing = firestations.get(i);</span>
+<span class="fc bfc" id="L77" title="All 2 branches covered.">            if (equalsTrimmed(existing.getAddress(), firestation.getAddress())) {</span>
+<span class="fc" id="L78">                existing.setAddress(firestation.getAddress());</span>
+<span class="fc" id="L79">                existing.setStation(firestation.getStation());</span>
+<span class="fc" id="L80">                return existing;</span>
             }
         }
-<span class="fc" id="L78">        firestations.add(firestation);</span>
-<span class="fc" id="L79">        return firestation;</span>
+<span class="fc" id="L83">        firestations.add(firestation);</span>
+<span class="fc" id="L84">        return firestation;</span>
     }
 
     /**
      * Deletes a firestation mapping by providing its address
+     *
      * @param address
      * @return
      */
     public boolean deleteByAddress(String address) {
-<span class="fc" id="L88">        return data.getFirestations().removeIf(f -&gt; equalsTrimmed(f.getAddress(), address));</span>
+<span class="fc" id="L94">        return data.getFirestations().removeIf(f -&gt; equalsTrimmed(f.getAddress(), address));</span>
     }
 
     /**
      * Updates a firestation's station number based on the address provided
+     *
      * @param address
      * @param newStation
      * @return
      */
     public Optional&lt;Firestation&gt; updateFirestation(String address, String newStation) {
-<span class="fc" id="L98">        Objects.requireNonNull(address, &quot;address must not be null&quot;);</span>
-<span class="fc" id="L99">        Objects.requireNonNull(newStation, &quot;newStation must not be null&quot;);</span>
-<span class="fc" id="L100">        String trimmedStation = newStation.trim();</span>
-<span class="fc bfc" id="L101" title="All 2 branches covered.">        if (trimmedStation.isEmpty()) {</span>
-<span class="fc" id="L102">            throw new IllegalArgumentException(&quot;newStation must not be blank&quot;);</span>
+<span class="fc" id="L105">        Objects.requireNonNull(address, &quot;address must not be null&quot;);</span>
+<span class="fc" id="L106">        Objects.requireNonNull(newStation, &quot;newStation must not be null&quot;);</span>
+<span class="fc" id="L107">        String trimmedStation = newStation.trim();</span>
+<span class="fc bfc" id="L108" title="All 2 branches covered.">        if (trimmedStation.isEmpty()) {</span>
+<span class="fc" id="L109">            throw new IllegalArgumentException(&quot;newStation must not be blank&quot;);</span>
         }
 
-<span class="fc bfc" id="L105" title="All 2 branches covered.">        for (Firestation existing : data.getFirestations()) {</span>
-<span class="fc bfc" id="L106" title="All 2 branches covered.">            if (equalsTrimmed(existing.getAddress(), address)) {</span>
-<span class="fc" id="L107">                existing.setStation(trimmedStation);</span>
-<span class="fc" id="L108">                return Optional.of(existing);</span>
+<span class="fc bfc" id="L112" title="All 2 branches covered.">        for (Firestation existing : data.getFirestations()) {</span>
+<span class="fc bfc" id="L113" title="All 2 branches covered.">            if (equalsTrimmed(existing.getAddress(), address)) {</span>
+<span class="fc" id="L114">                existing.setStation(trimmedStation);</span>
+<span class="fc" id="L115">                return Optional.of(existing);</span>
             }
-<span class="fc" id="L110">        }</span>
-<span class="fc" id="L111">        return Optional.empty();</span>
+<span class="fc" id="L117">        }</span>
+<span class="fc" id="L118">        return Optional.empty();</span>
     }
 
     /**
      * Helper method to compare two strings
+     *
      * @param a
      * @param b
      * @return
      */
     private boolean equalsTrimmed(String a, String b) {
-<span class="pc bpc" id="L121" title="1 of 2 branches missed.">        String aa = (a == null) ? null : a.trim();</span>
-<span class="fc bfc" id="L122" title="All 2 branches covered.">        String bb = (b == null) ? null : b.trim();</span>
-<span class="fc" id="L123">        return Objects.equals(aa, bb);</span>
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        String aa = (a == null) ? null : a.trim();</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">        String bb = (b == null) ? null : b.trim();</span>
+<span class="fc" id="L131">        return Objects.equals(aa, bb);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

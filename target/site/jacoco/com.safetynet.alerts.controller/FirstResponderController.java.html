@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FirstResponderController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.controller</a> &gt; <span class="el_source">FirstResponderController.java</span></div><h1>FirstResponderController.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.controller;
 
+import com.safetynet.alerts.repository.DataParser;
 import com.safetynet.alerts.service.FirstResponderService;
+import com.safetynet.alerts.repository.DataParser;
 import com.safetynet.alerts.view.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +15,10 @@ import java.util.List;
  * Controller for the FirstResponder class
  */
 @RestController
-<span class="fc" id="L16">@Slf4j</span>
+<span class="fc" id="L18">@Slf4j</span>
 public class FirstResponderController {
 
+    private final DataParser data;
     private final FirstResponderService firstResponderService;
 
     /**
@@ -23,9 +26,10 @@ public class FirstResponderController {
      *
      * @param firstResponderService
      */
-<span class="fc" id="L26">    public FirstResponderController(FirstResponderService firstResponderService) {</span>
-<span class="fc" id="L27">        this.firstResponderService = firstResponderService;</span>
-<span class="fc" id="L28">    }</span>
+<span class="fc" id="L29">    public FirstResponderController(FirstResponderService firstResponderService, DataParser data) {</span>
+<span class="fc" id="L30">        this.firstResponderService = firstResponderService;</span>
+<span class="fc" id="L31">        this.data = data;</span>
+<span class="fc" id="L32">    }</span>
 
     /**
      * Gets all of the people for a corresponding firestation
@@ -35,18 +39,18 @@ public class FirstResponderController {
      */
     @GetMapping(&quot;/firestation&quot;)
     public PeoplePerStation getPeopleByStation(@RequestParam String stationNumber) {
-<span class="fc" id="L38">        log.info(&quot;GET /firestation - Retrieving people for station {}&quot;, stationNumber);</span>
+<span class="fc" id="L42">        log.info(&quot;GET /firestation - Retrieving people for station {}&quot;, stationNumber);</span>
 
         try {
-<span class="fc" id="L41">            PeoplePerStation result =</span>
-<span class="fc" id="L42">                    firstResponderService.getPeopleByStation(stationNumber);</span>
+<span class="fc" id="L45">            PeoplePerStation result =</span>
+<span class="fc" id="L46">                    firstResponderService.getPeopleByStation(stationNumber);</span>
 
-<span class="fc" id="L44">            log.info(&quot;Successfully retrieved people for station {}&quot;, stationNumber);</span>
-<span class="fc" id="L45">            return result;</span>
+<span class="fc" id="L48">            log.info(&quot;Successfully retrieved people for station {}&quot;, stationNumber);</span>
+<span class="fc" id="L49">            return result;</span>
 
-<span class="nc" id="L47">        } catch (Exception ex) {</span>
-<span class="nc" id="L48">            log.error(&quot;Error retrieving people for station {}&quot;, stationNumber, ex);</span>
-<span class="nc" id="L49">            throw ex;</span>
+<span class="nc" id="L51">        } catch (Exception ex) {</span>
+<span class="nc" id="L52">            log.error(&quot;Error retrieving people for station {}&quot;, stationNumber, ex);</span>
+<span class="nc" id="L53">            throw ex;</span>
         }
     }
 
@@ -58,18 +62,18 @@ public class FirstResponderController {
      */
     @GetMapping(&quot;/childAlert&quot;)
     public ChildrenByAddress getChildrenByAddress(@RequestParam String address) {
-<span class="fc" id="L61">        log.info(&quot;GET /childAlert - Retrieving children for address {}&quot;, address);</span>
+<span class="fc" id="L65">        log.info(&quot;GET /childAlert - Retrieving children for address {}&quot;, address);</span>
 
         try {
-<span class="fc" id="L64">            ChildrenByAddress result =</span>
-<span class="fc" id="L65">                    firstResponderService.getChildrenByAddress(address);</span>
+<span class="fc" id="L68">            ChildrenByAddress result =</span>
+<span class="fc" id="L69">                    firstResponderService.getChildrenByAddress(address);</span>
 
-<span class="fc" id="L67">            log.info(&quot;Child alert lookup completed for address {}&quot;, address);</span>
-<span class="fc" id="L68">            return result;</span>
+<span class="fc" id="L71">            log.info(&quot;Child alert lookup completed for address {}&quot;, address);</span>
+<span class="fc" id="L72">            return result;</span>
 
-<span class="nc" id="L70">        } catch (Exception ex) {</span>
-<span class="nc" id="L71">            log.error(&quot;Error retrieving children for address {}&quot;, address, ex);</span>
-<span class="nc" id="L72">            throw ex;</span>
+<span class="nc" id="L74">        } catch (Exception ex) {</span>
+<span class="nc" id="L75">            log.error(&quot;Error retrieving children for address {}&quot;, address, ex);</span>
+<span class="nc" id="L76">            throw ex;</span>
         }
     }
 
@@ -83,18 +87,18 @@ public class FirstResponderController {
     public PhonesPerStation getPhonesPerStation(
             @RequestParam(name = &quot;firestation&quot;) String firestation) {
 
-<span class="fc" id="L86">        log.info(&quot;GET /phoneAlert - Retrieving phone numbers for station {}&quot;, firestation);</span>
+<span class="fc" id="L90">        log.info(&quot;GET /phoneAlert - Retrieving phone numbers for station {}&quot;, firestation);</span>
 
         try {
-<span class="fc" id="L89">            PhonesPerStation result =</span>
-<span class="fc" id="L90">                    firstResponderService.getPhonesPerStation(firestation);</span>
+<span class="fc" id="L93">            PhonesPerStation result =</span>
+<span class="fc" id="L94">                    firstResponderService.getPhonesPerStation(firestation);</span>
 
-<span class="fc" id="L92">            log.info(&quot;Phone alert lookup completed for station {}&quot;, firestation);</span>
-<span class="fc" id="L93">            return result;</span>
+<span class="fc" id="L96">            log.info(&quot;Phone alert lookup completed for station {}&quot;, firestation);</span>
+<span class="fc" id="L97">            return result;</span>
 
-<span class="nc" id="L95">        } catch (Exception ex) {</span>
-<span class="nc" id="L96">            log.error(&quot;Error retrieving phone numbers for station {}&quot;, firestation, ex);</span>
-<span class="nc" id="L97">            throw ex;</span>
+<span class="nc" id="L99">        } catch (Exception ex) {</span>
+<span class="nc" id="L100">            log.error(&quot;Error retrieving phone numbers for station {}&quot;, firestation, ex);</span>
+<span class="nc" id="L101">            throw ex;</span>
         }
     }
 
@@ -106,18 +110,18 @@ public class FirstResponderController {
      */
     @GetMapping(&quot;/fire&quot;)
     public ResidentsPerAddress getResidentsPerAddress(@RequestParam String address) {
-<span class="fc" id="L109">        log.info(&quot;GET /fire - Retrieving residents for address {}&quot;, address);</span>
+<span class="fc" id="L113">        log.info(&quot;GET /fire - Retrieving residents for address {}&quot;, address);</span>
 
         try {
-<span class="fc" id="L112">            ResidentsPerAddress result =</span>
-<span class="fc" id="L113">                    firstResponderService.getResidentsPerAddress(address);</span>
+<span class="fc" id="L116">            ResidentsPerAddress result =</span>
+<span class="fc" id="L117">                    firstResponderService.getResidentsPerAddress(address);</span>
 
-<span class="fc" id="L115">            log.info(&quot;Successfully retrieved residents for address {}&quot;, address);</span>
-<span class="fc" id="L116">            return result;</span>
+<span class="fc" id="L119">            log.info(&quot;Successfully retrieved residents for address {}&quot;, address);</span>
+<span class="fc" id="L120">            return result;</span>
 
-<span class="nc" id="L118">        } catch (Exception ex) {</span>
-<span class="nc" id="L119">            log.error(&quot;Error retrieving residents for address {}&quot;, address, ex);</span>
-<span class="nc" id="L120">            throw ex;</span>
+<span class="nc" id="L122">        } catch (Exception ex) {</span>
+<span class="nc" id="L123">            log.error(&quot;Error retrieving residents for address {}&quot;, address, ex);</span>
+<span class="nc" id="L124">            throw ex;</span>
         }
     }
 
@@ -131,18 +135,18 @@ public class FirstResponderController {
     public List&lt;HouseholdsByStation&gt; getHouseholdsByFirestation(
             @RequestParam List&lt;String&gt; stations) {
 
-<span class="fc" id="L134">        log.info(&quot;GET /flood - Retrieving households for station(s) {}&quot;, stations);</span>
+<span class="fc" id="L138">        log.info(&quot;GET /flood - Retrieving households for station(s) {}&quot;, stations);</span>
 
         try {
-<span class="fc" id="L137">            List&lt;HouseholdsByStation&gt; result =</span>
-<span class="fc" id="L138">                    firstResponderService.getHouseholdsByFirestation(stations);</span>
+<span class="fc" id="L141">            List&lt;HouseholdsByStation&gt; result =</span>
+<span class="fc" id="L142">                    firstResponderService.getHouseholdsByFirestation(stations);</span>
 
-<span class="fc" id="L140">            log.info(&quot;Successfully retrieved households for station(s) {}&quot;, (stations));</span>
-<span class="fc" id="L141">            return result;</span>
+<span class="fc" id="L144">            log.info(&quot;Successfully retrieved households for station(s) {}&quot;, (stations));</span>
+<span class="fc" id="L145">            return result;</span>
 
-<span class="nc" id="L143">        } catch (Exception ex) {</span>
-<span class="nc" id="L144">            log.error(&quot;Error retrieving households for station(s) {}&quot;, stations, ex);</span>
-<span class="nc" id="L145">            throw ex;</span>
+<span class="nc" id="L147">        } catch (Exception ex) {</span>
+<span class="nc" id="L148">            log.error(&quot;Error retrieving households for station(s) {}&quot;, stations, ex);</span>
+<span class="nc" id="L149">            throw ex;</span>
         }
     }
 
@@ -154,17 +158,17 @@ public class FirstResponderController {
      */
     @GetMapping(&quot;/personInfo&quot;)
     public PersonInfo getPersonInfo(@RequestParam String lastName) {
-<span class="fc" id="L157">        log.info(&quot;GET /personInfo - Retrieving person info for lastName {}&quot;, lastName);</span>
+<span class="fc" id="L161">        log.info(&quot;GET /personInfo - Retrieving person info for lastName {}&quot;, lastName);</span>
 
         try {
-<span class="fc" id="L160">            PersonInfo result = firstResponderService.getPersonInfo(lastName);</span>
+<span class="fc" id="L164">            PersonInfo result = firstResponderService.getPersonInfo(lastName);</span>
 
-<span class="fc" id="L162">            log.info(&quot;Successfully retrieved person info for lastName {}&quot;, lastName);</span>
-<span class="fc" id="L163">            return result;</span>
+<span class="fc" id="L166">            log.info(&quot;Successfully retrieved person info for lastName {}&quot;, lastName);</span>
+<span class="fc" id="L167">            return result;</span>
 
-<span class="nc" id="L165">        } catch (Exception ex) {</span>
-<span class="nc" id="L166">            log.error(&quot;Error retrieving person info for lastName {}&quot;, lastName, ex);</span>
-<span class="nc" id="L167">            throw ex;</span>
+<span class="nc" id="L169">        } catch (Exception ex) {</span>
+<span class="nc" id="L170">            log.error(&quot;Error retrieving person info for lastName {}&quot;, lastName, ex);</span>
+<span class="nc" id="L171">            throw ex;</span>
         }
     }
 
@@ -176,18 +180,18 @@ public class FirstResponderController {
      */
     @GetMapping(&quot;/communityEmail&quot;)
     public ResidentEmails getResidentEmails(@RequestParam String city) {
-<span class="fc" id="L179">        log.info(&quot;GET /communityEmail - Retrieving resident emails for city {}&quot;, city);</span>
+<span class="fc" id="L183">        log.info(&quot;GET /communityEmail - Retrieving resident emails for city {}&quot;, city);</span>
 
         try {
-<span class="fc" id="L182">            ResidentEmails result =</span>
-<span class="fc" id="L183">                    firstResponderService.getResidentEmails(city);</span>
+<span class="fc" id="L186">            ResidentEmails result =</span>
+<span class="fc" id="L187">                    firstResponderService.getResidentEmails(city);</span>
 
-<span class="fc" id="L185">            log.info(&quot;Successfully retrieved resident emails for city {}&quot;, city);</span>
-<span class="fc" id="L186">            return result;</span>
+<span class="fc" id="L189">            log.info(&quot;Successfully retrieved resident emails for city {}&quot;, city);</span>
+<span class="fc" id="L190">            return result;</span>
 
-<span class="nc" id="L188">        } catch (Exception ex) {</span>
-<span class="nc" id="L189">            log.error(&quot;Error retrieving resident emails for city {}&quot;, city, ex);</span>
-<span class="nc" id="L190">            throw ex;</span>
+<span class="nc" id="L192">        } catch (Exception ex) {</span>
+<span class="nc" id="L193">            log.error(&quot;Error retrieving resident emails for city {}&quot;, city, ex);</span>
+<span class="nc" id="L194">            throw ex;</span>
         }
     }
 }

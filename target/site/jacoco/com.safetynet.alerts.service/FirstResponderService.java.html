@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FirstResponderService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">alerts</a> &gt; <a href="index.source.html" class="el_package">com.safetynet.alerts.service</a> &gt; <span class="el_source">FirstResponderService.java</span></div><h1>FirstResponderService.java</h1><pre class="source lang-java linenums">package com.safetynet.alerts.service;
 
-import com.safetynet.alerts.domain.*;
+import com.safetynet.alerts.domain.Firestation;
+import com.safetynet.alerts.domain.MedicalRecord;
+import com.safetynet.alerts.domain.Person;
 import com.safetynet.alerts.dto.*;
+import com.safetynet.alerts.repository.DataParser;
 import com.safetynet.alerts.view.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.safetynet.alerts.repository.DataParser;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -21,34 +23,38 @@ public class FirstResponderService {
 
     /**
      * Constructor for the first responder service and instantiates our data parser
+     *
      * @param data
      */
     @Autowired
-<span class="fc" id="L27">    public FirstResponderService(DataParser data) { this.data = data; }</span>
+<span class="fc" id="L30">    public FirstResponderService(DataParser data) {</span>
+<span class="fc" id="L31">        this.data = data;</span>
+<span class="fc" id="L32">    }</span>
 
     private static String normalizeName(String firstName, String lastName) {
-<span class="fc" id="L30">        return ((firstName) + &quot;|&quot; + (lastName)).toLowerCase(Locale.ROOT).trim();</span>
+<span class="fc" id="L35">        return ((firstName) + &quot;|&quot; + (lastName)).toLowerCase(Locale.ROOT).trim();</span>
     }
 
 
     /**
      * Helper method for computing the age
+     *
      * @param mr
      * @return
      */
     private static Integer computeAge(MedicalRecord mr) {
-<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        if (mr == null) return null;</span>
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">        if (mr == null) return null;</span>
         try {
-<span class="fc" id="L42">            String birthdate = mr.getBirthdate();</span>
-<span class="pc bpc" id="L43" title="2 of 4 branches missed.">            if (birthdate != null &amp;&amp; !birthdate.isBlank()) {</span>
-<span class="fc" id="L44">                DateTimeFormatter fmt = DateTimeFormatter.ofPattern(&quot;MM/dd/yyyy&quot;);</span>
-<span class="fc" id="L45">                LocalDate dob = LocalDate.parse(birthdate, fmt);</span>
-<span class="fc" id="L46">                return Period.between(dob, LocalDate.now()).getYears();</span>
+<span class="fc" id="L48">            String birthdate = mr.getBirthdate();</span>
+<span class="pc bpc" id="L49" title="2 of 4 branches missed.">            if (birthdate != null &amp;&amp; !birthdate.isBlank()) {</span>
+<span class="fc" id="L50">                DateTimeFormatter fmt = DateTimeFormatter.ofPattern(&quot;MM/dd/yyyy&quot;);</span>
+<span class="fc" id="L51">                LocalDate dob = LocalDate.parse(birthdate, fmt);</span>
+<span class="fc" id="L52">                return Period.between(dob, LocalDate.now()).getYears();</span>
             }
-<span class="nc" id="L48">        } catch (Exception e) {</span>
-<span class="nc" id="L49">            return null;</span>
-<span class="nc" id="L50">        }</span>
-<span class="nc" id="L51">        return null;</span>
+<span class="nc" id="L54">        } catch (Exception e) {</span>
+<span class="nc" id="L55">            return null;</span>
+<span class="nc" id="L56">        }</span>
+<span class="nc" id="L57">        return null;</span>
     }
 
 
@@ -57,66 +63,68 @@ public class FirstResponderService {
      * First finds all the addresses and errors out if the station number does not exist
      * Then it filters the people who live at those addresses, then does a medical record lookup
      * Finally it maps the data to the DTO and counts the adults/children
+     *
      * @param stationNumber
      * @return
      */
     public PeoplePerStation getPeopleByStation(String stationNumber) {
-<span class="fc" id="L64">        List&lt;String&gt; addresses = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L65" title="All 2 branches covered.">        for (Firestation fs : data.getFirestations()) {</span>
-<span class="pc bpc" id="L66" title="2 of 4 branches missed.">            if (fs != null &amp;&amp; fs.getStation().equals(stationNumber)) {</span>
-<span class="fc" id="L67">                addresses.add(fs.getAddress());</span>
+<span class="fc" id="L71">        List&lt;String&gt; addresses = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        for (Firestation fs : data.getFirestations()) {</span>
+<span class="pc bpc" id="L73" title="2 of 4 branches missed.">            if (fs != null &amp;&amp; fs.getStation().equals(stationNumber)) {</span>
+<span class="fc" id="L74">                addresses.add(fs.getAddress());</span>
             }
-<span class="fc" id="L69">        }</span>
+<span class="fc" id="L76">        }</span>
 
-<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (addresses.isEmpty()) {</span>
-<span class="fc" id="L72">            throw new IllegalArgumentException(</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">        if (addresses.isEmpty()) {</span>
+<span class="fc" id="L79">            throw new IllegalArgumentException(</span>
                     &quot;Firestation not found for station number: &quot; + stationNumber
             );
         }
 
-<span class="fc" id="L77">        List&lt;Person&gt; personsCovered = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L78" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
-<span class="pc bpc" id="L79" title="2 of 4 branches missed.">            if (p != null &amp;&amp; addresses.contains(p.getAddress())) {</span>
-<span class="fc" id="L80">                personsCovered.add(p);</span>
+<span class="fc" id="L84">        List&lt;Person&gt; personsCovered = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
+<span class="pc bpc" id="L86" title="2 of 4 branches missed.">            if (p != null &amp;&amp; addresses.contains(p.getAddress())) {</span>
+<span class="fc" id="L87">                personsCovered.add(p);</span>
             }
-<span class="fc" id="L82">        }</span>
+<span class="fc" id="L89">        }</span>
 
-<span class="fc" id="L84">        Map&lt;String, MedicalRecord&gt; medicalRecordSearch = new HashMap&lt;&gt;();</span>
-<span class="fc bfc" id="L85" title="All 2 branches covered.">        for (MedicalRecord mr : data.getMedicalRecords()) {</span>
-<span class="pc bpc" id="L86" title="3 of 6 branches missed.">            if (mr != null &amp;&amp; mr.getFirstName() != null &amp;&amp; mr.getLastName() != null) {</span>
-<span class="fc" id="L87">                String key = normalizeName(mr.getFirstName(), mr.getLastName());</span>
-<span class="fc" id="L88">                medicalRecordSearch.put(key, mr);</span>
+<span class="fc" id="L91">        Map&lt;String, MedicalRecord&gt; medicalRecordSearch = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L92" title="All 2 branches covered.">        for (MedicalRecord mr : data.getMedicalRecords()) {</span>
+<span class="pc bpc" id="L93" title="3 of 6 branches missed.">            if (mr != null &amp;&amp; mr.getFirstName() != null &amp;&amp; mr.getLastName() != null) {</span>
+<span class="fc" id="L94">                String key = normalizeName(mr.getFirstName(), mr.getLastName());</span>
+<span class="fc" id="L95">                medicalRecordSearch.put(key, mr);</span>
             }
-<span class="fc" id="L90">        }</span>
+<span class="fc" id="L97">        }</span>
 
-<span class="fc" id="L92">        List&lt;CoveredPersonsDTO&gt; personToDto = new ArrayList&lt;&gt;();</span>
-<span class="fc" id="L93">        int adultCount = 0;</span>
-<span class="fc" id="L94">        int childCount = 0;</span>
+<span class="fc" id="L99">        List&lt;CoveredPersonsDTO&gt; personToDto = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L100">        int adultCount = 0;</span>
+<span class="fc" id="L101">        int childCount = 0;</span>
 
-<span class="fc bfc" id="L96" title="All 2 branches covered.">        for (Person p : personsCovered) {</span>
-<span class="fc" id="L97">            CoveredPersonsDTO dto = new CoveredPersonsDTO(</span>
-<span class="fc" id="L98">                    p.getFirstName(),</span>
-<span class="fc" id="L99">                    p.getLastName(),</span>
-<span class="fc" id="L100">                    p.getAddress(),</span>
-<span class="fc" id="L101">                    p.getPhone()</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        for (Person p : personsCovered) {</span>
+<span class="fc" id="L104">            CoveredPersonsDTO dto = new CoveredPersonsDTO(</span>
+<span class="fc" id="L105">                    p.getFirstName(),</span>
+<span class="fc" id="L106">                    p.getLastName(),</span>
+<span class="fc" id="L107">                    p.getAddress(),</span>
+<span class="fc" id="L108">                    p.getPhone()</span>
             );
-<span class="fc" id="L103">            personToDto.add(dto);</span>
+<span class="fc" id="L110">            personToDto.add(dto);</span>
 
-<span class="fc" id="L105">            String key = normalizeName(p.getFirstName(), p.getLastName());</span>
-<span class="fc" id="L106">            MedicalRecord mr = medicalRecordSearch.get(key);</span>
-<span class="fc" id="L107">            Integer age = computeAge(mr);</span>
+<span class="fc" id="L112">            String key = normalizeName(p.getFirstName(), p.getLastName());</span>
+<span class="fc" id="L113">            MedicalRecord mr = medicalRecordSearch.get(key);</span>
+<span class="fc" id="L114">            Integer age = computeAge(mr);</span>
 
-<span class="pc bpc" id="L109" title="1 of 2 branches missed.">            if (age != null) {</span>
-<span class="fc bfc" id="L110" title="All 2 branches covered.">                if (age &lt; 18) {</span>
-<span class="fc" id="L111">                    childCount++;</span>
+<span class="pc bpc" id="L116" title="1 of 2 branches missed.">            if (age != null) {</span>
+<span class="fc bfc" id="L117" title="All 2 branches covered.">                if (age &lt; 18) {</span>
+<span class="fc" id="L118">                    childCount++;</span>
                 } else {
-<span class="fc" id="L113">                    adultCount++;</span>
+<span class="fc" id="L120">                    adultCount++;</span>
                 }
             }
-<span class="fc" id="L116">        }</span>
+<span class="fc" id="L123">        }</span>
 
-<span class="fc" id="L118">        return new PeoplePerStation(personToDto, adultCount, childCount);</span>
+<span class="fc" id="L125">        return new PeoplePerStation(personToDto, adultCount, childCount);</span>
     }
+
     /**
      * Returns children (age 18 or younger) living at the given address,
      * First find the people living at an address and errors if its unknown
@@ -124,104 +132,105 @@ public class FirstResponderService {
      * Finally it obtains other household members by searching by address
      */
     public ChildrenByAddress getChildrenByAddress(String address) {
-<span class="fc" id="L127">        List&lt;Person&gt; personsAtAddress = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L128" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
-<span class="pc bpc" id="L129" title="2 of 4 branches missed.">            if (p != null &amp;&amp; address.equalsIgnoreCase(p.getAddress())) {</span>
-<span class="fc" id="L130">                personsAtAddress.add(p);</span>
+<span class="fc" id="L135">        List&lt;Person&gt; personsAtAddress = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
+<span class="pc bpc" id="L137" title="2 of 4 branches missed.">            if (p != null &amp;&amp; address.equalsIgnoreCase(p.getAddress())) {</span>
+<span class="fc" id="L138">                personsAtAddress.add(p);</span>
             }
-<span class="fc" id="L132">        }</span>
+<span class="fc" id="L140">        }</span>
 
-<span class="fc bfc" id="L134" title="All 2 branches covered.">        if (personsAtAddress.isEmpty()) {</span>
-<span class="fc" id="L135">            throw new IllegalArgumentException(</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">        if (personsAtAddress.isEmpty()) {</span>
+<span class="fc" id="L143">            throw new IllegalArgumentException(</span>
                     &quot;Address not found: &quot; + address
             );
         }
 
-<span class="fc" id="L140">        Map&lt;String, MedicalRecord&gt; recordLookup = new HashMap&lt;&gt;();</span>
-<span class="fc bfc" id="L141" title="All 2 branches covered.">        for (MedicalRecord mr : data.getMedicalRecords()) {</span>
-<span class="pc bpc" id="L142" title="3 of 6 branches missed.">            if (mr != null &amp;&amp; mr.getFirstName() != null &amp;&amp; mr.getLastName() != null) {</span>
-<span class="fc" id="L143">                String key = normalizeName(mr.getFirstName(), mr.getLastName());</span>
-<span class="fc" id="L144">                recordLookup.put(key, mr);</span>
+<span class="fc" id="L148">        Map&lt;String, MedicalRecord&gt; recordLookup = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        for (MedicalRecord mr : data.getMedicalRecords()) {</span>
+<span class="pc bpc" id="L150" title="3 of 6 branches missed.">            if (mr != null &amp;&amp; mr.getFirstName() != null &amp;&amp; mr.getLastName() != null) {</span>
+<span class="fc" id="L151">                String key = normalizeName(mr.getFirstName(), mr.getLastName());</span>
+<span class="fc" id="L152">                recordLookup.put(key, mr);</span>
             }
-<span class="fc" id="L146">        }</span>
+<span class="fc" id="L154">        }</span>
 
-<span class="fc" id="L148">        List&lt;ChildrenByAddressDTO&gt; children = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L156">        List&lt;ChildrenByAddressDTO&gt; children = new ArrayList&lt;&gt;();</span>
 
-<span class="fc bfc" id="L150" title="All 2 branches covered.">        for (Person p : personsAtAddress) {</span>
-<span class="fc" id="L151">            String key = normalizeName(p.getFirstName(), p.getLastName());</span>
-<span class="fc" id="L152">            MedicalRecord mr = recordLookup.get(key);</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">        for (Person p : personsAtAddress) {</span>
+<span class="fc" id="L159">            String key = normalizeName(p.getFirstName(), p.getLastName());</span>
+<span class="fc" id="L160">            MedicalRecord mr = recordLookup.get(key);</span>
 
-<span class="fc" id="L154">            Integer age = computeAge(mr);</span>
-<span class="pc bpc" id="L155" title="1 of 4 branches missed.">            if (age != null &amp;&amp; age &lt;= 18) {</span>
+<span class="fc" id="L162">            Integer age = computeAge(mr);</span>
+<span class="pc bpc" id="L163" title="1 of 4 branches missed.">            if (age != null &amp;&amp; age &lt;= 18) {</span>
 
-<span class="fc" id="L157">                ChildrenByAddressDTO childDto =</span>
-<span class="fc" id="L158">                        new ChildrenByAddressDTO(p.getFirstName(), p.getLastName(), age);</span>
+<span class="fc" id="L165">                ChildrenByAddressDTO childDto =</span>
+<span class="fc" id="L166">                        new ChildrenByAddressDTO(p.getFirstName(), p.getLastName(), age);</span>
 
-<span class="fc" id="L160">                List&lt;HouseholdMembersDTO&gt; householdMembers = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L161" title="All 2 branches covered.">                for (Person other : personsAtAddress) {</span>
-<span class="fc bfc" id="L162" title="All 2 branches covered.">                    if (!other.getFirstName().equalsIgnoreCase(p.getFirstName()) ||</span>
-<span class="pc bpc" id="L163" title="1 of 2 branches missed.">                            !other.getLastName().equalsIgnoreCase(p.getLastName())) {</span>
+<span class="fc" id="L168">                List&lt;HouseholdMembersDTO&gt; householdMembers = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L169" title="All 2 branches covered.">                for (Person other : personsAtAddress) {</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">                    if (!other.getFirstName().equalsIgnoreCase(p.getFirstName()) ||</span>
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">                            !other.getLastName().equalsIgnoreCase(p.getLastName())) {</span>
 
-<span class="fc" id="L165">                        householdMembers.add(new HouseholdMembersDTO(</span>
-<span class="fc" id="L166">                                other.getFirstName(),</span>
-<span class="fc" id="L167">                                other.getLastName()</span>
+<span class="fc" id="L173">                        householdMembers.add(new HouseholdMembersDTO(</span>
+<span class="fc" id="L174">                                other.getFirstName(),</span>
+<span class="fc" id="L175">                                other.getLastName()</span>
                         ));
                     }
-<span class="fc" id="L170">                }</span>
+<span class="fc" id="L178">                }</span>
 
-<span class="fc" id="L172">                childDto.setHouseholdMembersList(householdMembers);</span>
-<span class="fc" id="L173">                children.add(childDto);</span>
+<span class="fc" id="L180">                childDto.setHouseholdMembersList(householdMembers);</span>
+<span class="fc" id="L181">                children.add(childDto);</span>
             }
-<span class="fc" id="L175">        }</span>
+<span class="fc" id="L183">        }</span>
 
-<span class="fc" id="L177">        return new ChildrenByAddress(children);</span>
+<span class="fc" id="L185">        return new ChildrenByAddress(children);</span>
     }
 
     /**
      * Returns a list of unique phone numbers for residents served by the given fire station.
      * First finds all addresses for that firestation, then filters the people who live at those addresses
      * Extracts unique, non-blank numbers and then sorts them
+     *
      * @param fireStation the fire station number
      * @return PhonesPerStation view containing the list of phone numbers
      */
     public PhonesPerStation getPhonesPerStation(String fireStation) {
-<span class="fc" id="L188">        List&lt;String&gt; addresses = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L189" title="All 2 branches covered.">        for (Firestation fs : data.getFirestations()) {</span>
-<span class="pc bpc" id="L190" title="3 of 6 branches missed.">            if (fs != null &amp;&amp; fs.getStation() != null &amp;&amp; fs.getStation().equals(fireStation)) {</span>
-<span class="pc bpc" id="L191" title="1 of 2 branches missed.">                if (fs.getAddress() != null) {</span>
-<span class="fc" id="L192">                    addresses.add(fs.getAddress());</span>
+<span class="fc" id="L197">        List&lt;String&gt; addresses = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L198" title="All 2 branches covered.">        for (Firestation fs : data.getFirestations()) {</span>
+<span class="pc bpc" id="L199" title="3 of 6 branches missed.">            if (fs != null &amp;&amp; fs.getStation() != null &amp;&amp; fs.getStation().equals(fireStation)) {</span>
+<span class="pc bpc" id="L200" title="1 of 2 branches missed.">                if (fs.getAddress() != null) {</span>
+<span class="fc" id="L201">                    addresses.add(fs.getAddress());</span>
                 }
             }
-<span class="fc" id="L195">        }</span>
+<span class="fc" id="L204">        }</span>
 
-<span class="pc bpc" id="L197" title="1 of 2 branches missed.">        if (addresses.isEmpty()) {</span>
-<span class="nc" id="L198">            throw new IllegalArgumentException(</span>
+<span class="pc bpc" id="L206" title="1 of 2 branches missed.">        if (addresses.isEmpty()) {</span>
+<span class="nc" id="L207">            throw new IllegalArgumentException(</span>
                     &quot;Firestation not found for station number: &quot; + fireStation
             );
         }
 
-<span class="fc" id="L203">        List&lt;Person&gt; personsCovered = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L204" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
-<span class="pc bpc" id="L205" title="3 of 6 branches missed.">            if (p != null &amp;&amp; p.getAddress() != null &amp;&amp; addresses.contains(p.getAddress())) {</span>
-<span class="fc" id="L206">                personsCovered.add(p);</span>
+<span class="fc" id="L212">        List&lt;Person&gt; personsCovered = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L213" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
+<span class="pc bpc" id="L214" title="3 of 6 branches missed.">            if (p != null &amp;&amp; p.getAddress() != null &amp;&amp; addresses.contains(p.getAddress())) {</span>
+<span class="fc" id="L215">                personsCovered.add(p);</span>
             }
-<span class="fc" id="L208">        }</span>
+<span class="fc" id="L217">        }</span>
 
-<span class="fc" id="L210">        Set&lt;String&gt; uniquePhones = new LinkedHashSet&lt;&gt;();</span>
-<span class="fc bfc" id="L211" title="All 2 branches covered.">        for (Person p : personsCovered) {</span>
-<span class="pc bpc" id="L212" title="1 of 2 branches missed.">            String phone = (p != null) ? p.getPhone() : null;</span>
-<span class="pc bpc" id="L213" title="1 of 2 branches missed.">            if (phone != null) {</span>
-<span class="fc" id="L214">                phone = phone.trim();</span>
-<span class="pc bpc" id="L215" title="1 of 2 branches missed.">                if (!phone.isEmpty()) {</span>
-<span class="fc" id="L216">                    uniquePhones.add(phone);</span>
+<span class="fc" id="L219">        Set&lt;String&gt; uniquePhones = new LinkedHashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L220" title="All 2 branches covered.">        for (Person p : personsCovered) {</span>
+<span class="pc bpc" id="L221" title="1 of 2 branches missed.">            String phone = (p != null) ? p.getPhone() : null;</span>
+<span class="pc bpc" id="L222" title="1 of 2 branches missed.">            if (phone != null) {</span>
+<span class="fc" id="L223">                phone = phone.trim();</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">                if (!phone.isEmpty()) {</span>
+<span class="fc" id="L225">                    uniquePhones.add(phone);</span>
                 }
             }
-<span class="fc" id="L219">        }</span>
+<span class="fc" id="L228">        }</span>
 
-<span class="fc" id="L221">        List&lt;String&gt; phones = new ArrayList&lt;&gt;(uniquePhones);</span>
-<span class="fc" id="L222">        Collections.sort(phones);</span>
+<span class="fc" id="L230">        List&lt;String&gt; phones = new ArrayList&lt;&gt;(uniquePhones);</span>
+<span class="fc" id="L231">        Collections.sort(phones);</span>
 
-<span class="fc" id="L224">        return new PhonesPerStation(phones);</span>
+<span class="fc" id="L233">        return new PhonesPerStation(phones);</span>
     }
 
     /**
@@ -234,64 +243,65 @@ public class FirstResponderService {
      * @return ResidentsPerAddress view containing the residents and the station number
      */
     public ResidentsPerAddress getResidentsPerAddress(String address) {
-<span class="fc" id="L237">        String stationNumber = null;</span>
-<span class="pc bpc" id="L238" title="1 of 2 branches missed.">        for (Firestation fs : data.getFirestations()) {</span>
-<span class="pc bpc" id="L239" title="3 of 6 branches missed.">            if (fs != null &amp;&amp; fs.getAddress() != null &amp;&amp; fs.getAddress().equals(address)) {</span>
-<span class="fc" id="L240">                stationNumber = fs.getStation();</span>
-<span class="fc" id="L241">                break;</span>
+<span class="fc" id="L246">        String stationNumber = null;</span>
+<span class="pc bpc" id="L247" title="1 of 2 branches missed.">        for (Firestation fs : data.getFirestations()) {</span>
+<span class="pc bpc" id="L248" title="3 of 6 branches missed.">            if (fs != null &amp;&amp; fs.getAddress() != null &amp;&amp; fs.getAddress().equals(address)) {</span>
+<span class="fc" id="L249">                stationNumber = fs.getStation();</span>
+<span class="fc" id="L250">                break;</span>
             }
-<span class="nc" id="L243">        }</span>
+<span class="nc" id="L252">        }</span>
 
-<span class="pc bpc" id="L245" title="1 of 2 branches missed.">        if (stationNumber == null) {</span>
-<span class="nc" id="L246">            throw new IllegalArgumentException(</span>
+<span class="pc bpc" id="L254" title="1 of 2 branches missed.">        if (stationNumber == null) {</span>
+<span class="nc" id="L255">            throw new IllegalArgumentException(</span>
                     &quot;Address not found: &quot; + address
             );
         }
 
-<span class="fc" id="L251">        List&lt;Person&gt; residentsAtAddress = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L252" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
-<span class="pc bpc" id="L253" title="3 of 6 branches missed.">            if (p != null &amp;&amp; address != null &amp;&amp; address.equals(p.getAddress())) {</span>
-<span class="fc" id="L254">                residentsAtAddress.add(p);</span>
+<span class="fc" id="L260">        List&lt;Person&gt; residentsAtAddress = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L261" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
+<span class="pc bpc" id="L262" title="3 of 6 branches missed.">            if (p != null &amp;&amp; address != null &amp;&amp; address.equals(p.getAddress())) {</span>
+<span class="fc" id="L263">                residentsAtAddress.add(p);</span>
             }
-<span class="fc" id="L256">        }</span>
+<span class="fc" id="L265">        }</span>
 
-<span class="fc" id="L258">        Map&lt;String, MedicalRecord&gt; medicalRecordSearch = new HashMap&lt;&gt;();</span>
-<span class="fc bfc" id="L259" title="All 2 branches covered.">        for (MedicalRecord mr : data.getMedicalRecords()) {</span>
-<span class="pc bpc" id="L260" title="3 of 6 branches missed.">            if (mr != null &amp;&amp; mr.getFirstName() != null &amp;&amp; mr.getLastName() != null) {</span>
-<span class="fc" id="L261">                String key = normalizeName(mr.getFirstName(), mr.getLastName());</span>
-<span class="fc" id="L262">                medicalRecordSearch.put(key, mr);</span>
+<span class="fc" id="L267">        Map&lt;String, MedicalRecord&gt; medicalRecordSearch = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L268" title="All 2 branches covered.">        for (MedicalRecord mr : data.getMedicalRecords()) {</span>
+<span class="pc bpc" id="L269" title="3 of 6 branches missed.">            if (mr != null &amp;&amp; mr.getFirstName() != null &amp;&amp; mr.getLastName() != null) {</span>
+<span class="fc" id="L270">                String key = normalizeName(mr.getFirstName(), mr.getLastName());</span>
+<span class="fc" id="L271">                medicalRecordSearch.put(key, mr);</span>
             }
-<span class="fc" id="L264">        }</span>
+<span class="fc" id="L273">        }</span>
 
-<span class="fc" id="L266">        List&lt;ResidentsPerAddressDTO&gt; residents = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L267" title="All 2 branches covered.">        for (Person p : residentsAtAddress) {</span>
-<span class="fc" id="L268">            String key = normalizeName(p.getFirstName(), p.getLastName());</span>
-<span class="fc" id="L269">            MedicalRecord mr = medicalRecordSearch.get(key);</span>
+<span class="fc" id="L275">        List&lt;ResidentsPerAddressDTO&gt; residents = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L276" title="All 2 branches covered.">        for (Person p : residentsAtAddress) {</span>
+<span class="fc" id="L277">            String key = normalizeName(p.getFirstName(), p.getLastName());</span>
+<span class="fc" id="L278">            MedicalRecord mr = medicalRecordSearch.get(key);</span>
 
-<span class="fc" id="L271">            Integer maybeAge = computeAge(mr);</span>
-<span class="pc bpc" id="L272" title="1 of 2 branches missed.">            int age = (maybeAge != null) ? maybeAge : 0;</span>
+<span class="fc" id="L280">            Integer maybeAge = computeAge(mr);</span>
+<span class="pc bpc" id="L281" title="1 of 2 branches missed.">            int age = (maybeAge != null) ? maybeAge : 0;</span>
 
-<span class="pc bpc" id="L274" title="2 of 4 branches missed.">            List&lt;String&gt; medications = (mr != null &amp;&amp; mr.getMedications() != null)</span>
-<span class="nc" id="L275">                    ? mr.getMedications()</span>
-<span class="fc" id="L276">                    : Collections.emptyList();</span>
+<span class="pc bpc" id="L283" title="2 of 4 branches missed.">            List&lt;String&gt; medications = (mr != null &amp;&amp; mr.getMedications() != null)</span>
+<span class="nc" id="L284">                    ? mr.getMedications()</span>
+<span class="fc" id="L285">                    : Collections.emptyList();</span>
 
-<span class="pc bpc" id="L278" title="2 of 4 branches missed.">            List&lt;String&gt; allergies = (mr != null &amp;&amp; mr.getAllergies() != null)</span>
-<span class="nc" id="L279">                    ? mr.getAllergies()</span>
-<span class="fc" id="L280">                    : Collections.emptyList();</span>
+<span class="pc bpc" id="L287" title="2 of 4 branches missed.">            List&lt;String&gt; allergies = (mr != null &amp;&amp; mr.getAllergies() != null)</span>
+<span class="nc" id="L288">                    ? mr.getAllergies()</span>
+<span class="fc" id="L289">                    : Collections.emptyList();</span>
 
-<span class="fc" id="L282">            ResidentsPerAddressDTO dto = new ResidentsPerAddressDTO(</span>
-<span class="fc" id="L283">                    p.getFirstName(),</span>
-<span class="fc" id="L284">                    p.getLastName(),</span>
-<span class="fc" id="L285">                    p.getPhone(),</span>
+<span class="fc" id="L291">            ResidentsPerAddressDTO dto = new ResidentsPerAddressDTO(</span>
+<span class="fc" id="L292">                    p.getFirstName(),</span>
+<span class="fc" id="L293">                    p.getLastName(),</span>
+<span class="fc" id="L294">                    p.getPhone(),</span>
                     age,
                     medications,
                     allergies
             );
-<span class="fc" id="L290">            residents.add(dto);</span>
-<span class="fc" id="L291">        }</span>
+<span class="fc" id="L299">            residents.add(dto);</span>
+<span class="fc" id="L300">        }</span>
 
-<span class="fc" id="L293">        return new ResidentsPerAddress(residents, stationNumber);</span>
+<span class="fc" id="L302">        return new ResidentsPerAddress(residents, stationNumber);</span>
     }
+
     /**
      * Returns all households served by the given fire station numbers.
      * Collects addresses for the station numbers and group by those who live at that address.
@@ -301,180 +311,182 @@ public class FirstResponderService {
      * @return a list of households (one per address) with residents and their medical info
      */
     public List&lt;HouseholdsByStation&gt; getHouseholdsByFirestation(List&lt;String&gt; stations) {
-<span class="pc bpc" id="L304" title="2 of 4 branches missed.">        if (stations == null || stations.isEmpty()) {</span>
-<span class="nc" id="L305">            return Collections.emptyList();</span>
+<span class="pc bpc" id="L314" title="2 of 4 branches missed.">        if (stations == null || stations.isEmpty()) {</span>
+<span class="nc" id="L315">            return Collections.emptyList();</span>
         }
 
-<span class="fc" id="L308">        Set&lt;String&gt; stationSet = new HashSet&lt;&gt;(stations);</span>
-<span class="fc" id="L309">        Set&lt;String&gt; addresses = new LinkedHashSet&lt;&gt;();</span>
-<span class="fc bfc" id="L310" title="All 2 branches covered.">        for (Firestation fs : data.getFirestations()) {</span>
-<span class="pc bpc" id="L311" title="1 of 2 branches missed.">            if (fs != null</span>
-<span class="pc bpc" id="L312" title="1 of 2 branches missed.">                    &amp;&amp; fs.getStation() != null</span>
-<span class="pc bpc" id="L313" title="1 of 2 branches missed.">                    &amp;&amp; stationSet.contains(fs.getStation())</span>
-<span class="pc bpc" id="L314" title="1 of 2 branches missed.">                    &amp;&amp; fs.getAddress() != null) {</span>
-<span class="fc" id="L315">                addresses.add(fs.getAddress());</span>
+<span class="fc" id="L318">        Set&lt;String&gt; stationSet = new HashSet&lt;&gt;(stations);</span>
+<span class="fc" id="L319">        Set&lt;String&gt; addresses = new LinkedHashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L320" title="All 2 branches covered.">        for (Firestation fs : data.getFirestations()) {</span>
+<span class="pc bpc" id="L321" title="1 of 2 branches missed.">            if (fs != null</span>
+<span class="pc bpc" id="L322" title="1 of 2 branches missed.">                    &amp;&amp; fs.getStation() != null</span>
+<span class="pc bpc" id="L323" title="1 of 2 branches missed.">                    &amp;&amp; stationSet.contains(fs.getStation())</span>
+<span class="pc bpc" id="L324" title="1 of 2 branches missed.">                    &amp;&amp; fs.getAddress() != null) {</span>
+<span class="fc" id="L325">                addresses.add(fs.getAddress());</span>
             }
-<span class="fc" id="L317">        }</span>
+<span class="fc" id="L327">        }</span>
 
-<span class="pc bpc" id="L319" title="1 of 2 branches missed.">        if (addresses.isEmpty()) {</span>
-<span class="nc" id="L320">            throw new IllegalArgumentException(</span>
+<span class="pc bpc" id="L329" title="1 of 2 branches missed.">        if (addresses.isEmpty()) {</span>
+<span class="nc" id="L330">            throw new IllegalArgumentException(</span>
                     &quot;Firestation not found for station numbers: &quot; + stations
             );
         }
 
-<span class="fc" id="L325">        Map&lt;String, List&lt;Person&gt;&gt; personsByAddress = new LinkedHashMap&lt;&gt;();</span>
-<span class="fc bfc" id="L326" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
-<span class="pc bpc" id="L327" title="3 of 6 branches missed.">            if (p != null &amp;&amp; p.getAddress() != null &amp;&amp; addresses.contains(p.getAddress())) {</span>
-<span class="fc" id="L328">                personsByAddress</span>
-<span class="fc" id="L329">                        .computeIfAbsent(p.getAddress(), k -&gt; new ArrayList&lt;&gt;())</span>
-<span class="fc" id="L330">                        .add(p);</span>
+<span class="fc" id="L335">        Map&lt;String, List&lt;Person&gt;&gt; personsByAddress = new LinkedHashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L336" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
+<span class="pc bpc" id="L337" title="3 of 6 branches missed.">            if (p != null &amp;&amp; p.getAddress() != null &amp;&amp; addresses.contains(p.getAddress())) {</span>
+<span class="fc" id="L338">                personsByAddress</span>
+<span class="fc" id="L339">                        .computeIfAbsent(p.getAddress(), k -&gt; new ArrayList&lt;&gt;())</span>
+<span class="fc" id="L340">                        .add(p);</span>
             }
-<span class="fc" id="L332">        }</span>
+<span class="fc" id="L342">        }</span>
 
-<span class="fc" id="L334">        Map&lt;String, MedicalRecord&gt; medicalRecordSearch = new HashMap&lt;&gt;();</span>
-<span class="fc bfc" id="L335" title="All 2 branches covered.">        for (MedicalRecord mr : data.getMedicalRecords()) {</span>
-<span class="pc bpc" id="L336" title="3 of 6 branches missed.">            if (mr != null &amp;&amp; mr.getFirstName() != null &amp;&amp; mr.getLastName() != null) {</span>
-<span class="fc" id="L337">                String key = normalizeName(mr.getFirstName(), mr.getLastName());</span>
-<span class="fc" id="L338">                medicalRecordSearch.put(key, mr);</span>
+<span class="fc" id="L344">        Map&lt;String, MedicalRecord&gt; medicalRecordSearch = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L345" title="All 2 branches covered.">        for (MedicalRecord mr : data.getMedicalRecords()) {</span>
+<span class="pc bpc" id="L346" title="3 of 6 branches missed.">            if (mr != null &amp;&amp; mr.getFirstName() != null &amp;&amp; mr.getLastName() != null) {</span>
+<span class="fc" id="L347">                String key = normalizeName(mr.getFirstName(), mr.getLastName());</span>
+<span class="fc" id="L348">                medicalRecordSearch.put(key, mr);</span>
             }
-<span class="fc" id="L340">        }</span>
+<span class="fc" id="L350">        }</span>
 
-<span class="fc" id="L342">        List&lt;HouseholdsByStation&gt; households = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L343" title="All 2 branches covered.">        for (Map.Entry&lt;String, List&lt;Person&gt;&gt; entry : personsByAddress.entrySet()) {</span>
-<span class="fc" id="L344">            String address = entry.getKey();</span>
-<span class="fc" id="L345">            List&lt;Person&gt; personsAtAddress = entry.getValue();</span>
+<span class="fc" id="L352">        List&lt;HouseholdsByStation&gt; households = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L353" title="All 2 branches covered.">        for (Map.Entry&lt;String, List&lt;Person&gt;&gt; entry : personsByAddress.entrySet()) {</span>
+<span class="fc" id="L354">            String address = entry.getKey();</span>
+<span class="fc" id="L355">            List&lt;Person&gt; personsAtAddress = entry.getValue();</span>
 
-<span class="fc" id="L347">            List&lt;ResidentsPerAddressDTO&gt; residents = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L348" title="All 2 branches covered.">            for (Person p : personsAtAddress) {</span>
-<span class="fc" id="L349">                String key = normalizeName(p.getFirstName(), p.getLastName());</span>
-<span class="fc" id="L350">                MedicalRecord mr = medicalRecordSearch.get(key);</span>
+<span class="fc" id="L357">            List&lt;ResidentsPerAddressDTO&gt; residents = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L358" title="All 2 branches covered.">            for (Person p : personsAtAddress) {</span>
+<span class="fc" id="L359">                String key = normalizeName(p.getFirstName(), p.getLastName());</span>
+<span class="fc" id="L360">                MedicalRecord mr = medicalRecordSearch.get(key);</span>
 
-<span class="fc" id="L352">                Integer maybeAge = computeAge(mr);</span>
-<span class="pc bpc" id="L353" title="1 of 2 branches missed.">                int age = (maybeAge != null) ? maybeAge : 0;</span>
+<span class="fc" id="L362">                Integer maybeAge = computeAge(mr);</span>
+<span class="pc bpc" id="L363" title="1 of 2 branches missed.">                int age = (maybeAge != null) ? maybeAge : 0;</span>
 
-<span class="pc bpc" id="L355" title="2 of 4 branches missed.">                List&lt;String&gt; medications = (mr != null &amp;&amp; mr.getMedications() != null)</span>
-<span class="nc" id="L356">                        ? mr.getMedications()</span>
-<span class="fc" id="L357">                        : Collections.emptyList();</span>
+<span class="pc bpc" id="L365" title="2 of 4 branches missed.">                List&lt;String&gt; medications = (mr != null &amp;&amp; mr.getMedications() != null)</span>
+<span class="nc" id="L366">                        ? mr.getMedications()</span>
+<span class="fc" id="L367">                        : Collections.emptyList();</span>
 
-<span class="pc bpc" id="L359" title="2 of 4 branches missed.">                List&lt;String&gt; allergies = (mr != null &amp;&amp; mr.getAllergies() != null)</span>
-<span class="nc" id="L360">                        ? mr.getAllergies()</span>
-<span class="fc" id="L361">                        : Collections.emptyList();</span>
+<span class="pc bpc" id="L369" title="2 of 4 branches missed.">                List&lt;String&gt; allergies = (mr != null &amp;&amp; mr.getAllergies() != null)</span>
+<span class="nc" id="L370">                        ? mr.getAllergies()</span>
+<span class="fc" id="L371">                        : Collections.emptyList();</span>
 
-<span class="fc" id="L363">                residents.add(new ResidentsPerAddressDTO(</span>
-<span class="fc" id="L364">                        p.getFirstName(),</span>
-<span class="fc" id="L365">                        p.getLastName(),</span>
-<span class="fc" id="L366">                        p.getPhone(),</span>
+<span class="fc" id="L373">                residents.add(new ResidentsPerAddressDTO(</span>
+<span class="fc" id="L374">                        p.getFirstName(),</span>
+<span class="fc" id="L375">                        p.getLastName(),</span>
+<span class="fc" id="L376">                        p.getPhone(),</span>
                         age,
                         medications,
                         allergies
                 ));
-<span class="fc" id="L371">            }</span>
-<span class="fc" id="L372">            households.add(new HouseholdsByStation(address, residents));</span>
-<span class="fc" id="L373">        }</span>
-<span class="fc" id="L374">        return households;</span>
+<span class="fc" id="L381">            }</span>
+<span class="fc" id="L382">            households.add(new HouseholdsByStation(address, residents));</span>
+<span class="fc" id="L383">        }</span>
+<span class="fc" id="L384">        return households;</span>
     }
 
     /**
      * Obtains the list of residents matching a given last name.
      * Returns their first/last name, address, age, email, medications (with dosages), and allergies.
      * If multiple people share the last name, they will all appear.
+     *
      * @param lastName the last name to search
      * @return PersonInfo view containing a list of PersonInfoDTO
      */
     public PersonInfo getPersonInfo(String lastName) {
 
-<span class="pc bpc" id="L386" title="2 of 4 branches missed.">        if (lastName == null || lastName.isBlank()) {</span>
-<span class="nc" id="L387">            return new PersonInfo(new ArrayList&lt;&gt;());</span>
+<span class="pc bpc" id="L397" title="2 of 4 branches missed.">        if (lastName == null || lastName.isBlank()) {</span>
+<span class="nc" id="L398">            return new PersonInfo(new ArrayList&lt;&gt;());</span>
         }
 
-<span class="fc" id="L390">        Map&lt;String, MedicalRecord&gt; medicalRecordSearch = new HashMap&lt;&gt;();</span>
-<span class="fc bfc" id="L391" title="All 2 branches covered.">        for (MedicalRecord mr : data.getMedicalRecords()) {</span>
-<span class="pc bpc" id="L392" title="3 of 6 branches missed.">            if (mr != null &amp;&amp; mr.getFirstName() != null &amp;&amp; mr.getLastName() != null) {</span>
-<span class="fc" id="L393">                String key = normalizeName(mr.getFirstName(), mr.getLastName());</span>
-<span class="fc" id="L394">                medicalRecordSearch.put(key, mr);</span>
+<span class="fc" id="L401">        Map&lt;String, MedicalRecord&gt; medicalRecordSearch = new HashMap&lt;&gt;();</span>
+<span class="fc bfc" id="L402" title="All 2 branches covered.">        for (MedicalRecord mr : data.getMedicalRecords()) {</span>
+<span class="pc bpc" id="L403" title="3 of 6 branches missed.">            if (mr != null &amp;&amp; mr.getFirstName() != null &amp;&amp; mr.getLastName() != null) {</span>
+<span class="fc" id="L404">                String key = normalizeName(mr.getFirstName(), mr.getLastName());</span>
+<span class="fc" id="L405">                medicalRecordSearch.put(key, mr);</span>
             }
-<span class="fc" id="L396">        }</span>
+<span class="fc" id="L407">        }</span>
 
-<span class="fc" id="L398">        List&lt;Person&gt; personsMatched = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L399" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
-<span class="pc bpc" id="L400" title="2 of 4 branches missed.">            if (p != null &amp;&amp; p.getLastName() != null) {</span>
-<span class="fc bfc" id="L401" title="All 2 branches covered.">                if (p.getLastName().equalsIgnoreCase(lastName)) {</span>
-<span class="fc" id="L402">                    personsMatched.add(p);</span>
+<span class="fc" id="L409">        List&lt;Person&gt; personsMatched = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L410" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
+<span class="pc bpc" id="L411" title="2 of 4 branches missed.">            if (p != null &amp;&amp; p.getLastName() != null) {</span>
+<span class="fc bfc" id="L412" title="All 2 branches covered.">                if (p.getLastName().equalsIgnoreCase(lastName)) {</span>
+<span class="fc" id="L413">                    personsMatched.add(p);</span>
                 }
             }
-<span class="fc" id="L405">        }</span>
+<span class="fc" id="L416">        }</span>
 
-<span class="fc bfc" id="L407" title="All 2 branches covered.">        if (personsMatched.isEmpty()) {</span>
-<span class="fc" id="L408">            throw new IllegalArgumentException(</span>
+<span class="fc bfc" id="L418" title="All 2 branches covered.">        if (personsMatched.isEmpty()) {</span>
+<span class="fc" id="L419">            throw new IllegalArgumentException(</span>
                     &quot;No person found with last name: &quot; + lastName
             );
         }
 
-<span class="fc" id="L413">        List&lt;PersonInfoDTO&gt; result = new ArrayList&lt;&gt;();</span>
-<span class="fc bfc" id="L414" title="All 2 branches covered.">        for (Person p : personsMatched) {</span>
-<span class="fc" id="L415">            String key = normalizeName(p.getFirstName(), p.getLastName());</span>
-<span class="fc" id="L416">            MedicalRecord mr = medicalRecordSearch.get(key);</span>
+<span class="fc" id="L424">        List&lt;PersonInfoDTO&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L425" title="All 2 branches covered.">        for (Person p : personsMatched) {</span>
+<span class="fc" id="L426">            String key = normalizeName(p.getFirstName(), p.getLastName());</span>
+<span class="fc" id="L427">            MedicalRecord mr = medicalRecordSearch.get(key);</span>
 
-<span class="fc" id="L418">            Integer ageObj = computeAge(mr);</span>
-<span class="pc bpc" id="L419" title="1 of 2 branches missed.">            int age = (ageObj != null) ? ageObj : 0;</span>
+<span class="fc" id="L429">            Integer ageObj = computeAge(mr);</span>
+<span class="pc bpc" id="L430" title="1 of 2 branches missed.">            int age = (ageObj != null) ? ageObj : 0;</span>
 
             List&lt;String&gt; medications =
-<span class="pc bpc" id="L422" title="2 of 4 branches missed.">                    (mr != null &amp;&amp; mr.getMedications() != null)</span>
-<span class="nc" id="L423">                            ? mr.getMedications()</span>
-<span class="fc" id="L424">                            : Collections.emptyList();</span>
+<span class="pc bpc" id="L433" title="2 of 4 branches missed.">                    (mr != null &amp;&amp; mr.getMedications() != null)</span>
+<span class="nc" id="L434">                            ? mr.getMedications()</span>
+<span class="fc" id="L435">                            : Collections.emptyList();</span>
 
             List&lt;String&gt; allergies =
-<span class="pc bpc" id="L427" title="2 of 4 branches missed.">                    (mr != null &amp;&amp; mr.getAllergies() != null)</span>
-<span class="nc" id="L428">                            ? mr.getAllergies()</span>
-<span class="fc" id="L429">                            : Collections.emptyList();</span>
+<span class="pc bpc" id="L438" title="2 of 4 branches missed.">                    (mr != null &amp;&amp; mr.getAllergies() != null)</span>
+<span class="nc" id="L439">                            ? mr.getAllergies()</span>
+<span class="fc" id="L440">                            : Collections.emptyList();</span>
 
-<span class="fc" id="L431">            PersonInfoDTO dto = new PersonInfoDTO(</span>
-<span class="fc" id="L432">                    p.getLastName(),</span>
-<span class="fc" id="L433">                    p.getFirstName(),</span>
-<span class="fc" id="L434">                    p.getAddress(),</span>
+<span class="fc" id="L442">            PersonInfoDTO dto = new PersonInfoDTO(</span>
+<span class="fc" id="L443">                    p.getLastName(),</span>
+<span class="fc" id="L444">                    p.getFirstName(),</span>
+<span class="fc" id="L445">                    p.getAddress(),</span>
                     age,
-<span class="fc" id="L436">                    p.getEmail(),</span>
+<span class="fc" id="L447">                    p.getEmail(),</span>
                     medications,
                     allergies
             );
-<span class="fc" id="L440">            result.add(dto);</span>
-<span class="fc" id="L441">        }</span>
-<span class="fc" id="L442">        return new PersonInfo(result);</span>
+<span class="fc" id="L451">            result.add(dto);</span>
+<span class="fc" id="L452">        }</span>
+<span class="fc" id="L453">        return new PersonInfo(result);</span>
     }
 
     /**
      * Obtains unique email addresses for all residents in the given city.
      * Case-insensitive city match. Keeps stable order by first appearance.
+     *
      * @param city the city to search
      * @return ResidentEmails view containing a unique list of emails
      */
     public ResidentEmails getResidentEmails(String city) {
-<span class="fc bfc" id="L452" title="All 4 branches covered.">        if (city == null || city.isBlank()) {</span>
-<span class="fc" id="L453">            return new ResidentEmails(new ArrayList&lt;&gt;());</span>
+<span class="fc bfc" id="L464" title="All 4 branches covered.">        if (city == null || city.isBlank()) {</span>
+<span class="fc" id="L465">            return new ResidentEmails(new ArrayList&lt;&gt;());</span>
         }
 
-<span class="fc" id="L456">        Set&lt;String&gt; uniqueEmails = new LinkedHashSet&lt;&gt;();</span>
-<span class="fc bfc" id="L457" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
-<span class="pc bpc" id="L458" title="1 of 2 branches missed.">            if (p == null) continue;</span>
+<span class="fc" id="L468">        Set&lt;String&gt; uniqueEmails = new LinkedHashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L469" title="All 2 branches covered.">        for (Person p : data.getPersons()) {</span>
+<span class="pc bpc" id="L470" title="1 of 2 branches missed.">            if (p == null) continue;</span>
 
-<span class="fc" id="L460">            String personCity = p.getCity();</span>
-<span class="pc bpc" id="L461" title="1 of 4 branches missed.">            if (personCity != null &amp;&amp; personCity.equalsIgnoreCase(city)) {</span>
-<span class="fc" id="L462">                String email = p.getEmail();</span>
-<span class="pc bpc" id="L463" title="2 of 4 branches missed.">                if (email != null &amp;&amp; !email.isBlank()) {</span>
-<span class="fc" id="L464">                    uniqueEmails.add(email);</span>
+<span class="fc" id="L472">            String personCity = p.getCity();</span>
+<span class="pc bpc" id="L473" title="1 of 4 branches missed.">            if (personCity != null &amp;&amp; personCity.equalsIgnoreCase(city)) {</span>
+<span class="fc" id="L474">                String email = p.getEmail();</span>
+<span class="pc bpc" id="L475" title="2 of 4 branches missed.">                if (email != null &amp;&amp; !email.isBlank()) {</span>
+<span class="fc" id="L476">                    uniqueEmails.add(email);</span>
                 }
             }
-<span class="fc" id="L467">        }</span>
+<span class="fc" id="L479">        }</span>
 
-<span class="fc bfc" id="L469" title="All 2 branches covered.">        if (uniqueEmails.isEmpty()) {</span>
-<span class="fc" id="L470">            throw new IllegalArgumentException(</span>
+<span class="fc bfc" id="L481" title="All 2 branches covered.">        if (uniqueEmails.isEmpty()) {</span>
+<span class="fc" id="L482">            throw new IllegalArgumentException(</span>
                     &quot;City not found: &quot; + city
             );
         }
 
-<span class="fc" id="L475">        List&lt;String&gt; emails = new ArrayList&lt;&gt;(uniqueEmails);</span>
+<span class="fc" id="L487">        List&lt;String&gt; emails = new ArrayList&lt;&gt;(uniqueEmails);</span>
 
-<span class="fc" id="L477">        return new ResidentEmails(emails);</span>
+<span class="fc" id="L489">        return new ResidentEmails(emails);</span>
     }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>
